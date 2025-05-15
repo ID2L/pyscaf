@@ -1,5 +1,5 @@
 """
-pyscaf - Générateur de projet pour laboratoire, enseignement et analyse de données.
+pyscaf - Project generator for laboratory, teaching and data analysis.
 """
 
 __version__ = "0.1.0" 

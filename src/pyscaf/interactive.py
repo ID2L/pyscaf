@@ -26,8 +26,8 @@ def get_project_config(project_name: str) -> ProjectConfig:
     Returns:
         ProjectConfig: Configuration for the project
     """
-    console.print("[bold blue]Configuration interactive du projet[/bold blue]")
-    console.print(f"Nom du projet: [bold]{project_name}[/bold]")
+    console.print("[bold blue]Interactive project configuration[/bold blue]")
+    console.print(f"Project name: [bold]{project_name}[/bold]")
     
     # Project type
     project_type_choices = [
@@ -35,8 +35,8 @@ def get_project_config(project_name: str) -> ProjectConfig:
         for pt in ProjectType
     ]
     
-    project_type = questionary.select(
-        "Type de projet ?",
+    project_type = questionary.checkbox(
+        "Project type?",
         choices=project_type_choices,
     ).ask()
     
@@ -47,7 +47,7 @@ def get_project_config(project_name: str) -> ProjectConfig:
     ]
     
     formats = questionary.checkbox(
-        "Formats de sortie souhaités ?",
+        "Desired output formats?",
         choices=format_choices,
     ).ask()
     
@@ -58,7 +58,7 @@ def get_project_config(project_name: str) -> ProjectConfig:
     ]
     
     versioning = questionary.select(
-        "Système de versionnage ?",
+        "Versioning system?",
         choices=versioning_choices,
         default=VersioningSystem.NONE,
     ).ask()
@@ -70,13 +70,13 @@ def get_project_config(project_name: str) -> ProjectConfig:
     ]
     
     ci_options = questionary.checkbox(
-        "Options CI/CD ?",
+        "CI/CD options?",
         choices=ci_choices,
     ).ask() if versioning != VersioningSystem.NONE else None
     
     # Docker
     docker = questionary.confirm(
-        "Inclure un Dockerfile ?",
+        "Include a Dockerfile?",
         default=False,
     ).ask()
     
@@ -94,10 +94,10 @@ def get_project_config(project_name: str) -> ProjectConfig:
 def _get_project_type_description(project_type: ProjectType) -> str:
     """Get description for project type."""
     descriptions = {
-        ProjectType.PACKAGE: "Package Python installable",
-        ProjectType.NOTEBOOK: "Notebooks Jupyter pour analyse de données",
-        ProjectType.BOOK: "Livre/rapport Quarto pour documentation",
-        ProjectType.WEBAPP: "Application web pour interface utilisateur",
+        ProjectType.PACKAGE: "Installable Python package",
+        ProjectType.NOTEBOOK: "Jupyter notebooks for data analysis",
+        ProjectType.BOOK: "Quarto book/report for documentation",
+        ProjectType.WEBAPP: "Web application for user interface",
     }
     return descriptions.get(project_type, "")
 
@@ -105,9 +105,9 @@ def _get_project_type_description(project_type: ProjectType) -> str:
 def _get_format_description(output_format: OutputFormat) -> str:
     """Get description for output format."""
     descriptions = {
-        OutputFormat.HTML: "Documentation web",
-        OutputFormat.PDF: "Document PDF",
-        OutputFormat.IPYNB: "Notebooks Jupyter",
+        OutputFormat.HTML: "Web documentation",
+        OutputFormat.PDF: "PDF document",
+        OutputFormat.IPYNB: "Jupyter notebooks",
     }
     return descriptions.get(output_format, "")
 
@@ -115,9 +115,9 @@ def _get_format_description(output_format: OutputFormat) -> str:
 def _get_versioning_description(versioning: VersioningSystem) -> str:
     """Get description for versioning system."""
     descriptions = {
-        VersioningSystem.GITHUB: "Utiliser GitHub",
-        VersioningSystem.GITLAB: "Utiliser GitLab",
-        VersioningSystem.NONE: "Pas de versionnage configuré",
+        VersioningSystem.GITHUB: "Use GitHub",
+        VersioningSystem.GITLAB: "Use GitLab",
+        VersioningSystem.NONE: "No versioning configured",
     }
     return descriptions.get(versioning, "")
 
@@ -125,8 +125,8 @@ def _get_versioning_description(versioning: VersioningSystem) -> str:
 def _get_ci_description(ci_option: CIOption) -> str:
     """Get description for CI option."""
     descriptions = {
-        CIOption.EXECUTE: "Exécuter tests et notebooks",
-        CIOption.BUILD: "Construire package et documentation",
-        CIOption.PUBLISH: "Publier package et documentation",
+        CIOption.EXECUTE: "Run tests and notebooks",
+        CIOption.BUILD: "Build package and documentation",
+        CIOption.PUBLISH: "Publish package and documentation",
     }
     return descriptions.get(ci_option, "") 

@@ -28,57 +28,73 @@ def print_version(ctx, param, value):
     ctx.exit()
 
 
+class CustomCommand(click.Command):
+    """Custom command class to make type option conditionally required."""
+    def parse_args(self, ctx, args):
+        # Parse once to check for --interactive option
+        parser = self.make_parser(ctx)
+        opts, _, param_order = parser.parse_args(args=list(args))
+        interactive_present = opts.get('interactive', False)
+        
+        # Modify required options based on interactive mode
+        for param in self.get_params(ctx):
+            if param.name == 'type' and interactive_present:
+                param.required = False
+                
+        return super().parse_args(ctx, args)
+
+
 @click.group()
 @click.version_option(
     __version__, "--version", "-V", callback=print_version, help="Show the version and exit."
 )
 def cli():
-    """🧪 pyscaf - Générateur de projet pour laboratoire, enseignement et analyse de données."""
+    """🧪 pyscaf - Project generator for laboratory, teaching and data analysis."""
     pass
 
 
-@cli.command()
+@cli.command(cls=CustomCommand)
 @click.argument("project_name")
 @click.option(
     "--type", "-t",
     type=click.Choice([t.value for t in ProjectType], case_sensitive=False),
     required=True,
     multiple=True,
-    help="Type de projet à générer (multi-sélection possible)."
+    help="Type of project to generate."
 )
 @click.option(
     "--formats",
     type=click.Choice([f.value for f in OutputFormat], case_sensitive=False),
     multiple=True,
-    help="Formats de sortie souhaités (multi-sélection possible)."
+    help="Desired output formats (multiple selections possible)."
 )
 @click.option(
     "--versioning",
     type=click.Choice([v.value for v in VersioningSystem], case_sensitive=False),
     default=VersioningSystem.NONE.value,
     show_default=True,
-    help="Système de versionnage à configurer."
+    help="Versioning system to configure."
 )
 @click.option(
     "--ci",
     type=click.Choice([c.value for c in CIOption], case_sensitive=False),
     multiple=True,
-    help="Ajoute des workflows CI/CD (multi-sélection possible)."
+    help="Add CI/CD workflows (multiple selections possible)."
 )
 @click.option(
     "--docker/--no-docker",
     default=False,
     show_default=True,
-    help="Inclure un Dockerfile pour environnement reproductible."
+    help="Include a Dockerfile for reproducible environment."
 )
 @click.option(
     "--interactive",
     is_flag=True,
-    help="Active le mode interactif (pose des questions à l'utilisateur)."
+    help="Enable interactive mode (asks questions to the user)."
 )
 def init(
     project_name: str,
-    type: str,
+    type: Optional[List[str]] = None,
     formats: Optional[List[str]] = None,
     versioning: str = VersioningSystem.NONE.value,
     ci: Optional[List[str]] = None,
@@ -86,16 +102,21 @@ def init(
     interactive: bool = False,
 ):
     """
-    Initialise une nouvelle structure de projet personnalisée avec support Python, Jupyter,
-    Quarto Bookdown, Web App, CI/CD, Docker, et plus encore.
+    Initialize a new customized project structure with Python, Jupyter,
+    Quarto Bookdown, Web App, CI/CD, Docker, and more.
     """
     config = None
 
     if interactive:
         config = get_project_config(project_name)
     else:
+        # Check if type is provided when not in interactive mode
+        if type is None:
+            console.print("[bold red]Error:[/bold red] The --type option is required in non-interactive mode.")
+            sys.exit(1)
+            
         # Convert string values to enum types
-        project_type = ProjectType(type)
+        project_type = [ProjectType(p) for p in type]
         output_formats = [OutputFormat(f) for f in formats] if formats else None
         versioning_system = VersioningSystem(versioning)
         ci_options = [CIOption(c) for c in ci] if ci else None
@@ -111,19 +132,19 @@ def init(
             interactive=interactive,
         )
 
-    console.print(f"[bold green]Configuration du projet :[/bold green]")
-    console.print(f"Nom du projet: [bold]{config.project_name}[/bold]")
-    console.print(f"Type de projet: [bold]{config.project_type.value}[/bold]")
+    console.print(f"[bold green]Project configuration:[/bold green]")
+    console.print(f"Project name: [bold]{config.project_name}[/bold]")
+    console.print(f"Project type: [bold]{', '.join(f.value for f in config.project_type)}[/bold]")
     if config.formats:
-        console.print(f"Formats de sortie: [bold]{', '.join(f.value for f in config.formats)}[/bold]")
-    console.print(f"Système de versionnage: [bold]{config.versioning.value}[/bold]")
+        console.print(f"Output formats: [bold]{', '.join(f.value for f in config.formats)}[/bold]")
+    console.print(f"Versioning system: [bold]{config.versioning.value}[/bold]")
     if config.ci_options:
-        console.print(f"Options CI/CD: [bold]{', '.join(c.value for c in config.ci_options)}[/bold]")
-    console.print(f"Docker: [bold]{'Oui' if config.docker else 'Non'}[/bold]")
-    console.print(f"Mode interactif: [bold]{'Oui' if config.interactive else 'Non'}[/bold]")
+        console.print(f"CI/CD options: [bold]{', '.join(c.value for c in config.ci_options)}[/bold]")
+    console.print(f"Docker: [bold]{'Yes' if config.docker else 'No'}[/bold]")
+    console.print(f"Interactive mode: [bold]{'Yes' if config.interactive else 'No'}[/bold]")
 
     # TODO: Implement project generation
-    console.print("[bold yellow]Génération du projet non implémentée.[/bold yellow]")
+    console.print("[bold yellow]Project generation not implemented yet.[/bold yellow]")
 
 
 def main():
@@ -131,7 +152,7 @@ def main():
     try:
         cli()
     except Exception as e:
-        console.print(f"[bold red]Erreur:[/bold red] {str(e)}")
+        console.print(f"[bold red]Error:[/bold red] {str(e)}")
         sys.exit(1)
 
 

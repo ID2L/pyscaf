@@ -39,7 +39,7 @@ class OutputFormat(str, Enum):
 class ProjectConfig(BaseModel):
     """Configuration for a new project."""
     project_name: str
-    project_type: ProjectType
+    project_type: List[ProjectType]
     formats: Optional[List[OutputFormat]] = None
     versioning: VersioningSystem = VersioningSystem.NONE
     ci_options: Optional[List[CIOption]] = None
