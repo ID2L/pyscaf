@@ -46,9 +46,9 @@ build-backend = "poetry.core.masonry.api"
         # Return skeleton dictionary
         return {
             # Path("pyproject.toml"): pyproject_content,
-            # Path("README.md"): f"# {project_name}\n\nA Python project created with pyscaf\n",
-            # Path(f"src/{project_name}"): None,  # Create directory
-            # Path(f"src/{project_name}/__init__.py"): f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n',
+            Path("README.md"): f"# {project_name}\n\nA Python project created with pyscaf\n",
+            Path(f"src/{project_name}"): None,  # Create directory
+            Path(f"src/{project_name}/__init__.py"): f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n',
         }
     
     def init(self) -> None:
@@ -79,6 +79,37 @@ build-backend = "poetry.core.masonry.api"
                 console.print("[bold green]Poetry initialization successful![/bold green]")
             else:
                 console.print(f"[bold yellow]Poetry init exited with code {result}[/bold yellow]")
+            
+        except FileNotFoundError:
+            console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
+            console.print("https://python-poetry.org/docs/#installation")
+    
+    def install(self) -> None:
+        """
+        Install dependencies with Poetry.
+        
+        This will run 'poetry install' to install all dependencies.
+        """
+        console.print("[bold blue]Installing dependencies with Poetry...[/bold blue]")
+        
+        try:
+            # Ensure we're in the right directory
+            os.chdir(self.project_path)
+            
+            # Run poetry install
+            console.print("[bold cyan]Running poetry install...[/bold cyan]")
+            
+            result = subprocess.call(
+                ["poetry", "install"],
+                stdin=None,
+                stdout=None,
+                stderr=None,
+            )
+            
+            if result == 0:
+                console.print("[bold green]Poetry dependencies installed successfully![/bold green]")
+            else:
+                console.print(f"[bold yellow]Poetry install exited with code {result}[/bold yellow]")
             
         except FileNotFoundError:
             console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")

@@ -16,15 +16,16 @@ console = Console()
 class ActionManager:
     """Manager for all project actions."""
     
-    def __init__(self, project_path: Union[str, Path], config: ProjectConfig):
+    def __init__(self, project_name: Union[str, Path], config: ProjectConfig):
         """
         Initialize the action manager.
         
         Args:
-            project_path: Path to the project directory
+            project_name: Name of the project to create
             config: Project configuration
         """
-        self.project_path = Path(project_path)
+        self.project_path = Path.cwd() / project_name
+        console.print(f"[bold green]Project path: [/bold green]{self.project_path}")
         self.config = config
         self.actions: List[Action] = []
         
@@ -55,5 +56,11 @@ class ActionManager:
             action_name = action.__class__.__name__
             console.print(f"[bold blue]Initializing: [/bold blue]{action_name}")
             action.init()
+        
+        # Third pass: Install dependencies
+        for action in self.actions:
+            action_name = action.__class__.__name__
+            console.print(f"[bold blue]Installing dependencies for: [/bold blue]{action_name}")
+            action.install()
             
         console.print("[bold green]Project creation complete![/bold green]") 

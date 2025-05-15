@@ -15,6 +15,7 @@ class Action(ABC):
     Actions can:
     1. Generate file/directory skeleton via the skeleton() method
     2. Initialize content/behavior via the init() method
+    3. Install dependencies via the install() method
     """
     
     def __init__(self, project_path: Union[str, Path], config: ProjectConfig):
@@ -48,6 +49,15 @@ class Action(ABC):
         
         This method is called after all skeletons have been created.
         Use it to run tools, modify files, etc.
+        """
+        pass
+    
+    def install(self) -> None:
+        """
+        Install dependencies or run post-initialization commands.
+        
+        This method is called after all actions have been initialized.
+        Use it to install dependencies, run commands like 'poetry install', etc.
         """
         pass
     
