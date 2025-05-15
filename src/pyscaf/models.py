@@ -1,0 +1,47 @@
+"""
+Data models for pyscaf CLI.
+"""
+from enum import Enum, auto
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
+
+
+class ProjectType(str, Enum):
+    """Type of project to generate."""
+    PACKAGE = "package"
+    NOTEBOOK = "notebook"
+    BOOK = "book"
+    WEBAPP = "webapp"
+
+
+class VersioningSystem(str, Enum):
+    """Type of versioning system to configure."""
+    GITHUB = "github"
+    GITLAB = "gitlab"
+    NONE = "none"
+
+
+class CIOption(str, Enum):
+    """CI/CD options to configure."""
+    EXECUTE = "execute"
+    BUILD = "build"
+    PUBLISH = "publish"
+
+
+class OutputFormat(str, Enum):
+    """Output formats to generate."""
+    HTML = "html"
+    PDF = "pdf"
+    IPYNB = "ipynb"
+
+
+class ProjectConfig(BaseModel):
+    """Configuration for a new project."""
+    project_name: str
+    project_type: ProjectType
+    formats: Optional[List[OutputFormat]] = None
+    versioning: VersioningSystem = VersioningSystem.NONE
+    ci_options: Optional[List[CIOption]] = None
+    docker: bool = False
+    interactive: bool = False 
