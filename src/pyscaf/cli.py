@@ -8,6 +8,7 @@ import click
 from rich.console import Console
 
 from pyscaf import __version__
+from pyscaf.actions.manager import ActionManager
 from pyscaf.models import (
     CIOption,
     OutputFormat,
@@ -143,8 +144,9 @@ def init(
     console.print(f"Docker: [bold]{'Yes' if config.docker else 'No'}[/bold]")
     console.print(f"Interactive mode: [bold]{'Yes' if config.interactive else 'No'}[/bold]")
 
-    # TODO: Implement project generation
-    console.print("[bold yellow]Project generation not implemented yet.[/bold yellow]")
+    # Create the project using ActionManager
+    manager = ActionManager(project_name, config)
+    manager.create_project()
 
 
 def main():
