@@ -8,7 +8,9 @@ from rich.console import Console
 
 from pyscaf.actions import Action
 from pyscaf.actions.poetry import PoetryAction
-from pyscaf.models import ProjectConfig, ProjectType
+from pyscaf.actions.jupyter import JupyterAction
+from pyscaf.actions.git import GitAction
+from pyscaf.models import ProjectConfig, ProjectType, VersioningSystem
 
 console = Console()
 
@@ -35,6 +37,16 @@ class ActionManager:
     def _determine_actions(self) -> None:
         """Determine which actions to include based on configuration."""
         self.actions.append(PoetryAction(self.project_path, self.config))
+        
+        # Add JupyterAction if NOTEBOOK type is selected
+        if ProjectType.NOTEBOOK in self.config.project_type:
+            console.print("[bold blue]Adding Jupyter notebook support...[/bold blue]")
+            self.actions.append(JupyterAction(self.project_path, self.config))
+        
+        # Add GitAction if versioning is enabled
+        if self.config.versioning != VersioningSystem.NONE:
+            console.print(f"[bold blue]Adding Git support with {self.config.versioning.value}...[/bold blue]")
+            self.actions.append(GitAction(self.project_path, self.config))
         
         # Other actions would be added here based on config
         
