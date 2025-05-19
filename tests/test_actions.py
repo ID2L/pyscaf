@@ -13,7 +13,7 @@ from pyscaf.actions import Action
 from pyscaf.actions.poetry import PoetryAction
 from pyscaf.actions.git import GitAction
 from pyscaf.actions.jupyter import JupyterAction
-from pyscaf.models import ProjectConfig, ProjectType, VersioningSystem
+from pyscaf.models import ProjectConfig, ProjectType
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def project_config() -> ProjectConfig:
     return ProjectConfig(
         project_name="test-project",
         project_type=[ProjectType.PACKAGE],
-        versioning=VersioningSystem.GITHUB,
+        use_git=True,
         interactive=False,
         no_install=True,
     )
@@ -110,7 +110,7 @@ def test_action_abstract_base() -> None:
         Action(Path("test"), ProjectConfig(
             project_name="test",
             project_type=[ProjectType.PACKAGE],
-            versioning=VersioningSystem.NONE,
+            use_git=False,
             interactive=False,
             no_install=True,
         ))  # type: ignore

@@ -10,7 +10,7 @@ import pytest
 from click.testing import CliRunner
 
 from pyscaf.cli import cli
-from pyscaf.models import ProjectType, VersioningSystem
+from pyscaf.models import ProjectType
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def test_cli_version(runner: CliRunner) -> None:
     """Test the version command."""
     result = runner.invoke(cli, ["--version"])
     assert result.exit_code == 0
-    assert "pyscaf version" in result.output
+    assert "cli, version" in result.output
 
 
 def test_cli_init_package(runner: CliRunner, temp_project_dir: Path) -> None:
@@ -49,8 +49,7 @@ def test_cli_init_package(runner: CliRunner, temp_project_dir: Path) -> None:
             "test-package",
             "--type",
             ProjectType.PACKAGE.value,
-            "--versioning",
-            VersioningSystem.GITHUB.value,
+            "--git",
             "--no-install",
         ],
     )
@@ -76,8 +75,7 @@ def test_cli_init_notebook(runner: CliRunner, temp_project_dir: Path) -> None:
             "test-notebook",
             "--type",
             ProjectType.NOTEBOOK.value,
-            "--versioning",
-            VersioningSystem.GITHUB.value,
+            "--git",
             "--no-install",
         ],
     )
@@ -103,10 +101,9 @@ def test_cli_init_interactive(runner: CliRunner, temp_project_dir: Path) -> None
         input="\n".join([
             "package",  # Select package type
             "guilhem.heinrich@gmail.com",  # Author
-            "n",  # No output formats
-            "git",  # Versioning system
-            "n",  # No CI options
-            "n",  # No Docker
+            "",  # Use Git
+            "",  # No CI options
+            "",  # No Docker
             "y",  # Skip installation
         ]),
     )

@@ -10,7 +10,7 @@ import questionary
 from rich.console import Console
 
 from pyscaf.actions import Action
-from pyscaf.models import ProjectConfig, VersioningSystem
+from pyscaf.models import ProjectConfig
 
 console = Console()
 
@@ -189,7 +189,7 @@ poetry.lock
             if result == 0:
                 console.print("[bold green]Git repository initialized successfully![/bold green]")
                 
-                # Configure remote repository if using GitHub or GitLab
+                # Configure remote repository if URL is provided
                 self._configure_remote()
             else:
                 console.print(f"[bold yellow]Git init exited with code {result}[/bold yellow]")
@@ -205,7 +205,7 @@ poetry.lock
         if not remote_url and self.config.interactive:
             # Ask for remote URL in interactive mode
             remote_url = questionary.text(
-                f"Enter remote URL for {self.config.versioning.value} repository (leave empty to configure later):",
+                "Enter remote URL for Git repository (leave empty to configure later):",
                 default="",
             ).ask()
         

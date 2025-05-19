@@ -11,7 +11,7 @@ from pyscaf.models import (
     OutputFormat,
     ProjectConfig,
     ProjectType,
-    VersioningSystem,
+    
 )
 
 console = Console()
@@ -66,28 +66,35 @@ def get_project_config(project_name: str) -> ProjectConfig:
         choices=format_choices,
     ).ask() if ProjectType.NOTEBOOK in project_type or ProjectType.BOOK in project_type else None
     
-    # Versioning system
-    versioning_choices = [
-        Choice(title=f"{vs.value} - {_get_versioning_description(vs)}", value=vs)
-        for vs in VersioningSystem
-    ]
     
-    versioning = questionary.select(
-        "Versioning system?",
-        choices=versioning_choices,
-        default=VersioningSystem.NONE,
+    # Git
+    use_git = questionary.confirm(
+        "Initialize Git repository?",
+        default=False,
     ).ask()
     
-    # CI options
-    ci_choices = [
-        Choice(title=f"{ci.value} - {_get_ci_description(ci)}", value=ci)
-        for ci in CIOption
-    ]
+    # # Versioning system
+    # versioning_choices = [
+    #     Choice(title=f"{vs.value} - {_get_versioning_description(vs)}", value=vs)
+    #     for vs in VersioningSystem
+    # ]
     
-    ci_options = questionary.checkbox(
-        "CI/CD options?",
-        choices=ci_choices,
-    ).ask() if versioning != VersioningSystem.NONE else None
+    # versioning = questionary.select(
+    #     "Versioning system?",
+    #     choices=versioning_choices,
+    #     default=VersioningSystem.NONE,
+    # ).ask()
+    
+    # CI options
+    # ci_choices = [
+    #     Choice(title=f"{ci.value} - {_get_ci_description(ci)}", value=ci)
+    #     for ci in CIOption
+    # ]
+    
+    # ci_options = questionary.checkbox(
+    #     "CI/CD options?",
+    #     choices=ci_choices,
+    # ).ask() if versioning != VersioningSystem.NONE else None
     
     # Docker
     docker = questionary.confirm(
@@ -106,8 +113,8 @@ def get_project_config(project_name: str) -> ProjectConfig:
         project_type=project_type,
         author=author,
         formats=formats if formats else None,
-        versioning=versioning,
-        ci_options=ci_options,
+        use_git=use_git,
+        # ci_options=ci_options,
         docker=docker,
         interactive=True,
         no_install=no_install,
@@ -135,14 +142,14 @@ def _get_format_description(output_format: OutputFormat) -> str:
     return descriptions.get(output_format, "")
 
 
-def _get_versioning_description(versioning: VersioningSystem) -> str:
-    """Get description for versioning system."""
-    descriptions = {
-        VersioningSystem.GITHUB: "Use GitHub",
-        VersioningSystem.GITLAB: "Use GitLab",
-        VersioningSystem.NONE: "No versioning configured",
-    }
-    return descriptions.get(versioning, "")
+# def _get_versioning_description(versioning: VersioningSystem) -> str:
+#     """Get description for versioning system."""
+#     descriptions = {
+#         VersioningSystem.GITHUB: "Use GitHub",
+#         VersioningSystem.GITLAB: "Use GitLab",
+#         VersioningSystem.NONE: "No versioning configured",
+#     }
+    # return descriptions.get(versioning, "")
 
 
 def _get_ci_description(ci_option: CIOption) -> str:

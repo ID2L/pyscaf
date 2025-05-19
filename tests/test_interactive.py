@@ -10,7 +10,7 @@ from unittest.mock import patch
 import pytest
 
 from pyscaf.interactive import get_project_config
-from pyscaf.models import ProjectType, VersioningSystem
+from pyscaf.models import ProjectType
 
 
 @pytest.fixture
@@ -32,14 +32,12 @@ def test_interactive_package_project() -> None:
     # Mock user input
     with patch("questionary.checkbox") as mock_checkbox, \
          patch("questionary.text") as mock_text, \
-         patch("questionary.select") as mock_select, \
          patch("questionary.confirm") as mock_confirm:
         
         # Configure mocks
         mock_checkbox.return_value = [ProjectType.PACKAGE]
         mock_text.return_value = "guilhem.heinrich@gmail.com"
-        mock_select.return_value = VersioningSystem.GITHUB
-        mock_confirm.side_effect = [False, False, True]  # No formats, no CI, skip install
+        mock_confirm.side_effect = [False, True, False, False, True]  # No formats, Use Git, No CI, No Docker, Skip install
         
         # Get project config
         config = get_project_config("test-package")
@@ -49,7 +47,7 @@ def test_interactive_package_project() -> None:
         assert config.project_type == [ProjectType.PACKAGE]
         assert config.author == "guilhem.heinrich@gmail.com"
         assert config.formats is None
-        assert config.versioning == VersioningSystem.GITHUB
+        assert config.use_git
         assert config.ci_options is None
         assert not config.docker
         assert config.interactive
@@ -61,7 +59,6 @@ def test_interactive_notebook_project() -> None:
     # Mock user input
     with patch("questionary.checkbox") as mock_checkbox, \
          patch("questionary.text") as mock_text, \
-         patch("questionary.select") as mock_select, \
          patch("questionary.confirm") as mock_confirm:
         
         # Configure mocks
@@ -70,8 +67,7 @@ def test_interactive_notebook_project() -> None:
             ["html", "pdf"],  # Output formats
         ]
         mock_text.return_value = "guilhem.heinrich@gmail.com"
-        mock_select.return_value = VersioningSystem.GITHUB
-        mock_confirm.side_effect = [False, True]  # No CI, skip install
+        mock_confirm.side_effect = [True, False, True]  # Use Git, No CI, Skip install
         
         # Get project config
         config = get_project_config("test-notebook")
@@ -80,8 +76,9 @@ def test_interactive_notebook_project() -> None:
         assert config.project_name == "test-notebook"
         assert config.project_type == [ProjectType.NOTEBOOK]
         assert config.author == "guilhem.heinrich@gmail.com"
+        assert config.formats is not None
         assert len(config.formats) == 2
-        assert config.versioning == VersioningSystem.GITHUB
+        assert config.use_git
         assert config.ci_options is None
         assert not config.docker
         assert config.interactive
@@ -93,7 +90,6 @@ def test_interactive_mixed_project() -> None:
     # Mock user input
     with patch("questionary.checkbox") as mock_checkbox, \
          patch("questionary.text") as mock_text, \
-         patch("questionary.select") as mock_select, \
          patch("questionary.confirm") as mock_confirm:
         
         # Configure mocks
@@ -103,8 +99,7 @@ def test_interactive_mixed_project() -> None:
             ["github"],  # CI options
         ]
         mock_text.return_value = "guilhem.heinrich@gmail.com"
-        mock_select.return_value = VersioningSystem.GITHUB
-        mock_confirm.side_effect = [True, False]  # Docker, skip install
+        mock_confirm.side_effect = [True, True, False]  # Use Git, Docker, Skip install
         
         # Get project config
         config = get_project_config("test-mixed")
@@ -113,8 +108,10 @@ def test_interactive_mixed_project() -> None:
         assert config.project_name == "test-mixed"
         assert set(config.project_type) == {ProjectType.PACKAGE, ProjectType.NOTEBOOK}
         assert config.author == "guilhem.heinrich@gmail.com"
+        assert config.formats is not None
         assert len(config.formats) == 2
-        assert config.versioning == VersioningSystem.GITHUB
+        assert config.use_git
+        assert config.ci_options is not None
         assert len(config.ci_options) == 1
         assert config.docker
         assert config.interactive

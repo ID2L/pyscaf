@@ -9,7 +9,7 @@ from typing import Generator
 import pytest
 
 from pyscaf.actions.manager import ActionManager
-from pyscaf.models import ProjectConfig, ProjectType, VersioningSystem
+from pyscaf.models import ProjectConfig, ProjectType
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def test_manager_package_project(temp_project_dir: Path) -> None:
     config = ProjectConfig(
         project_name="test-package",
         project_type=[ProjectType.PACKAGE],
-        versioning=VersioningSystem.GITHUB,
+        use_git=True,
         interactive=False,
         no_install=True,
     )
@@ -54,7 +54,7 @@ def test_manager_notebook_project(temp_project_dir: Path) -> None:
     config = ProjectConfig(
         project_name="test-notebook",
         project_type=[ProjectType.NOTEBOOK],
-        versioning=VersioningSystem.GITHUB,
+        use_git=True,
         interactive=False,
         no_install=True,
     )
@@ -77,7 +77,7 @@ def test_manager_mixed_project(temp_project_dir: Path) -> None:
     config = ProjectConfig(
         project_name="test-mixed",
         project_type=[ProjectType.PACKAGE, ProjectType.NOTEBOOK],
-        versioning=VersioningSystem.GITHUB,
+        use_git=True,
         interactive=False,
         no_install=True,
     )
@@ -97,12 +97,12 @@ def test_manager_mixed_project(temp_project_dir: Path) -> None:
     assert (project_dir / ".gitignore").exists()
 
 
-def test_manager_no_versioning(temp_project_dir: Path) -> None:
-    """Test action manager without versioning."""
+def test_manager_no_git(temp_project_dir: Path) -> None:
+    """Test action manager without Git."""
     config = ProjectConfig(
         project_name="test-no-git",
         project_type=[ProjectType.PACKAGE],
-        versioning=VersioningSystem.NONE,
+        use_git=False,
         interactive=False,
         no_install=True,
     )
