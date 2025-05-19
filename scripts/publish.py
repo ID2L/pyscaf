@@ -55,11 +55,17 @@ def check_required_env(target: PublishTarget) -> None:
     default=PublishTarget.BOTH.value,
     help="Target platform to publish to (github, pypi, or both)",
 )
-def publish(target: str) -> NoReturn:
+@click.option(
+    "--prerelease/--no-prerelease",
+    default=True,
+    help="Whether to publish as a prerelease version",
+)
+def publish(target: str, prerelease: bool) -> NoReturn:
     """Run semantic-release publish command with environment variables.
     
     Args:
         target: The target platform(s) to publish to
+        prerelease: Whether to publish as a prerelease version
     """
     target_enum = PublishTarget(target)
     load_env()
@@ -72,6 +78,11 @@ def publish(target: str) -> NoReturn:
         elif target_enum == PublishTarget.PYPI:
             os.environ["SEMANTIC_RELEASE_PUBLISH"] = "pypi"
         # For BOTH, we use the default configuration
+        
+        # Configure prerelease
+        if prerelease:
+            os.environ["SEMANTIC_RELEASE_PRERELEASE"] = "true"
+            os.environ["SEMANTIC_RELEASE_PRERELEASE_TOKEN"] = "alpha"
         
         result = subprocess.run(["semantic-release", "publish"], check=True)
         sys.exit(result.returncode)

@@ -73,13 +73,16 @@ markers = [
 [tool.semantic_release]
 version_variable = ["pyproject.toml:version"]
 branch = "main"
-upload_to_pypi = false
+upload_to_pypi = true
 upload_to_release = true
-commit_message = "{version}\n\n{changelog}"
+commit_message = "chore(release): {version}"
 changelog_sections = ["feature", "fix", "breaking"]
 commit_parser = "conventional"
 remote = {name = "origin", url = "https://github.com/ID2L/pyscaf.git"}
 plugins = ["python-semantic-release.plugins.pypi", "python-semantic-release.plugins.github"]
+prerelease = true
+prerelease_token = "alpha"
+prerelease_branches = ["main"]
 release_notes_template = """
 {% if version %}
 # Version {{ version }}
