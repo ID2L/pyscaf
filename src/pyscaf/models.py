@@ -45,4 +45,5 @@ class ProjectConfig(BaseModel):
     versioning: VersioningSystem = VersioningSystem.NONE
     ci_options: Optional[List[CIOption]] = None
     docker: bool = False
-    interactive: bool = False 
+    interactive: bool = False
+    no_install: bool = False

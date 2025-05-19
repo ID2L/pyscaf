@@ -25,6 +25,10 @@ class GitAction(Action):
         Returns:
             Dictionary mapping paths to content
         """
+        # Read Git documentation
+        git_doc_path = Path(__file__).parent / "README.md"
+        git_doc = git_doc_path.read_text() if git_doc_path.exists() else ""
+        
         # Python & Poetry .gitignore content
         gitignore_content = """### Python ###
 # Byte-compiled / optimized / DLL files
@@ -156,6 +160,7 @@ poetry.lock
         # Return skeleton dictionary
         return {
             Path(".gitignore"): gitignore_content,
+            Path("README.md"): git_doc,  # Add Git documentation to README.md
         }
     
     def init(self) -> None:

@@ -69,10 +69,13 @@ class ActionManager:
             console.print(f"[bold blue]Initializing: [/bold blue]{action_name}")
             action.init()
         
-        # Third pass: Install dependencies
-        for action in self.actions:
-            action_name = action.__class__.__name__
-            console.print(f"[bold blue]Installing dependencies for: [/bold blue]{action_name}")
-            action.install()
+        # Third pass: Install dependencies if not skipped
+        if not self.config.no_install:
+            for action in self.actions:
+                action_name = action.__class__.__name__
+                console.print(f"[bold blue]Installing dependencies for: [/bold blue]{action_name}")
+                action.install()
+        else:
+            console.print("[bold yellow]Skipping installation.[/bold yellow]")
             
         console.print("[bold green]Project creation complete![/bold green]") 

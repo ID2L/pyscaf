@@ -26,24 +26,16 @@ class JupyterAction(Action):
         """
         project_name = self.config.project_name
         
+        # Read Jupyter documentation
+        jupyter_doc_path = Path(__file__).parent / "README.md"
+        jupyter_doc = jupyter_doc_path.read_text() if jupyter_doc_path.exists() else ""
+        
         # Create a README for notebooks
         notebook_readme = f"""# {project_name} - Notebooks
 
 This directory contains Jupyter notebooks for the {project_name} project.
 
-## Usage
-
-To use these notebooks:
-
-1. Ensure you have the development dependencies installed:
-   ```
-   poetry install
-   ```
-
-2. Launch Jupyter:
-   ```
-   poetry run jupyter notebook
-   ```
+{jupyter_doc}
 """
         
         # Create .gitignore for notebooks to ignore checkpoints

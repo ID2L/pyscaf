@@ -60,10 +60,11 @@ def get_project_config(project_name: str) -> ProjectConfig:
         for fmt in OutputFormat
     ]
     
+    
     formats = questionary.checkbox(
         "Desired output formats?",
         choices=format_choices,
-    ).ask()
+    ).ask() if ProjectType.NOTEBOOK in project_type or ProjectType.BOOK in project_type else None
     
     # Versioning system
     versioning_choices = [
@@ -94,6 +95,12 @@ def get_project_config(project_name: str) -> ProjectConfig:
         default=False,
     ).ask()
     
+    # No install option
+    no_install = questionary.confirm(
+        "Skip installation step ?",
+        default=False,
+    ).ask()
+    
     return ProjectConfig(
         project_name=project_name,
         project_type=project_type,
@@ -103,6 +110,7 @@ def get_project_config(project_name: str) -> ProjectConfig:
         ci_options=ci_options,
         docker=docker,
         interactive=True,
+        no_install=no_install,
     )
 
 

@@ -93,6 +93,11 @@ def cli():
     is_flag=True,
     help="Enable interactive mode (asks questions to the user)."
 )
+@click.option(
+    "--no-install",
+    is_flag=True,
+    help="Skip installation step."
+)
 def init(
     project_name: str,
     type: Optional[List[str]] = None,
@@ -101,6 +106,7 @@ def init(
     ci: Optional[List[str]] = None,
     docker: bool = False,
     interactive: bool = False,
+    no_install: bool = False,
 ):
     """
     Initialize a new customized project structure with Python, Jupyter,
@@ -131,6 +137,7 @@ def init(
             ci_options=ci_options,
             docker=docker,
             interactive=interactive,
+            no_install=no_install,
         )
 
     console.print(f"[bold green]Project configuration:[/bold green]")

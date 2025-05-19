@@ -27,10 +27,19 @@ class PoetryAction(Action):
         project_name = self.config.project_name
         currated_projet_name = project_name.replace("-", "_")
         
+        # Read Poetry documentation
+        poetry_doc_path = Path(__file__).parent / "README.md"
+        poetry_doc = poetry_doc_path.read_text() if poetry_doc_path.exists() else ""
+        
         # Return skeleton dictionary
         return {
             # Path("pyproject.toml"): pyproject_content,
-            Path("README.md"): f"# {project_name}\n\nA Python project created with pyscaf\n",
+            Path("README.md"): f"""# {project_name}
+
+A Python project created with pyscaf
+
+{poetry_doc}
+""",
             Path(f"{currated_projet_name}"): None,  # Create directory
             Path(f"{currated_projet_name}/__init__.py"): f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n',
         }
