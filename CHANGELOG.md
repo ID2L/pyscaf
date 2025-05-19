@@ -1,0 +1,31 @@
+# CHANGELOG
+
+
+## v0.1.0 (2025-05-19)
+
+### Chores
+
+- A test for release
+  ([`5f385c2`](https://github.com/ID2L/pyscaf/commit/5f385c2848cb4f6548264b88b9da14c041f85300))
+
+- Initial release
+  ([`3a19a23`](https://github.com/ID2L/pyscaf/commit/3a19a23beaa8712a19922d8736ed906f7eb56b6f))
+
+### Features
+
+- Update dependencies and project structure ([#2](https://github.com/ID2L/pyscaf/pull/2),
+  [`462e0e0`](https://github.com/ID2L/pyscaf/commit/462e0e0f1f7a9b1520e4473e08af26ad308ac16f))
+
+This commit enhances the project by updating the `pyproject.toml` and `poetry.lock` files to include
+  new development dependencies such as `python-semantic-release` and `python-dotenv`. It also
+  introduces a new script for publishing, improving the project's deployment capabilities. The
+  `poetry.lock` file has been modified to include additional packages like `certifi`,
+  `charset-normalizer`, and `click-option-group`, among others, which are essential for development
+  and testing.
+
+Furthermore, the project structure has been refined to include the `scripts` directory, allowing for
+  better organization of utility scripts. The `dev` group in the `pyproject.toml` has been expanded
+  to support a broader range of development tools, ensuring a more robust development environment.
+
+These changes aim to streamline the development process and enhance the overall functionality of the
+  project.
