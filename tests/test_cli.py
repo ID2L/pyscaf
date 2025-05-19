@@ -5,6 +5,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import Generator
+from unittest.mock import patch, MagicMock
 
 import pytest
 from click.testing import CliRunner
@@ -92,32 +93,47 @@ def test_cli_init_notebook(runner: CliRunner, temp_project_dir: Path) -> None:
     assert (project_dir / ".gitignore").exists()
 
 
-def test_cli_init_interactive(runner: CliRunner, temp_project_dir: Path) -> None:
+@patch("pyscaf.interactive.questionary.checkbox")
+@patch("pyscaf.interactive.questionary.text")
+@patch("pyscaf.interactive.questionary.confirm")
+def test_cli_init_interactive(
+    mock_confirm,
+    mock_text,
+    mock_checkbox,
+    runner: CliRunner,
+    temp_project_dir: Path,
+) -> None:
     """Test interactive project initialization."""
-    # Simulate user input for interactive mode
+    # Create mock objects
+    checkbox_mock = MagicMock()
+    checkbox_mock.ask.return_value = [ProjectType.PACKAGE.value]
+    mock_checkbox.return_value = checkbox_mock
+
+    text_mock = MagicMock()
+    text_mock.ask.return_value = "guilhem.heinrich@gmail.com"
+    mock_text.return_value = text_mock
+
+    confirm_mock = MagicMock()
+    confirm_mock.ask.side_effect = [False, False, True]  # [use_git, docker, no_install]
+    mock_confirm.return_value = confirm_mock
+
     result = runner.invoke(
         cli,
         ["init", "test-interactive", "--interactive"],
-        input="\n".join([
-            "package",  # Select package type
-            "guilhem.heinrich@gmail.com",  # Author
-            "",  # Use Git
-            "",  # No CI options
-            "",  # No Docker
-            "y",  # Skip installation
-        ]),
     )
     
-    assert result.exit_code == 0
+    assert result.exit_code == 0, f"Command failed with output: {result.output}"
     
     # Check project structure
     project_dir = temp_project_dir / "test-interactive"
+    # Print project tree structure using os.walk
+
     assert project_dir.exists()
     assert (project_dir / "test_interactive").exists()
     assert (project_dir / "test_interactive" / "__init__.py").exists()
     assert (project_dir / "pyproject.toml").exists()
-    assert (project_dir / ".git").exists()
-    assert (project_dir / ".gitignore").exists()
+    assert not (project_dir / ".git").exists()  # Git should not be initialized
+    assert not (project_dir / ".gitignore").exists()  # Gitignore should not exist
 
 
 def test_cli_init_invalid_type(runner: CliRunner, temp_project_dir: Path) -> None:
