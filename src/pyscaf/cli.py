@@ -77,6 +77,11 @@ def cli():
     help="Versioning system to configure."
 )
 @click.option(
+    "--remote-url",
+    type=str,
+    help="Remote repository URL for Git versioning (only used with GitHub/GitLab)."
+)
+@click.option(
     "--ci",
     type=click.Choice([c.value for c in CIOption], case_sensitive=False),
     multiple=True,
@@ -103,6 +108,7 @@ def init(
     type: Optional[List[str]] = None,
     formats: Optional[List[str]] = None,
     versioning: str = VersioningSystem.NONE.value,
+    remote_url: Optional[str] = None,
     ci: Optional[List[str]] = None,
     docker: bool = False,
     interactive: bool = False,
@@ -134,6 +140,7 @@ def init(
             project_type=project_type,
             formats=output_formats,
             versioning=versioning_system,
+            remote_url=remote_url,
             ci_options=ci_options,
             docker=docker,
             interactive=interactive,

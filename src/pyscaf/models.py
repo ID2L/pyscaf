@@ -43,6 +43,7 @@ class ProjectConfig(BaseModel):
     author: str = ""
     formats: Optional[List[OutputFormat]] = None
     versioning: VersioningSystem = VersioningSystem.NONE
+    remote_url: Optional[str] = None
     ci_options: Optional[List[CIOption]] = None
     docker: bool = False
     interactive: bool = False
