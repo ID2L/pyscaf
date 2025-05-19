@@ -10,7 +10,7 @@ from pyscaf.actions import Action
 from pyscaf.actions.poetry import PoetryAction
 from pyscaf.actions.jupyter import JupyterAction
 from pyscaf.actions.git import GitAction
-from pyscaf.models import ProjectConfig, ProjectType, VersioningSystem
+from pyscaf.models import ProjectConfig, ProjectType
 
 console = Console()
 
@@ -43,9 +43,9 @@ class ActionManager:
             console.print("[bold blue]Adding Jupyter notebook support...[/bold blue]")
             self.actions.append(JupyterAction(self.project_path, self.config))
         
-        # Add GitAction if versioning is enabled
-        if self.config.versioning != VersioningSystem.NONE:
-            console.print(f"[bold blue]Adding Git support with {self.config.versioning.value}...[/bold blue]")
+        # Add GitAction if Git is enabled
+        if self.config.use_git:
+            console.print("[bold blue]Adding Git support...[/bold blue]")
             self.actions.append(GitAction(self.project_path, self.config))
         
         # Other actions would be added here based on config

@@ -14,7 +14,7 @@ from pyscaf.models import (
     OutputFormat,
     ProjectConfig,
     ProjectType,
-    VersioningSystem,
+    
 )
 from pyscaf.interactive import get_project_config
 
@@ -70,11 +70,15 @@ def cli():
     help="Desired output formats (multiple selections possible)."
 )
 @click.option(
-    "--versioning",
-    type=click.Choice([v.value for v in VersioningSystem], case_sensitive=False),
-    default=VersioningSystem.NONE.value,
+    "--git/--no-git",
+    default=False,
     show_default=True,
-    help="Versioning system to configure."
+    help="Initialize Git repository."
+)
+@click.option(
+    "--remote-url",
+    type=str,
+    help="Remote repository URL for Git versioning."
 )
 @click.option(
     "--ci",
@@ -102,7 +106,8 @@ def init(
     project_name: str,
     type: Optional[List[str]] = None,
     formats: Optional[List[str]] = None,
-    versioning: str = VersioningSystem.NONE.value,
+    git: bool = False,
+    remote_url: Optional[str] = None,
     ci: Optional[List[str]] = None,
     docker: bool = False,
     interactive: bool = False,
@@ -125,7 +130,6 @@ def init(
         # Convert string values to enum types
         project_type = [ProjectType(p) for p in type]
         output_formats = [OutputFormat(f) for f in formats] if formats else None
-        versioning_system = VersioningSystem(versioning)
         ci_options = [CIOption(c) for c in ci] if ci else None
 
         # Create configuration
@@ -133,7 +137,8 @@ def init(
             project_name=project_name,
             project_type=project_type,
             formats=output_formats,
-            versioning=versioning_system,
+            use_git=git,
+            remote_url=remote_url,
             ci_options=ci_options,
             docker=docker,
             interactive=interactive,
@@ -145,7 +150,7 @@ def init(
     console.print(f"Project type: [bold]{', '.join(f.value for f in config.project_type)}[/bold]")
     if config.formats:
         console.print(f"Output formats: [bold]{', '.join(f.value for f in config.formats)}[/bold]")
-    console.print(f"Versioning system: [bold]{config.versioning.value}[/bold]")
+    console.print(f"Git: [bold]{'Yes' if config.use_git else 'No'}[/bold]")
     if config.ci_options:
         console.print(f"CI/CD options: [bold]{', '.join(c.value for c in config.ci_options)}[/bold]")
     console.print(f"Docker: [bold]{'Yes' if config.docker else 'No'}[/bold]")

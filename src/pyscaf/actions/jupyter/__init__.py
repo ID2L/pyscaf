@@ -6,6 +6,8 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Optional
 
+import tomli
+import tomli_w
 from rich.console import Console
 
 from pyscaf.actions import Action
@@ -48,8 +50,6 @@ profile_default/
 ipython_config.py
 """
         
-        # Create a sample notebook
- 
         # Return skeleton dictionary
         return {
             Path("notebooks"): None,  # Create main notebook directory
@@ -81,33 +81,34 @@ ipython_config.py
                 "pandas",
             ]
             
-            # First ensure the dev group exists
-            result = subprocess.call(
-                ["poetry", "add", "--group", "dev"],
-                stdin=None,
-                stdout=None,
-                stderr=None,
-            )
+            # Read current pyproject.toml
+            pyproject_path = Path("pyproject.toml")
+            with open(pyproject_path, "rb") as f:
+                pyproject = tomli.load(f)
+            
+            # Ensure tool.poetry.group.dev exists
+            if "tool" not in pyproject:
+                pyproject["tool"] = {}
+            if "poetry" not in pyproject["tool"]:
+                pyproject["tool"]["poetry"] = {}
+            if "group" not in pyproject["tool"]["poetry"]:
+                pyproject["tool"]["poetry"]["group"] = {}
+            if "dev" not in pyproject["tool"]["poetry"]["group"]:
+                pyproject["tool"]["poetry"]["group"]["dev"] = {"dependencies": {}}
             
             # Add each dependency to the dev group
             for dep in jupyter_deps:
-                result = subprocess.call(
-                    ["poetry", "add", "--group", "dev", dep],
-                    stdin=None,
-                    stdout=None,
-                    stderr=None,
-                )
-                
-                if result == 0:
-                    console.print(f"[bold green]Added {dep} to dev dependencies[/bold green]")
-                else:
-                    console.print(f"[bold yellow]Failed to add {dep} (exit code {result})[/bold yellow]")
+                pyproject["tool"]["poetry"]["group"]["dev"]["dependencies"][dep] = "*"
+                console.print(f"[bold green]Added {dep} to dev dependencies[/bold green]")
+            
+            # Write back to pyproject.toml
+            with open(pyproject_path, "wb") as f:
+                tomli_w.dump(pyproject, f)
             
             console.print("[bold green]Jupyter dependencies added to poetry.dev group![/bold green]")
             
         except FileNotFoundError:
-            console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
-            console.print("https://python-poetry.org/docs/#installation")
+            console.print("[bold yellow]pyproject.toml not found. Please ensure you are in a Poetry project.[/bold yellow]")
     
     def install(self) -> None:
         """

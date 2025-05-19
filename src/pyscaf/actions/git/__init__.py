@@ -10,7 +10,7 @@ import questionary
 from rich.console import Console
 
 from pyscaf.actions import Action
-from pyscaf.models import ProjectConfig, VersioningSystem
+from pyscaf.models import ProjectConfig
 
 console = Console()
 
@@ -189,7 +189,7 @@ poetry.lock
             if result == 0:
                 console.print("[bold green]Git repository initialized successfully![/bold green]")
                 
-                # Configure remote repository if using GitHub or GitLab
+                # Configure remote repository if URL is provided
                 self._configure_remote()
             else:
                 console.print(f"[bold yellow]Git init exited with code {result}[/bold yellow]")
@@ -199,11 +199,15 @@ poetry.lock
     
     def _configure_remote(self) -> None:
         """Configure remote repository."""
-        # Ask for remote URL
-        remote_url = questionary.text(
-            f"Enter remote URL for {self.config.versioning.value} repository (leave empty to configure later):",
-            default="",
-        ).ask()
+        # Use remote URL from config if provided
+        remote_url = self.config.remote_url
+        
+        if not remote_url and self.config.interactive:
+            # Ask for remote URL in interactive mode
+            remote_url = questionary.text(
+                "Enter remote URL for Git repository (leave empty to configure later):",
+                default="",
+            ).ask()
         
         if remote_url:
             # Add remote
@@ -216,23 +220,6 @@ poetry.lock
             
             if result == 0:
                 console.print(f"[bold green]Remote repository configured: {remote_url}[/bold green]")
-                
-                # Ask if user wants to push to remote
-                should_push = questionary.confirm(
-                    "Push to remote repository now?",
-                    default=False,
-                ).ask()
-                
-                if should_push:
-                    # Push to remote
-                    subprocess.call(
-                        ["git", "push", "-u", "origin", "main"],
-                        stdin=None,
-                        stdout=None,
-                        stderr=None,
-                    )
-            else:
-                console.print(f"[bold yellow]Failed to add remote (exit code {result})[/bold yellow]")
         else:
             console.print("[bold blue]No remote URL provided. You can add it later with:[/bold blue]")
             console.print("  git remote add origin <your-repository-url>")

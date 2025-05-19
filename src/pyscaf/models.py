@@ -15,13 +15,6 @@ class ProjectType(str, Enum):
     WEBAPP = "webapp"
 
 
-class VersioningSystem(str, Enum):
-    """Type of versioning system to configure."""
-    GITHUB = "github"
-    GITLAB = "gitlab"
-    NONE = "none"
-
-
 class CIOption(str, Enum):
     """CI/CD options to configure."""
     EXECUTE = "execute"
@@ -42,7 +35,8 @@ class ProjectConfig(BaseModel):
     project_type: List[ProjectType]
     author: str = ""
     formats: Optional[List[OutputFormat]] = None
-    versioning: VersioningSystem = VersioningSystem.NONE
+    use_git: bool = False
+    remote_url: Optional[str] = None
     ci_options: Optional[List[CIOption]] = None
     docker: bool = False
     interactive: bool = False
