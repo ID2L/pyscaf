@@ -79,6 +79,7 @@ commit_message = "{version}\n\n{changelog}"
 changelog_sections = ["feature", "fix", "breaking"]
 commit_parser = "conventional"
 remote = {name = "origin", url = "https://github.com/ID2L/pyscaf.git"}
+plugins = ["python-semantic-release.plugins.pypi", "python-semantic-release.plugins.github"]
 release_notes_template = """
 {% if version %}
 # Version {{ version }}
