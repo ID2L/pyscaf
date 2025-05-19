@@ -20,6 +20,7 @@ dependencies = [
 
 [project.scripts]
 pyscaf = "pyscaf.cli:main"
+publish = "scripts.publish:publish"
 
 [tool.poetry]
 name = "pyscaf"
@@ -27,7 +28,10 @@ version = "0.1.0"
 description = "A python scaffolder with quarto and other utilities out-of-the-box"
 authors = ["guilhem.heinrich <guilhem.heinrich@gmail.com>"]
 readme = "README.md"
-packages = [{include = "pyscaf", from = "src"}]
+packages = [
+    {include = "pyscaf", from = "src"},
+    {include = "scripts"}
+]
 
 [tool.poetry.dependencies]
 python = ">=3.10"
@@ -39,12 +43,15 @@ jinja2 = ">=3.0.0"
 
 [tool.poetry.scripts]
 pyscaf = "pyscaf.cli:main"
+publish = "scripts.publish:publish"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.12.0"
 pytest-xdist = "^3.5.0"
+python-semantic-release = "^9.21.1"
+python-dotenv = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -62,3 +69,28 @@ markers = [
     "manager: tests for action manager",
     "interactive: tests for interactive mode",
 ]
+
+[tool.semantic_release]
+version_variable = ["pyproject.toml:version"]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+commit_message = "{version}\n\n{changelog}"
+changelog_sections = ["feature", "fix", "breaking"]
+commit_parser = "conventional"
+remote = {name = "origin", url = "https://github.com/ID2L/pyscaf.git"}
+release_notes_template = """
+{% if version %}
+# Version {{ version }}
+
+{% endif %}
+{% for section, commits in sections.items() %}
+{% if section %}
+## {{ section }}
+{% endif %}
+{% for commit in commits %}
+* {{ commit.subject }}
+{% endfor %}
+
+{% endfor %}
+"""
