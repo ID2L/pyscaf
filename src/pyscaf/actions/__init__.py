@@ -81,8 +81,14 @@ class Action(ABC):
                 # Create directory
                 full_path.mkdir(exist_ok=True)
             else:
-                # Create file with content
-                full_path.write_text(content)
+                # Create file with content or append if exists
+                if full_path.exists():
+                    # Append content to existing file
+                    with open(full_path, 'a') as f:
+                        f.write('\n' + content)
+                else:
+                    # Create new file with content
+                    full_path.write_text(content)
                 
             created_paths.add(full_path)
         

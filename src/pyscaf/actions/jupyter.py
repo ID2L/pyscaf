@@ -54,10 +54,6 @@ To use these notebooks:
 # IPython
 profile_default/
 ipython_config.py
-
-# Converted notebooks
-*.html
-*.pdf
 """
         
         # Create a sample notebook
@@ -66,7 +62,7 @@ ipython_config.py
         return {
             Path("notebooks"): None,  # Create main notebook directory
             Path("notebooks/README.md"): notebook_readme,
-            Path("notebooks/.gitignore"): gitignore_content,
+            Path(".gitignore"): gitignore_content,  # Append Jupyter gitignore to root .gitignore
         }
     
     def init(self) -> None:

@@ -25,30 +25,14 @@ class PoetryAction(Action):
             Dictionary mapping paths to content
         """
         project_name = self.config.project_name
-        
-        # Create pyproject.toml content
-        pyproject_content = f"""[tool.poetry]
-name = "{project_name}"
-version = "0.1.0"
-description = "A Python project"
-authors = ["Your Name <your.email@example.com>"]
-readme = "README.md"
-packages = [{{include = "{project_name}", from = "src"}}]
-
-[tool.poetry.dependencies]
-python = ">=3.10"
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-"""
+        currated_projet_name = project_name.replace("-", "_")
         
         # Return skeleton dictionary
         return {
             # Path("pyproject.toml"): pyproject_content,
             Path("README.md"): f"# {project_name}\n\nA Python project created with pyscaf\n",
-            Path(f"src/{project_name}"): None,  # Create directory
-            Path(f"src/{project_name}/__init__.py"): f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n',
+            Path(f"{currated_projet_name}"): None,  # Create directory
+            Path(f"{currated_projet_name}/__init__.py"): f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n',
         }
     
     def init(self) -> None:
@@ -63,12 +47,9 @@ build-backend = "poetry.core.masonry.api"
             # Change to project directory
             os.chdir(self.project_path)
             
-            # Run poetry init interactively
-            console.print("[bold cyan]Starting interactive poetry init session...[/bold cyan]")
-            
             # Use subprocess.call to pass control to the terminal
             result = subprocess.call(
-                ["poetry", "init"],
+                ["poetry", "init", "--no-interaction", "--author", self.config.author],
                 # No redirection, allowing full terminal interaction
                 stdin=None,
                 stdout=None,

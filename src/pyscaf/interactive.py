@@ -4,6 +4,7 @@ Interactive mode for pyscaf.
 import questionary
 from questionary import Choice
 from rich.console import Console
+import subprocess
 
 from pyscaf.models import (
     CIOption,
@@ -38,6 +39,19 @@ def get_project_config(project_name: str) -> ProjectConfig:
     project_type = questionary.checkbox(
         "Project type?",
         choices=project_type_choices,
+    ).ask()
+    
+    # Get git author info
+    try:
+        git_name = subprocess.check_output(['git', 'config', 'user.name']).decode().strip()
+        git_email = subprocess.check_output(['git', 'config', 'user.email']).decode().strip()
+        default_author = f"{git_name} <{git_email}>"
+    except subprocess.CalledProcessError:
+        default_author = ""
+    
+    author = questionary.text(
+        "Project author?",
+        default=default_author,
     ).ask()
     
     # Output formats
@@ -83,6 +97,7 @@ def get_project_config(project_name: str) -> ProjectConfig:
     return ProjectConfig(
         project_name=project_name,
         project_type=project_type,
+        author=author,
         formats=formats if formats else None,
         versioning=versioning,
         ci_options=ci_options,

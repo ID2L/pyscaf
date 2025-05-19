@@ -93,17 +93,9 @@ docs/_build/
 # PyBuilder
 target/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-
 # IPython
 profile_default/
 ipython_config.py
-
-# Converted notebooks
-notebooks/*.html
-notebooks/*.pdf
 
 # pyenv
 .python-version
