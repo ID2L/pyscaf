@@ -5,6 +5,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import Generator
+from unittest.mock import patch
 
 import pytest
 
@@ -72,8 +73,10 @@ def test_git_action(temp_project_dir: Path, project_config: ProjectConfig) -> No
     # Check created files
     assert (temp_project_dir / ".gitignore").exists()
     
-    # Test init (should not fail)
-    action.init()
+    # Test init with simulated empty input for remote URL prompt
+    with patch('questionary.text') as mock_text:
+        mock_text.return_value.ask.return_value = ""  # Simulate pressing Enter
+        action.init()
     
     # Check if .git directory exists
     assert (temp_project_dir / ".git").exists()
@@ -110,4 +113,4 @@ def test_action_abstract_base() -> None:
             versioning=VersioningSystem.NONE,
             interactive=False,
             no_install=True,
-        )) 
+        ))  # type: ignore
