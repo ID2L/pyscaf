@@ -84,7 +84,7 @@ def publish(target: str, prerelease: bool) -> NoReturn:
             os.environ["SEMANTIC_RELEASE_PRERELEASE"] = "true"
             os.environ["SEMANTIC_RELEASE_PRERELEASE_TOKEN"] = "alpha"
         
-        result = subprocess.run(["semantic-release", "publish"], check=True)
+        result = subprocess.run(["semantic-release", "-vv", "publish"], check=True)
         sys.exit(result.returncode)
     except subprocess.CalledProcessError as e:
         sys.exit(e.returncode)

@@ -80,9 +80,7 @@ changelog_sections = ["feature", "fix", "breaking"]
 commit_parser = "conventional"
 remote = {name = "origin", url = "https://github.com/ID2L/pyscaf.git"}
 plugins = ["python-semantic-release.plugins.pypi", "python-semantic-release.plugins.github"]
-prerelease = true
-prerelease_token = "alpha"
-prerelease_branches = ["main"]
+prerelease = {enabled = true, token = "alpha", branches = ["main"]}
 release_notes_template = """
 {% if version %}
 # Version {{ version }}
