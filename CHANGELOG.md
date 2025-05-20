@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.0-rc.3 (2025-05-20)
+
+### Features
+
+- Trigger release 2
+  ([`342eb23`](https://github.com/ID2L/pyscaf/commit/342eb23f3ee767fcd19c30bc999f00a83029c9dc))
+
+
 ## v0.2.0-rc.2 (2025-05-20)
 
 ### Features
