@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.2.0 (2025-05-20)
+
+### Chores
+
+- Test prerelease
+  ([`8dcf605`](https://github.com/ID2L/pyscaf/commit/8dcf605a1084890983b7c3f2dbb3ee1ee6cdfe99))
+
+### Features
+
+- Test prerelease
+  ([`1a55988`](https://github.com/ID2L/pyscaf/commit/1a5598832263ab86e0fc48405b637083e895b791))
+
+- Test prerelease
+  ([`a18353a`](https://github.com/ID2L/pyscaf/commit/a18353a705c2de1cf086dbf2bac83f49f1fd8c42))
+
+
 ## v0.1.0 (2025-05-19)
 
 ### Chores
