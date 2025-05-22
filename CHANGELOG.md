@@ -1,13 +1,49 @@
 # CHANGELOG
 
 
+## v0.3.0 (2025-05-22)
+
+### Bug Fixes
+
+- Remove publish script from pyproject.toml
+  ([`ada55d5`](https://github.com/ID2L/pyscaf/commit/ada55d564dc2bfa4ef439ee9ba02fd24ec85eef9))
+
+- Trying fixing semantic relaease action
+  ([`dbfc241`](https://github.com/ID2L/pyscaf/commit/dbfc241e8ae2c054e58544b86d63b9c9fd56686e))
+
+### Chores
+
+- **release**: 0.0.0
+  ([`fd4ad5d`](https://github.com/ID2L/pyscaf/commit/fd4ad5db8a12f334ac02d501122cbc5abe6da41f))
+
+Updated project version to 0.0.0 in pyproject.toml and src/pyscaf/__init__.py. Introduced GitHub
+  Actions workflow for automated releases, including steps for semantic versioning and publishing to
+  TestPyPI. Removed the publish script as its functionality is now handled by the semantic-release
+  tool.
+
+
 ## v0.2.0-rc.7 (2025-05-20)
+
+### Chores
+
+- **release**: 0.2.0-rc.7
+  ([`faf4e8b`](https://github.com/ID2L/pyscaf/commit/faf4e8ba017155b090b2727264cba80187ec25bc))
 
 
 ## v0.2.0-rc.6 (2025-05-20)
 
+### Chores
+
+- **release**: 0.2.0-rc.6
+  ([`f638e12`](https://github.com/ID2L/pyscaf/commit/f638e129419b057950c3ffd9128c012b893c970e))
+
 
 ## v0.2.0-rc.5 (2025-05-20)
+
+### Chores
+
+- **release**: 0.2.0-rc.5
+  ([`5f93fab`](https://github.com/ID2L/pyscaf/commit/5f93fab756e093d23702dfa6e9112bf4c8bfe2a1))
 
 ### Features
 
@@ -17,8 +53,18 @@
 
 ## v0.2.0-rc.4 (2025-05-20)
 
+### Chores
+
+- **release**: 0.2.0-rc.4
+  ([`156c4ac`](https://github.com/ID2L/pyscaf/commit/156c4ac4cbb62265076fb9129f0a3ae5b2680f76))
+
 
 ## v0.2.0-rc.3 (2025-05-20)
+
+### Chores
+
+- **release**: 0.2.0-rc.3
+  ([`613679a`](https://github.com/ID2L/pyscaf/commit/613679a6dbd259e14fb0a1b5626866bfeb1a28a6))
 
 ### Features
 
@@ -28,6 +74,11 @@
 
 ## v0.2.0-rc.2 (2025-05-20)
 
+### Chores
+
+- **release**: 0.2.0-rc.2
+  ([`d31d6c9`](https://github.com/ID2L/pyscaf/commit/d31d6c902f0fbf3365c228cad75c15da3a41cfd0))
+
 ### Features
 
 - Trigger release
@@ -36,6 +87,11 @@
 
 ## v0.2.0-rc.1 (2025-05-20)
 
+### Chores
+
+- **release**: 0.2.0-rc.1
+  ([`48078a0`](https://github.com/ID2L/pyscaf/commit/48078a05c6de6736c2aec33edf5a008f5b31dd0e))
+
 
 ## v0.2.0 (2025-05-20)
 
@@ -43,6 +99,9 @@
 
 - Test prerelease
   ([`8dcf605`](https://github.com/ID2L/pyscaf/commit/8dcf605a1084890983b7c3f2dbb3ee1ee6cdfe99))
+
+- **release**: 0.2.0
+  ([`5098660`](https://github.com/ID2L/pyscaf/commit/5098660ddcd6a834cb483a968c4baf2e43d89f8d))
 
 ### Features
 
@@ -62,6 +121,9 @@
 
 - Initial release
   ([`3a19a23`](https://github.com/ID2L/pyscaf/commit/3a19a23beaa8712a19922d8736ed906f7eb56b6f))
+
+- **release**: 0.1.0
+  ([`3dfee75`](https://github.com/ID2L/pyscaf/commit/3dfee750e785617cfc7fbe25e2896ddddfa05f58))
 
 ### Features
 
