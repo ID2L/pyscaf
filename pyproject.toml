@@ -29,7 +29,6 @@ packages = [
 
 [tool.poetry.scripts]
 pyscaf = "pyscaf.cli:main"
-publish = "scripts.publish:publish"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
