@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.1 (2025-05-22)
+
+### Bug Fixes
+
+- Removed empty build path `./scripts`
+  ([`d15947b`](https://github.com/ID2L/pyscaf/commit/d15947b416ddfb456f1e877557cee2848afb27b4))
+
+
 ## v0.3.0 (2025-05-22)
 
 ### Bug Fixes
