@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.4.0 (2025-05-22)
+
+### Features
+
+- Add support for develop branch in semantic release for prerelease and pypi-test publishing
+  ([`e680e99`](https://github.com/ID2L/pyscaf/commit/e680e99b0d0fcf0a98ff3b8da791b4664f02579a))
+
+This commit introduces configuration for the 'develop' branch in the semantic release setup. The
+  'develop' branch is now recognized as a pre-release branch with a specific token for release
+  candidates. Additionally, the GitHub Actions workflow has been updated to trigger releases on
+  pushes to the 'develop' branch, enhancing the CI/CD pipeline for development workflows.
+
+
 ## v0.3.1 (2025-05-22)
 
 ### Bug Fixes
