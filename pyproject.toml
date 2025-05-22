@@ -1,6 +1,6 @@
 [project]
 name = "pyscaf"
-version = "0.0.0"
+version = "0.3.0"
 description = "A python scaffolder with quarto and other utilities out-of-the-box"
 authors = [
     {name = "guilhem.heinrich",email = "guilhem.heinrich@gmail.com"}
@@ -23,8 +23,7 @@ pyscaf = "pyscaf.cli:main"
 
 [tool.poetry]
 packages = [
-    {include = "pyscaf", from = "src"},
-    {include = "scripts"}
+    {include = "pyscaf", from = "src"}
 ]
 
 [tool.poetry.scripts]
