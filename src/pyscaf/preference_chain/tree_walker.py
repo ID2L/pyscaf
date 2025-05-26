@@ -7,7 +7,8 @@ class DependencyTreeWalker:
         self.dependencies = dependencies
         self.root_id = root_id
         self.tree = None
-        self.extra_depends = set()
+        self.external_depends = set()
+        self.fullfilled_depends = set()
         self._build_tree()
 
     def _build_tree(self):
@@ -34,7 +35,9 @@ class DependencyTreeWalker:
             return children
 
         self.tree = {self.root_id: _build(self.root_id)}
-        self.extra_depends = extra_depends
+        self.external_depends = extra_depends
+        self.fullfilled_depends = visited
+        print(f"fulfilled_depends: {self.fullfilled_depends}")
 
     def print_tree(self):
         """
@@ -42,6 +45,7 @@ class DependencyTreeWalker:
         External dependencies (extra_depends) are shown in red.
         """
         RED = '\033[91m'
+        GREEN = '\033[92m'
         RESET = '\033[0m'
         def _print_subtree(subtree, prefix="", is_last=True):
             items = list(subtree.items())
@@ -52,7 +56,7 @@ class DependencyTreeWalker:
                     extension = "    " if idx == len(items) - 1 else "│   "
                     _print_subtree(children, prefix + extension, is_last=(idx == len(items) - 1))
                 # Afficher les dépendances externes à ce niveau
-                if node in self.extra_depends:
+                if node in self.external_depends:
                     print(prefix + ("    " if idx == len(items) - 1 else "│   ") + f"{RED}{node} (external){RESET}")
         # Afficher l'arbre principal
         _print_subtree(self.tree)
@@ -63,6 +67,8 @@ class DependencyTreeWalker:
                 shown.add(node)
                 _collect_shown(children)
         _collect_shown(self.tree)
-        for ext in self.extra_depends:
+        for ext in self.external_depends:
             if ext not in shown:
                 print(f"{RED}{ext} (external){RESET}") 
+        for internal in self.fullfilled_depends:
+            print(f"{GREEN}{internal} (fullfilled){RESET}") 
