@@ -1,6 +1,6 @@
 from collections import defaultdict
 from typing import Dict, Any, Set, Tuple
-from src.dependency_loader import RawDependency
+from .dependency_loader import RawDependency
 
 class DependencyTreeWalker:
     def __init__(self, dependencies: list[RawDependency], root_id: str):
