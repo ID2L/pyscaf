@@ -8,9 +8,19 @@ from typing import Dict, Optional
 
 from rich.console import Console
 
-from pyscaf.actions import Action
+from pyscaf.actions import Action, CLIOption
 
 console = Console()
+
+def get_local_git_author():
+    """Get the author name from the local git config."""
+    try:
+        git_name = subprocess.check_output(['git', 'config', 'user.name']).decode().strip()
+        git_email = subprocess.check_output(['git', 'config', 'user.email']).decode().strip()
+        default_author = f"{git_name} <{git_email}>"
+    except subprocess.CalledProcessError:
+        default_author = ""
+    return default_author
 
 class PoetryAction(Action):
     """Action to initialize a project with Poetry."""
@@ -18,8 +28,13 @@ class PoetryAction(Action):
     depends = []  # Poetry is the root action
     run_preferably_after = None
     cli_options = [
-        {"name": "--project-name", "help": "Project name", "prompt": "Project name?"},
-        {"name": "--author", "help": "Author name", "prompt": "Author?"},
+        CLIOption(
+            name="--author",
+            type="str",
+            help="Author name",
+            prompt="Author ?",
+            default=get_local_git_author
+        ),
         # Add other global options here
     ]
 
@@ -112,3 +127,5 @@ A Python project created with pyscaf
         except FileNotFoundError:
             console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
             console.print("https://python-poetry.org/docs/#installation") 
+            
+

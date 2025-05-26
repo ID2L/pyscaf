@@ -9,7 +9,7 @@ from typing import Dict, Optional
 import questionary
 from rich.console import Console
 
-from pyscaf.actions import Action
+from pyscaf.actions import Action, CLIOption
 from pyscaf.models import ProjectConfig
 
 console = Console()
@@ -20,7 +20,14 @@ class GitAction(Action):
     
     depends = ['poetry']
     run_preferably_after = 'poetry'
-    cli_options = []  # Add Git-specific options if needed
+    cli_options = [
+                CLIOption(
+            name="--remote-url",
+            type="str",
+            help="Provide a remote url for the git repository",
+            prompt="Git remote url ?",
+            default='try'
+        )]  # Add Git-specific options if needed
 
     def __init__(self, project_path):
         super().__init__(project_path)

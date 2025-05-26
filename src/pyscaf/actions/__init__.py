@@ -7,9 +7,20 @@ from typing import Any, Dict, List, Optional, Set, Union
 import importlib
 import pkgutil
 import os
+from pydantic import BaseModel
 
 from pyscaf.models import ProjectConfig
 
+class CLIOption(BaseModel):
+    name: str  # e.g. '--author'
+    type: str = "str"  # 'str', 'bool', 'int', 'choice', etc.
+    help: Optional[str] = None
+    default: Any = None
+    prompt: Optional[str] = None
+    choices: Optional[List[Any]] = None  # For choice type
+    is_flag: Optional[bool] = None  # For bool
+    multiple: Optional[bool] = None  # For multi-choice
+    required: Optional[bool] = None
 
 class Action(ABC):
     """
@@ -25,7 +36,7 @@ class Action(ABC):
     # Explicit dependencies and preferences
     depends: List[str] = []
     run_preferably_after: Optional[str] = None
-    cli_options: List[Dict[str, Any]] = []
+    cli_options: List[CLIOption] = []
 
     def __init_subclass__(cls):
         # Validation: if multiple depends and no run_preferably_after, raise error
