@@ -4,11 +4,15 @@ from .topologic_tree import best_execution_order
 import os
 
 # Utility to get direct dependants of a node
+# Returns the list of RawDependency that directly depend on parent_id
+
 def get_direct_dependants(dependencies, parent_id):
     """Return the list of RawDependency that directly depend on parent_id."""
     return [dep for dep in dependencies if dep.depends and parent_id in dep.depends]
 
 # Utility to build a node for best_execution_order
+# Uses DependencyTreeWalker to compute the fullfilled and external dependencies for a given node
+
 def build_node(dep, dependencies):
     walker = DependencyTreeWalker(dependencies, dep.id)
     return {
@@ -18,6 +22,10 @@ def build_node(dep, dependencies):
     }
 
 # Recursive function to build the optimal order
+# For a given current_id, finds all direct dependants, orders them optimally,
+# and recursively applies the same logic to each dependant.
+# The result is a flattened list starting with current_id, followed by the optimal order of all subtrees.
+
 def recursive_best_order(dependencies, current_id):
     direct_dependants = get_direct_dependants(dependencies, current_id)
     if not direct_dependants:

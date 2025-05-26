@@ -2,13 +2,16 @@ from typing import List, Optional
 from pydantic import BaseModel, ValidationError
 import yaml
 from collections import defaultdict
-from typing import Dict, Any, Set, Tuple
 
 class RawDependency(BaseModel):
     id: str
     depends: Optional[List[str]] = None
     after: Optional[str] = None
 
+# Load dependencies from a YAML file and complete the 'after' property if possible
+# Returns a list of RawDependency objects
+# - If 'after' is missing and there is only one 'depends', it is auto-completed
+# - Warns if there are multiple 'depends' but no 'after'
 def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
     """
     Load dependencies from a YAML file and complete the 'after' property if possible.
@@ -24,7 +27,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
         except ValidationError as e:
             print(f"Validation error for dependency '{entry.get('id', '?')}': {e}")
             continue
-        # Complete 'after' if missing and only one 'depends'
+        # If 'after' is missing and there is only one 'depends', set 'after' to that dependency
         if dep.after is None:
             if dep.depends:
                 if len(dep.depends) == 1:
@@ -34,6 +37,10 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
         dependencies.append(dep)
     return dependencies 
 
+# Build a dependency tree starting from root_id, following 'after' recursively
+# Returns a tuple (tree, extra_depends) where:
+#   - tree is a nested dict representing the after-chain
+#   - extra_depends is a set of ids that are depends but not in the after-chain
 def build_dependency_tree(
     dependencies: list[RawDependency],
     root_id: str
@@ -44,9 +51,7 @@ def build_dependency_tree(
       - tree is a nested dict representing the after-chain
       - extra_depends is a set of ids that are depends but not in the after-chain
     """
-    # Index dependencies by id for fast lookup
-    dep_by_id: dict[str, RawDependency] = {dep.id: dep for dep in dependencies}
-    # Reverse index: for each id, who has after == id ?
+    # Build a reverse index: for each id, who has after == id ?
     after_targets: defaultdict[str, list[RawDependency]] = defaultdict(list)
     for dep in dependencies:
         if dep.after:
@@ -55,15 +60,16 @@ def build_dependency_tree(
     visited: set[str] = set()
     extra_depends: set[str] = set()
 
+    # Recursive helper to build the tree
     def _build(current_id: str) -> dict:
         if current_id in visited:
             return {}  # Prevent cycles
         visited.add(current_id)
         children = {}
         for dep in after_targets.get(current_id, []):
-            # Pour chaque dépendance qui cible current_id via after
+            # For each dependency that targets current_id via 'after', build its subtree
             children[dep.id] = _build(dep.id)
-            # Si plusieurs depends, on récupère les dépendances supplémentaires
+            # If there are multiple 'depends', collect additional dependencies as external
             if dep.depends and len(dep.depends) > 1:
                 for d in dep.depends:
                     if d != current_id:

@@ -1,5 +1,4 @@
 from collections import defaultdict
-from typing import Dict, Any, Set, Tuple
 from .dependency_loader import RawDependency
 
 class DependencyTreeWalker:
@@ -12,7 +11,7 @@ class DependencyTreeWalker:
         self._build_tree()
 
     def _build_tree(self):
-        dep_by_id: dict[str, RawDependency] = {dep.id: dep for dep in self.dependencies}
+        # Build a reverse index: for each id, who has after == id ?
         after_targets: defaultdict[str, list[RawDependency]] = defaultdict(list)
         for dep in self.dependencies:
             if dep.after:
@@ -21,46 +20,50 @@ class DependencyTreeWalker:
         visited: set[str] = set()
         extra_depends: set[str] = set()
 
+        # Recursive helper to build the tree
         def _build(current_id: str) -> dict:
             if current_id in visited:
-                return {}
+                return {}  # Prevent cycles
             visited.add(current_id)
             children = {}
             for dep in after_targets.get(current_id, []):
+                # For each dependency that targets current_id via 'after', build its subtree
                 children[dep.id] = _build(dep.id)
+                # If there are multiple 'depends', collect additional dependencies as external
                 if dep.depends and len(dep.depends) > 1:
                     for d in dep.depends:
                         if d != current_id:
                             extra_depends.add(d)
             return children
 
+        # Build the tree and collect external and fulfilled dependencies
         self.tree = {self.root_id: _build(self.root_id)}
         self.external_depends = extra_depends
         self.fullfilled_depends = visited
-        print(f"fulfilled_depends: {self.fullfilled_depends}")
 
     def print_tree(self):
         """
         Print the dependency tree in a graphical way (like the 'tree' utility).
         External dependencies (extra_depends) are shown in red.
+        Fulfilled dependencies are shown in green.
         """
         RED = '\033[91m'
         GREEN = '\033[92m'
         RESET = '\033[0m'
-        def _print_subtree(subtree, prefix="", is_last=True):
+        def _print_subtree(subtree, prefix=""):
             items = list(subtree.items())
             for idx, (node, children) in enumerate(items):
                 connector = "└── " if idx == len(items) - 1 else "├── "
                 print(prefix + connector + node)
                 if children:
                     extension = "    " if idx == len(items) - 1 else "│   "
-                    _print_subtree(children, prefix + extension, is_last=(idx == len(items) - 1))
-                # Afficher les dépendances externes à ce niveau
+                    _print_subtree(children, prefix + extension)
+                # Show external dependencies at this level
                 if node in self.external_depends:
                     print(prefix + ("    " if idx == len(items) - 1 else "│   ") + f"{RED}{node} (external){RESET}")
-        # Afficher l'arbre principal
+        # Print the main tree
         _print_subtree(self.tree)
-        # Afficher les dépendances externes non affichées
+        # Print external dependencies not shown in the tree
         shown = set()
         def _collect_shown(subtree):
             for node, children in subtree.items():
@@ -70,5 +73,6 @@ class DependencyTreeWalker:
         for ext in self.external_depends:
             if ext not in shown:
                 print(f"{RED}{ext} (external){RESET}") 
+        # Print all fulfilled dependencies
         for internal in self.fullfilled_depends:
             print(f"{GREEN}{internal} (fullfilled){RESET}") 
