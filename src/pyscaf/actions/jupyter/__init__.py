@@ -11,7 +11,6 @@ import tomli_w
 from rich.console import Console
 
 from pyscaf.actions import Action
-from pyscaf.models import ProjectConfig
 
 console = Console()
 
@@ -19,14 +18,21 @@ console = Console()
 class JupyterAction(Action):
     """Action to initialize Jupyter notebook support in a project."""
     
-    def skeleton(self) -> Dict[Path, Optional[str]]:
+    depends = ['poetry']
+    run_preferably_after = 'poetry'
+    cli_options = []  # Add Jupyter-specific options if needed
+
+    def __init__(self, project_path):
+        super().__init__(project_path)
+
+    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
         Define the filesystem skeleton for Jupyter notebook support.
         
         Returns:
             Dictionary mapping paths to content
         """
-        project_name = self.config.project_name
+        project_name = context.get("project_name", "myproject")
         
         # Read Jupyter documentation
         jupyter_doc_path = Path(__file__).parent / "README.md"
@@ -57,7 +63,7 @@ ipython_config.py
             Path(".gitignore"): gitignore_content,  # Append Jupyter gitignore to root .gitignore
         }
     
-    def init(self) -> None:
+    def init(self, context: dict) -> None:
         """
         Initialize Jupyter notebook support after skeleton creation.
         
@@ -110,7 +116,7 @@ ipython_config.py
         except FileNotFoundError:
             console.print("[bold yellow]pyproject.toml not found. Please ensure you are in a Poetry project.[/bold yellow]")
     
-    def install(self) -> None:
+    def install(self, context: dict) -> None:
         """
         Set up the Jupyter kernel for the project.
         
@@ -125,7 +131,7 @@ ipython_config.py
             # Create a Jupyter kernel for this project
             console.print("[bold cyan]Creating Jupyter kernel for this project...[/bold cyan]")
             
-            project_name = self.config.project_name
+            project_name = context.get("project_name", "myproject")
             
             # Run the ipykernel installation via poetry
             result = subprocess.call(

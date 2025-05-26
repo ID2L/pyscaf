@@ -9,22 +9,31 @@ from typing import Dict, Optional
 from rich.console import Console
 
 from pyscaf.actions import Action
-from pyscaf.models import ProjectConfig
 
 console = Console()
-
 
 class PoetryAction(Action):
     """Action to initialize a project with Poetry."""
     
-    def skeleton(self) -> Dict[Path, Optional[str]]:
+    depends = []  # Poetry is the root action
+    run_preferably_after = None
+    cli_options = [
+        {"name": "--project-name", "help": "Project name", "prompt": "Project name?"},
+        {"name": "--author", "help": "Author name", "prompt": "Author?"},
+        # Add other global options here
+    ]
+
+    def __init__(self, project_path):
+        super().__init__(project_path)
+
+    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
         Define the filesystem skeleton for Poetry initialization.
         
         Returns:
             Dictionary mapping paths to content
         """
-        project_name = self.config.project_name
+        project_name = context.get("project_name", "myproject")
         currated_projet_name = project_name.replace("-", "_")
         
         # Read Poetry documentation
@@ -33,7 +42,6 @@ class PoetryAction(Action):
         
         # Return skeleton dictionary
         return {
-            # Path("pyproject.toml"): pyproject_content,
             Path("README.md"): f"""# {project_name}
 
 A Python project created with pyscaf
@@ -44,7 +52,7 @@ A Python project created with pyscaf
             Path(f"{currated_projet_name}/__init__.py"): f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n',
         }
     
-    def init(self) -> None:
+    def init(self, context: dict) -> None:
         """
         Initialize Poetry after skeleton creation.
         
@@ -58,7 +66,7 @@ A Python project created with pyscaf
             
             # Use subprocess.call to pass control to the terminal
             result = subprocess.call(
-                ["poetry", "init", "--no-interaction", "--author", self.config.author],
+                ["poetry", "init", "--no-interaction", "--author", context.get("author", "")],
                 # No redirection, allowing full terminal interaction
                 stdin=None,
                 stdout=None,
@@ -74,7 +82,7 @@ A Python project created with pyscaf
             console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
             console.print("https://python-poetry.org/docs/#installation")
     
-    def install(self) -> None:
+    def install(self, context: dict) -> None:
         """
         Install dependencies with Poetry.
         

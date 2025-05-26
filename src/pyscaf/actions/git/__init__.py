@@ -18,7 +18,14 @@ console = Console()
 class GitAction(Action):
     """Action to initialize a Git repository in a project."""
     
-    def skeleton(self) -> Dict[Path, Optional[str]]:
+    depends = ['poetry']
+    run_preferably_after = 'poetry'
+    cli_options = []  # Add Git-specific options if needed
+
+    def __init__(self, project_path):
+        super().__init__(project_path)
+
+    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
         Define the filesystem skeleton for Git initialization.
         
@@ -163,7 +170,7 @@ poetry.lock
             Path("README.md"): git_doc,  # Add Git documentation to README.md
         }
     
-    def init(self) -> None:
+    def init(self, context: dict) -> None:
         """
         Initialize Git repository after skeleton creation.
         
@@ -190,19 +197,19 @@ poetry.lock
                 console.print("[bold green]Git repository initialized successfully![/bold green]")
                 
                 # Configure remote repository if URL is provided
-                self._configure_remote()
+                self._configure_remote(context)
             else:
                 console.print(f"[bold yellow]Git init exited with code {result}[/bold yellow]")
             
         except FileNotFoundError:
             console.print("[bold yellow]Git not found. Please install it first.[/bold yellow]")
     
-    def _configure_remote(self) -> None:
+    def _configure_remote(self, context: dict) -> None:
         """Configure remote repository."""
         # Use remote URL from config if provided
-        remote_url = self.config.remote_url
+        remote_url = context.get('remote_url')
         
-        if not remote_url and self.config.interactive:
+        if not remote_url and context.get('interactive'):
             # Ask for remote URL in interactive mode
             remote_url = questionary.text(
                 "Enter remote URL for Git repository (leave empty to configure later):",
@@ -224,10 +231,11 @@ poetry.lock
             console.print("[bold blue]No remote URL provided. You can add it later with:[/bold blue]")
             console.print("  git remote add origin <your-repository-url>")
     
-    def install(self) -> None:
+    def install(self, context: dict) -> None:
         """
         No additional installation steps needed for Git.
         """
+        console.print("[bold blue]Setting up Git for the project...[/bold blue]")
         # Add files to repository
         subprocess.call(
             ["git", "add", "."],
