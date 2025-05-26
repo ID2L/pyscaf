@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Union, Dict, Any
 
 from rich.console import Console
+import questionary
 
 from pyscaf.actions import Action
 from pyscaf.actions import discover_actions
@@ -57,6 +58,35 @@ class ActionManager:
         ])
         # Instantiate actions in the optimal order
         self.actions = [action_class_by_id[action_id](self.project_path) for action_id in order]
+    
+    def ask_interactive_questions(self, context: dict) -> dict:
+        """
+        Ask all relevant questions for actions in optimal order, updating the context.
+        Only asks if action.condition_to_ask(context) is True.
+        Skips questions for which a value is already present in the context (e.g. provided via CLI).
+        """
+        for action in self.actions:
+            if action.condition_to_ask(context):
+                for opt in getattr(action, "cli_options", []):
+                    name = opt.name.lstrip("-").replace("-", "_")
+                    if name in context and context[name] not in (None, ""):
+                        continue  # Skip if already provided
+                    prompt = opt.prompt or name
+                    default = opt.default() if callable(opt.default) else opt.default
+                    if opt.type == "bool":
+                        answer = questionary.confirm(prompt, default=bool(default)).ask()
+                    elif opt.type == "int":
+                        answer = questionary.text(prompt, default=str(default) if default is not None else "").ask()
+                        answer = int(answer) if answer is not None and answer != "" else None
+                    elif opt.type == "choice" and opt.choices:
+                        if opt.multiple:
+                            answer = questionary.checkbox(prompt, choices=opt.choices, default=default).ask()
+                        else:
+                            answer = questionary.select(prompt, choices=opt.choices, default=default).ask()
+                    else:  # str or fallback
+                        answer = questionary.text(prompt, default=default if default is not None else "").ask()
+                    context[name] = answer
+        return context
     
     def create_project(self) -> None:
         """Create the project structure and initialize it."""

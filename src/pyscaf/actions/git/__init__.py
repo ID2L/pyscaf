@@ -32,6 +32,9 @@ class GitAction(Action):
     def __init__(self, project_path):
         super().__init__(project_path)
 
+    def condition_to_ask(self, context: dict) -> bool:
+        return context.get('versionning', False)
+
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
         Define the filesystem skeleton for Git initialization.

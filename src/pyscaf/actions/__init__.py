@@ -113,6 +113,13 @@ class Action(ABC):
         
         return created_paths 
 
+    def condition_to_ask(self, context: dict) -> bool:
+        """
+        Return True if this action's question/step should be executed given the current context.
+        Override in subclasses for conditional logic.
+        """
+        return True
+
 
 def discover_actions():
     """

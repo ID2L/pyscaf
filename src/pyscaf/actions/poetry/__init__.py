@@ -35,6 +35,13 @@ class PoetryAction(Action):
             prompt="Author ?",
             default=get_local_git_author
         ),
+        CLIOption(
+            name="--versionning",
+            type="bool",
+            help="Enable versionning with git",
+            prompt="Does this project will be versionned with git ?",
+            default=True
+        ),
         # Add other global options here
     ]
 

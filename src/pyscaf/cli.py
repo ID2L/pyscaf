@@ -55,9 +55,7 @@ def add_dynamic_options(command):
         param_decls = [opt.name]
         click_opts = {}
         # Type
-        if opt.type == "bool":
-            click_opts["is_flag"] = True
-        elif opt.type == "int":
+        if opt.type == "int":
             click_opts["type"] = int
         elif opt.type == "choice" and opt.choices:
             click_opts["type"] = click.Choice(opt.choices, case_sensitive=False)
@@ -69,8 +67,6 @@ def add_dynamic_options(command):
         if opt.help:
             click_opts["help"] = opt.help
         # Default
-        if opt.default is not None:
-            click_opts["default"] = opt.default
         # Required
         if opt.required:
             click_opts["required"] = True
@@ -88,10 +84,10 @@ def cli():
 
 
 @cli.command()
+@add_dynamic_options
 @click.argument("project_name")
 @click.option("--interactive", is_flag=True, help="Enable interactive mode (asks questions to the user).")
 @click.option("--no-install", is_flag=True, help="Skip installation step.")
-@add_dynamic_options
 def init(project_name, interactive, no_install, **kwargs):
     """
     Initialize a new customized project structure.
@@ -100,11 +96,10 @@ def init(project_name, interactive, no_install, **kwargs):
     context["project_name"] = project_name
     context["interactive"] = interactive
     context["no_install"] = no_install
-
-    if interactive:
-        from pyscaf.interactive import get_dynamic_context
-        context.update(get_dynamic_context(project_name))
+    print('context', context)
     manager = ActionManager(project_name, context)
+    if interactive:
+        context = manager.ask_interactive_questions(context)
     manager.create_project()
 
 
