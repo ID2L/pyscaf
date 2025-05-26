@@ -3,19 +3,36 @@ from .tree_walker import DependencyTreeWalker
 from .topologic_tree import best_execution_order
 import os
 
+# Utility to get direct dependants of a node
+def get_direct_dependants(dependencies, parent_id):
+    """Return the list of RawDependency that directly depend on parent_id."""
+    return [dep for dep in dependencies if dep.depends and parent_id in dep.depends]
+
+# Utility to build a node for best_execution_order
+def build_node(dep, dependencies):
+    walker = DependencyTreeWalker(dependencies, dep.id)
+    return {
+        "id": dep.id,
+        "fullfilled": list(walker.fullfilled_depends),
+        "external": list(walker.external_depends)
+    }
+
+# Recursive function to build the optimal order
+def recursive_best_order(dependencies, current_id):
+    direct_dependants = get_direct_dependants(dependencies, current_id)
+    if not direct_dependants:
+        return [current_id]
+    nodes = [build_node(dep, dependencies) for dep in direct_dependants]
+    local_order = best_execution_order(nodes)
+    result = [current_id]
+    for node_id in local_order:
+        result.extend(recursive_best_order(dependencies, node_id))
+    return result
+
 if __name__ == '__main__':
     # Load and complete dependencies from YAML
     yaml_path = os.path.join(os.path.dirname(__file__), 'dependencies.yaml')
     dependencies = load_and_complete_dependencies(yaml_path)
-    # Example usage: build and print the tree from a root id
-    nodes = []
-    for root_id in ['test', 'jupyter', 'versionning']:
-        tree_walker = DependencyTreeWalker(dependencies, root_id)
-        tree_walker.print_tree()
-        node = {
-            "id": root_id,
-            "fullfilled": list(tree_walker.fullfilled_depends),
-            "external": list(tree_walker.external_depends)
-        }
-        nodes.append(node)
-    print("Best execution order:", best_execution_order(nodes)) 
+    # Recursive optimal order from 'root'
+    order = recursive_best_order(dependencies, "root")
+    print("Ordre optimal récursif :", order) 

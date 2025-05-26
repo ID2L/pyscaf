@@ -1,5 +1,6 @@
 [
-  { id: test },
+  { id: root },
+  { id: test, depends: [root] },
   { id: github-action-test, depends: [test, github], after: test },
   { id: test-coverage, depends: [test] },
   { id: test-report, depends: [test-coverage] },
@@ -7,9 +8,8 @@
   { id: test-report-latex, depends: [test-report] },
   { id: test-report-markdown, depends: [test-report] },
   { id: test-report-json, depends: [test-report] },
-  { id: jupyterlab },
-  { id: jupyter },
-  { id: versionning },
+  { id: jupyter, depends: [root] },
+  { id: versionning, depends: [root] },
   { id: github, depends: [versionning] },
   { id: jupyter-actions, depends: [jupyter, github], after: jupyter },
   { id: github-actions, depends: [github] },
@@ -17,6 +17,5 @@
   { id: pytest, depends: [ci-pipeline] },
   { id: coverage, depends: [pytest] },
   { id: pre-commit, depends: [versionning] },
-  { id: datascience },
-  { id: ciruclar, depends: [versionning, jupyter], after: versionning },
+  { id: circular, depends: [versionning, jupyter], after: versionning },
 ]
