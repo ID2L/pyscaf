@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.6.0 (2025-05-27)
+
+### Features
+
+- Added activate hook to modulary handle behaviour while in prompt mode, or during the skeleton and
+  install hook
+  ([`90ca806`](https://github.com/ID2L/pyscaf/commit/90ca806eaeef352b85d03c222ab1de298968c73f))
+
+
 ## v0.5.1 (2025-05-27)
 
 ### Bug Fixes
