@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.7.1 (2025-05-27)
+
+### Bug Fixes
+
+- Correctly handle python >3.10
+  ([`9d9da59`](https://github.com/ID2L/pyscaf/commit/9d9da596f64b35ebe1da842049435345af98e995))
+
+
 ## v0.7.0 (2025-05-27)
 
 ### Bug Fixes
