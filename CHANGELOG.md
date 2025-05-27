@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.8.0 (2025-05-27)
+
+### Features
+
+- Add ruff as a development dependency
+  ([`5c05049`](https://github.com/ID2L/pyscaf/commit/5c0504941ce1723a10701bd2e602c1943f7b1f86))
+
+This commit introduces the `ruff` package (version 0.11.11) as a new development dependency in the
+  `pyproject.toml` file. Ruff is an extremely fast Python linter and code formatter, enhancing the
+  code quality and consistency of the project. Additionally, the `poetry.lock` file has been updated
+  to reflect this new dependency, including all relevant wheel files and their hashes.
+
+Minor formatting adjustments were also made across various files to ensure consistency and
+  readability, including the addition of newlines and the reformatting of some code lines.
+
+
 ## v0.7.1 (2025-05-27)
 
 ### Bug Fixes
