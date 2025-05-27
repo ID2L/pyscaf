@@ -36,11 +36,9 @@ class PoetryAction(Action):
             name="--author",
             type="str",
             help="Author name",
-            prompt="Author ?",
+            prompt="Who is the main author of this project ?",
             default=get_local_git_author
         ),
-
-        # Add other global options here
     ]
 
     def __init__(self, project_path):

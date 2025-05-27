@@ -69,6 +69,8 @@ class ActionManager:
         """
         for action in self.actions:
             for opt in getattr(action, "cli_options", []):
+                print(opt)
+                print(action.activate(context))
                 if action.activate(context):
                     name = opt.name.lstrip("-").replace("-", "_")
                     if name in context and context[name] not in (None, ""):

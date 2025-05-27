@@ -67,7 +67,9 @@ def add_dynamic_options(command):
         elif opt.type == "str":
             click_opts["type"] = str
         elif opt.type == "bool":
-            click_opts["type"] = bool
+            click_opts["type"] = click.BOOL
+            click_opts["is_flag"] = True
+            click_opts["default"] = None
         # Help
         if opt.help:
             click_opts["help"] = opt.help
