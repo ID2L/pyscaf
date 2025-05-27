@@ -3,14 +3,29 @@ Action classes for project scaffolding.
 """
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union
+import importlib
+import pkgutil
+import os
+from pydantic import BaseModel
 
 from pyscaf.models import ProjectConfig
 
+class CLIOption(BaseModel):
+    name: str  # e.g. '--author'
+    type: str = "str"  # 'str', 'bool', 'int', 'choice', etc.
+    help: Optional[str] = None
+    default: Any = None
+    prompt: Optional[str] = None
+    choices: Optional[List[Any]] = None  # For choice type
+    is_flag: Optional[bool] = None  # For bool
+    multiple: Optional[bool] = None  # For multi-choice
+    required: Optional[bool] = None
 
 class Action(ABC):
     """
     Abstract base class for all project actions.
+    Now supports explicit dependencies, preferences, and CLI options.
     
     Actions can:
     1. Generate file/directory skeleton via the skeleton() method
@@ -18,21 +33,25 @@ class Action(ABC):
     3. Install dependencies via the install() method
     """
     
-    def __init__(self, project_path: Union[str, Path], config: ProjectConfig):
-        """
-        Initialize the action.
-        
-        Args:
-            project_path: Path to the project directory
-            config: Project configuration
-        """
+    # Explicit dependencies and preferences
+    depends: List[str] = []
+    run_preferably_after: Optional[str] = None
+    cli_options: List[CLIOption] = []
+
+    def __init_subclass__(cls):
+        # Validation: if multiple depends and no run_preferably_after, raise error
+        if hasattr(cls, 'depends') and len(cls.depends) > 1 and not getattr(cls, 'run_preferably_after', None):
+            raise ValueError(
+                f"Action '{cls.__name__}' has multiple depends but no run_preferably_after"
+            )
+
+    def __init__(self, project_path: Union[str, Path]):
         self.project_path = Path(project_path)
-        self.config = config
     
     @abstractmethod
-    def skeleton(self) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
-        Define the filesystem skeleton for this action.
+        Define the filesystem skeleton for this action, using the provided context.
         
         Returns a dictionary mapping paths to create to their content:
         - If the value is None, a directory is created
@@ -43,33 +62,33 @@ class Action(ABC):
         """
         pass
     
-    def init(self) -> None:
+    def init(self, context: dict) -> None:
         """
-        Initialize the action after skeleton creation.
+        Initialize the action after skeleton creation, using the provided context.
         
         This method is called after all skeletons have been created.
         Use it to run tools, modify files, etc.
         """
         pass
     
-    def install(self) -> None:
+    def install(self, context: dict) -> None:
         """
-        Install dependencies or run post-initialization commands.
+        Install dependencies or run post-initialization commands, using the provided context.
         
         This method is called after all actions have been initialized.
         Use it to install dependencies, run commands like 'poetry install', etc.
         """
         pass
     
-    def create_skeleton(self) -> Set[Path]:
+    def create_skeleton(self, context: dict) -> Set[Path]:
         """
-        Create the filesystem skeleton for this action.
+        Create the filesystem skeleton for this action using the provided context.
         
         Returns:
             Set of paths created
         """
         created_paths = set()
-        skeleton = self.skeleton()
+        skeleton = self.skeleton(context)
         
         for path, content in skeleton.items():
             full_path = self.project_path / path
@@ -93,3 +112,28 @@ class Action(ABC):
             created_paths.add(full_path)
         
         return created_paths 
+
+    def condition_to_ask(self, context: dict) -> bool:
+        """
+        Return True if this action's question/step should be executed given the current context.
+        Override in subclasses for conditional logic.
+        """
+        return True
+
+
+def discover_actions():
+    """
+    Dynamically discover all Action subclasses in the actions package (excluding base/manager/pycache).
+    Returns a list of Action classes.
+    """
+    actions = []
+    actions_dir = os.path.dirname(__file__)
+    for _, module_name, is_pkg in pkgutil.iter_modules([actions_dir]):
+        if module_name in ('base', 'manager', '__pycache__'):
+            continue
+        mod = importlib.import_module(f"pyscaf.actions.{module_name}")
+        for attr in dir(mod):
+            obj = getattr(mod, attr)
+            if isinstance(obj, type) and issubclass(obj, Action) and obj is not Action:
+                actions.append(obj)
+    return actions 
