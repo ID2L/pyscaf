@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.5.1 (2025-05-27)
+
+### Bug Fixes
+
+- Release action set to python 3.12
+  ([`f7b2579`](https://github.com/ID2L/pyscaf/commit/f7b257952ea9903defe7c1d45e7aa106790af66c))
+
+
 ## v0.5.0 (2025-05-27)
 
 ### Bug Fixes
