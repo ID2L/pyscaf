@@ -1,6 +1,78 @@
 # CHANGELOG
 
 
+## v0.5.0 (2025-05-27)
+
+### Bug Fixes
+
+- **preference_chain**: Enhance dependency loading and tree building with detailed comments
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+Long description: - Improved the `load_and_complete_dependencies` function to provide clearer
+  documentation on its behavior, specifically regarding the auto-completion of the 'after' property
+  when only one dependency exists. - Added comprehensive comments throughout the
+  `build_dependency_tree` and `DependencyTreeWalker` classes to clarify the purpose and
+  functionality of each method and variable. - Enhanced the `print_tree` method to include visual
+  cues for fulfilled and external dependencies, improving the usability of the dependency tree
+  representation. - These changes aim to increase code readability and maintainability, making it
+  easier for future developers to understand the logic behind dependency management and tree
+  traversal.
+
+### Code Style
+
+- Added flake8 / blackformatter in local settings.json
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+### Features
+
+- Make best_execution_order robust to circular dependencies
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+Long description: - The function now handles cycles or unsatisfiable dependencies gracefully by
+  picking the first remaining node in a stable order (sorted by id) instead of raising an exception.
+  - A warning is printed listing the nodes for which dependencies could not be satisfied. - This
+  ensures a stable and always available execution order, even in the presence of preference cycles.
+
+- **interactive**: Enhance project initialization with conditional questions
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+Long description: - Removed the interactive mode logic from the `init` function and encapsulated it
+  within the `ActionManager` class, specifically in the new `ask_interactive_questions` method. -
+  Introduced a `condition_to_ask` method in the `Action` class to determine if a question should be
+  asked based on the current context, allowing for more dynamic and context-aware interactions. -
+  Added a new CLI option for enabling versioning with Git, enhancing the project's configurability
+  during initialization. - The changes aim to streamline the user experience by only prompting for
+  necessary information, thus improving the overall interactivity of the project setup process.
+
+- **preference_chain**: Add __main__.py as package entry point
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+Long description: - Created __main__.py in pyscaf.preference_chain to serve as the executable entry
+  point for the package. - Moved the main execution logic (dependency loading and tree printing)
+  from __init__.py to __main__.py. - This allows running `python -m pyscaf.preference_chain` as
+  recommended by Python packaging best practices. - __init__.py now only handles package
+  initialization and imports.
+
+- **preference_chain**: Add recursive optimal dependency resolution order from root
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+Long description: - Introduces a recursive function to compute the optimal order of dependency
+  resolution starting from a given root node. - At each recursion level, direct dependants are
+  ordered using best_execution_order, and the process is applied recursively to each dependant. -
+  The root id is always included as the first element in the returned order, ensuring the full
+  resolution path is explicit and starts from the root. - This approach minimizes context switching
+  and follows the 'after' preferences as much as possible, providing a stable and logical
+  question/step ordering for complex dependency graphs. - The final optimal order is printed for
+  user inspection.
+
+### Refactoring
+
+- Action now declare their dependencies on themselves
+  ([`af0e597`](https://github.com/ID2L/pyscaf/commit/af0e5970670d271a8f1edc3dcffa76e611dbdd9a))
+
+* [refactor] actions to be in declarative mod
+
+
 ## v0.4.0 (2025-05-22)
 
 ### Features
