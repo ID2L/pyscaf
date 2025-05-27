@@ -1,15 +1,15 @@
 """
 Action classes for project scaffolding.
 """
+import importlib
+import os
+import pkgutil
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
-import importlib
-import pkgutil
-import os
+
 from pydantic import BaseModel
 
-from pyscaf.models import ProjectConfig
 
 class CLIOption(BaseModel):
     name: str  # e.g. '--author'
@@ -22,17 +22,18 @@ class CLIOption(BaseModel):
     multiple: Optional[bool] = None  # For multi-choice
     required: Optional[bool] = None
 
+
 class Action(ABC):
     """
     Abstract base class for all project actions.
     Now supports explicit dependencies, preferences, and CLI options.
-    
+
     Actions can:
     1. Generate file/directory skeleton via the skeleton() method
     2. Initialize content/behavior via the init() method
     3. Install dependencies via the install() method
     """
-    
+
     # Explicit dependencies and preferences
     depends: List[str] = []
     run_preferably_after: Optional[str] = None
@@ -47,55 +48,55 @@ class Action(ABC):
 
     def __init__(self, project_path: Union[str, Path]):
         self.project_path = Path(project_path)
-    
+
     @abstractmethod
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
         Define the filesystem skeleton for this action, using the provided context.
-        
+
         Returns a dictionary mapping paths to create to their content:
         - If the value is None, a directory is created
         - If the value is a string, a file is created with that content
-        
+
         Returns:
             Dictionary mapping paths to content
         """
         pass
-    
+
     def init(self, context: dict) -> None:
         """
         Initialize the action after skeleton creation, using the provided context.
-        
+
         This method is called after all skeletons have been created.
         Use it to run tools, modify files, etc.
         """
         pass
-    
+
     def install(self, context: dict) -> None:
         """
         Install dependencies or run post-initialization commands, using the provided context.
-        
+
         This method is called after all actions have been initialized.
         Use it to install dependencies, run commands like 'poetry install', etc.
         """
         pass
-    
+
     def create_skeleton(self, context: dict) -> Set[Path]:
         """
         Create the filesystem skeleton for this action using the provided context.
-        
+
         Returns:
             Set of paths created
         """
         created_paths = set()
         skeleton = self.skeleton(context)
-        
+
         for path, content in skeleton.items():
             full_path = self.project_path / path
-            
+
             # Create parent directories if they don't exist
             full_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             if content is None:
                 # Create directory
                 full_path.mkdir(exist_ok=True)
@@ -108,12 +109,12 @@ class Action(ABC):
                 else:
                     # Create new file with content
                     full_path.write_text(content)
-                
-            created_paths.add(full_path)
-        
-        return created_paths 
 
-    def condition_to_ask(self, context: dict) -> bool:
+            created_paths.add(full_path)
+
+        return created_paths
+
+    def activate(self, context: dict) -> bool:
         """
         Return True if this action's question/step should be executed given the current context.
         Override in subclasses for conditional logic.
@@ -136,4 +137,4 @@ def discover_actions():
             obj = getattr(mod, attr)
             if isinstance(obj, type) and issubclass(obj, Action) and obj is not Action:
                 actions.append(obj)
-    return actions 
+    return actions

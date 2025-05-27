@@ -21,18 +21,24 @@ class GitAction(Action):
     run_preferably_after = 'poetry'
     cli_options = [
         CLIOption(
+            name="--versionning",
+            type="bool",
+            help="Enable versionning with git",
+            prompt="Does this project will be versionned with git ?",
+            default=True
+        ),
+        CLIOption(
             name="--remote-url",
             type="str",
             help="Provide a remote url for the git repository",
-            prompt="Git remote url ?",
-            default='try'
+            prompt="Git remote url ?"
         )]  # Add Git-specific options if needed
 
     def __init__(self, project_path):
         super().__init__(project_path)
 
-    def condition_to_ask(self, context: dict) -> bool:
-        return context.get('versionning', False)
+    def activate(self, context: dict) -> bool:
+        return context.get('versionning') is None or context.get('versionning', True)
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """

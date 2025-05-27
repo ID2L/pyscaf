@@ -10,7 +10,7 @@ import tomli
 import tomli_w
 from rich.console import Console
 
-from pyscaf.actions import Action
+from pyscaf.actions import Action, CLIOption
 
 console = Console()
 
@@ -20,10 +20,20 @@ class JupyterAction(Action):
 
     depends = ['poetry']
     run_preferably_after = 'poetry'
-    cli_options = []  # Add Jupyter-specific options if needed
+    cli_options = [
+        CLIOption(
+            name="--is-jupyter",
+            type="bool",
+            help="Handle Jupyter notebook support",
+            prompt="Does this project will use Jupyter notebook ?",
+            default=True
+        ),]  # Add Jupyter-specific options if needed
 
     def __init__(self, project_path):
         super().__init__(project_path)
+
+    def activate(self, context: dict) -> bool:
+        return context.get("is_jupyter") is None or context.get("is_jupyter", True)
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
