@@ -1,7 +1,9 @@
-from typing import List, Optional
-from pydantic import BaseModel, ValidationError
-import yaml
 from collections import defaultdict
+from typing import List, Optional
+
+import yaml
+from pydantic import BaseModel, ValidationError
+
 
 class RawDependency(BaseModel):
     id: str
@@ -12,6 +14,8 @@ class RawDependency(BaseModel):
 # Returns a list of RawDependency objects
 # - If 'after' is missing and there is only one 'depends', it is auto-completed
 # - Warns if there are multiple 'depends' but no 'after'
+
+
 def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
     """
     Load dependencies from a YAML file and complete the 'after' property if possible.
@@ -25,7 +29,8 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
         try:
             dep = RawDependency(**entry)
         except ValidationError as e:
-            print(f"Validation error for dependency '{entry.get('id', '?')}': {e}")
+            print(
+                f"Validation error for dependency '{entry.get('id', '?')}': {e}")
             continue
         # If 'after' is missing and there is only one 'depends', set 'after' to that dependency
         if dep.after is None:
@@ -33,14 +38,17 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
                 if len(dep.depends) == 1:
                     dep.after = dep.depends[0]
                 else:
-                    print(f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'.")
+                    print(
+                        f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'.")
         dependencies.append(dep)
-    return dependencies 
+    return dependencies
 
 # Build a dependency tree starting from root_id, following 'after' recursively
 # Returns a tuple (tree, extra_depends) where:
 #   - tree is a nested dict representing the after-chain
 #   - extra_depends is a set of ids that are depends but not in the after-chain
+
+
 def build_dependency_tree(
     dependencies: list[RawDependency],
     root_id: str
@@ -77,4 +85,4 @@ def build_dependency_tree(
         return children
 
     tree = {root_id: _build(root_id)}
-    return tree, extra_depends 
+    return tree, extra_depends

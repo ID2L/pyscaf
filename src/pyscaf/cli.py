@@ -1,14 +1,14 @@
 """
 Command-line interface for pyscaf.
 """
+
 import sys
-from typing import Any
 import click
 from rich.console import Console
 
 from pyscaf import __version__
 from pyscaf.actions.manager import ActionManager
-from pyscaf.actions import discover_actions, CLIOption
+from pyscaf.actions import discover_actions
 from pyscaf.preference_chain.topologic_tree import best_execution_order
 
 console = Console()
@@ -27,21 +27,22 @@ def collect_cli_options():
     deps = []
     action_class_by_id = {}
     for action_cls in action_classes:
-        action_id = action_cls.__name__.replace('Action', '').lower()
-        deps.append({
-            "id": action_id,
-            "depends": getattr(action_cls, "depends", []),
-            "after": getattr(action_cls, "run_preferably_after", None)
-        })
+        action_id = action_cls.__name__.replace("Action", "").lower()
+        deps.append(
+            {
+                "id": action_id,
+                "depends": getattr(action_cls, "depends", []),
+                "after": getattr(action_cls, "run_preferably_after", None),
+            }
+        )
         action_class_by_id[action_id] = action_cls
-    order = best_execution_order([
-        {
-            "id": d["id"],
-            "fullfilled": [d["id"]],
-            "external": d["depends"] or []
-        }
-        for d in deps
-    ])
+    order = best_execution_order(
+        [
+            {"id": d["id"], "fullfilled": [d["id"]],
+                "external": d["depends"] or []}
+            for d in deps
+        ]
+    )
     cli_options = []
     for action_id in order:
         action_cls = action_class_by_id[action_id]
@@ -58,7 +59,8 @@ def add_dynamic_options(command):
         if opt.type == "int":
             click_opts["type"] = int
         elif opt.type == "choice" and opt.choices:
-            click_opts["type"] = click.Choice(opt.choices, case_sensitive=False)
+            click_opts["type"] = click.Choice(
+                opt.choices, case_sensitive=False)
             if opt.multiple:
                 click_opts["multiple"] = True
         elif opt.type == "str":
@@ -76,7 +78,11 @@ def add_dynamic_options(command):
 
 @click.group()
 @click.version_option(
-    __version__, "--version", "-V", callback=print_version, help="Show the version and exit."
+    __version__,
+    "--version",
+    "-V",
+    callback=print_version,
+    help="Show the version and exit.",
 )
 def cli():
     """🧪 pyscaf - Project generator for laboratory, teaching and data analysis."""
@@ -86,7 +92,11 @@ def cli():
 @cli.command()
 @add_dynamic_options
 @click.argument("project_name")
-@click.option("--interactive", is_flag=True, help="Enable interactive mode (asks questions to the user).")
+@click.option(
+    "--interactive",
+    is_flag=True,
+    help="Enable interactive mode (asks questions to the user).",
+)
 @click.option("--no-install", is_flag=True, help="Skip installation step.")
 def init(project_name, interactive, no_install, **kwargs):
     """
@@ -96,7 +106,7 @@ def init(project_name, interactive, no_install, **kwargs):
     context["project_name"] = project_name
     context["interactive"] = interactive
     context["no_install"] = no_install
-    print('context', context)
+    print("context", context)
     manager = ActionManager(project_name, context)
     if interactive:
         context = manager.ask_interactive_questions(context)
@@ -113,4 +123,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()

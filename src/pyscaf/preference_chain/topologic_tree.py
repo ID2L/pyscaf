@@ -1,6 +1,7 @@
 def best_execution_order(nodes):
     # Compute reverse dependencies: who depends on what
-    external_map = {node['id']: set(node.get('external', [])) for node in nodes}
+    external_map = {node['id']: set(node.get('external', []))
+                    for node in nodes}
 
     # Initialize sets to track satisfied and executed nodes, and the final order
     satisfied = set()
@@ -22,7 +23,8 @@ def best_execution_order(nodes):
         if not candidates:
             # If no candidate is found, there is a cycle or unsatisfiable dependency
             # Pick the first remaining node (stable order) and record a violation
-            remaining = sorted([node for node in nodes if node['id'] not in executed], key=lambda n: n['id'])
+            remaining = sorted(
+                [node for node in nodes if node['id'] not in executed], key=lambda n: n['id'])
             chosen = remaining[0]
             violations.append(chosen['id'])
         else:
@@ -38,6 +40,7 @@ def best_execution_order(nodes):
         executed.add(chosen['id'])
 
     if violations:
-        print(f"Warning: Circular or unsatisfiable dependencies for: {violations}")
+        print(
+            f"Warning: Circular or unsatisfiable dependencies for: {violations}")
 
     return execution_order
