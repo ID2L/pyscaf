@@ -3,12 +3,13 @@ Command-line interface for pyscaf.
 """
 
 import sys
+
 import click
 from rich.console import Console
 
 from pyscaf import __version__
-from pyscaf.actions.manager import ActionManager
 from pyscaf.actions import discover_actions
+from pyscaf.actions.manager import ActionManager
 from pyscaf.preference_chain.topologic_tree import best_execution_order
 
 console = Console()
@@ -65,6 +66,8 @@ def add_dynamic_options(command):
                 click_opts["multiple"] = True
         elif opt.type == "str":
             click_opts["type"] = str
+        elif opt.type == "bool":
+            click_opts["type"] = bool
         # Help
         if opt.help:
             click_opts["help"] = opt.help

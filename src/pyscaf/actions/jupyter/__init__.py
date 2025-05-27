@@ -22,7 +22,7 @@ class JupyterAction(Action):
     run_preferably_after = 'poetry'
     cli_options = [
         CLIOption(
-            name="--is-jupyter",
+            name="--jupyter",
             type="bool",
             help="Handle Jupyter notebook support",
             prompt="Does this project will use Jupyter notebook ?",
