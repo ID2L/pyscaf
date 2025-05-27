@@ -1,6 +1,7 @@
 """
 Poetry initialization actions.
 """
+
 import os
 import subprocess
 from pathlib import Path
@@ -16,10 +17,12 @@ console = Console()
 def get_local_git_author():
     """Get the author name from the local git config."""
     try:
-        git_name = subprocess.check_output(
-            ['git', 'config', 'user.name']).decode().strip()
-        git_email = subprocess.check_output(
-            ['git', 'config', 'user.email']).decode().strip()
+        git_name = (
+            subprocess.check_output(["git", "config", "user.name"]).decode().strip()
+        )
+        git_email = (
+            subprocess.check_output(["git", "config", "user.email"]).decode().strip()
+        )
         default_author = f"{git_name} <{git_email}>"
     except subprocess.CalledProcessError:
         default_author = ""
@@ -37,7 +40,7 @@ class PoetryAction(Action):
             type="str",
             help="Author name",
             prompt="Who is the main author of this project ?",
-            default=get_local_git_author
+            default=get_local_git_author,
         ),
     ]
 
@@ -56,9 +59,7 @@ class PoetryAction(Action):
 
         # Read Poetry documentation
         poetry_doc_path = Path(__file__).parent / "README.md"
-        poetry_doc = (
-            poetry_doc_path.read_text() if poetry_doc_path.exists() else ""
-        )
+        poetry_doc = poetry_doc_path.read_text() if poetry_doc_path.exists() else ""
 
         # Return skeleton dictionary
         return {
@@ -68,8 +69,7 @@ class PoetryAction(Action):
             ),
             Path(f"{currated_projet_name}"): None,  # Create directory
             Path(f"{currated_projet_name}/__init__.py"): (
-                f'"""\n{project_name} package.\n"""\n\n'
-                f'__version__ = "0.1.0"\n'
+                f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n'
             ),
         }
 
@@ -92,13 +92,13 @@ class PoetryAction(Action):
                     "init",
                     "--no-interaction",
                     "--author",
-                    context.get("author", "")
+                    context.get("author", ""),
                 ],
                 # No redirection,
                 # allows full terminal interaction
                 stdin=None,
                 stdout=None,
-                stderr=None
+                stderr=None,
             )
 
             if result == 0:
@@ -112,8 +112,7 @@ class PoetryAction(Action):
 
         except FileNotFoundError:
             console.print(
-                "[bold yellow]Poetry not found. Please install it first:"
-                "[/bold yellow]"
+                "[bold yellow]Poetry not found. Please install it first:[/bold yellow]"
             )
             console.print("https://python-poetry.org/docs/#installation")
 
@@ -123,8 +122,7 @@ class PoetryAction(Action):
 
         This will run 'poetry install' to install all dependencies.
         """
-        console.print(
-            "[bold blue]Installing dependencies with Poetry...[/bold blue]")
+        console.print("[bold blue]Installing dependencies with Poetry...[/bold blue]")
 
         try:
             # Ensure we're in the right directory
@@ -134,13 +132,7 @@ class PoetryAction(Action):
             console.print("[bold cyan]Running poetry install...[/bold cyan]")
 
             result = subprocess.call(
-                [
-                    "poetry",
-                    "install"
-                ],
-                stdin=None,
-                stdout=None,
-                stderr=None
+                ["poetry", "install"], stdin=None, stdout=None, stderr=None
             )
 
             if result == 0:
@@ -156,7 +148,6 @@ class PoetryAction(Action):
 
         except FileNotFoundError:
             console.print(
-                "[bold yellow]Poetry not found. Please install it first:"
-                "[/bold yellow]"
+                "[bold yellow]Poetry not found. Please install it first:[/bold yellow]"
             )
             console.print("https://python-poetry.org/docs/#installation")

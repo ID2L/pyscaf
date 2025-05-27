@@ -1,5 +1,7 @@
 from collections import defaultdict
+
 from .dependency_loader import RawDependency
+
 
 class DependencyTreeWalker:
     def __init__(self, dependencies: list[RawDependency], root_id: str):
@@ -47,9 +49,10 @@ class DependencyTreeWalker:
         External dependencies (extra_depends) are shown in red.
         Fulfilled dependencies are shown in green.
         """
-        RED = '\033[91m'
-        GREEN = '\033[92m'
-        RESET = '\033[0m'
+        RED = "\033[91m"
+        GREEN = "\033[92m"
+        RESET = "\033[0m"
+
         def _print_subtree(subtree, prefix=""):
             items = list(subtree.items())
             for idx, (node, children) in enumerate(items):
@@ -60,19 +63,26 @@ class DependencyTreeWalker:
                     _print_subtree(children, prefix + extension)
                 # Show external dependencies at this level
                 if node in self.external_depends:
-                    print(prefix + ("    " if idx == len(items) - 1 else "│   ") + f"{RED}{node} (external){RESET}")
+                    print(
+                        prefix
+                        + ("    " if idx == len(items) - 1 else "│   ")
+                        + f"{RED}{node} (external){RESET}"
+                    )
+
         # Print the main tree
         _print_subtree(self.tree)
         # Print external dependencies not shown in the tree
         shown = set()
+
         def _collect_shown(subtree):
             for node, children in subtree.items():
                 shown.add(node)
                 _collect_shown(children)
+
         _collect_shown(self.tree)
         for ext in self.external_depends:
             if ext not in shown:
-                print(f"{RED}{ext} (external){RESET}") 
+                print(f"{RED}{ext} (external){RESET}")
         # Print all fulfilled dependencies
         for internal in self.fullfilled_depends:
-            print(f"{GREEN}{internal} (fullfilled){RESET}") 
+            print(f"{GREEN}{internal} (fullfilled){RESET}")

@@ -10,6 +10,7 @@ class RawDependency(BaseModel):
     depends: Optional[List[str]] = None
     after: Optional[str] = None
 
+
 # Load dependencies from a YAML file and complete the 'after' property if possible
 # Returns a list of RawDependency objects
 # - If 'after' is missing and there is only one 'depends', it is auto-completed
@@ -21,7 +22,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
     Load dependencies from a YAML file and complete the 'after' property if possible.
     Returns a list of RawDependency objects.
     """
-    with open(yaml_path, 'r') as f:
+    with open(yaml_path, "r") as f:
         raw_dependencies = yaml.safe_load(f)
 
     dependencies = []
@@ -29,8 +30,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
         try:
             dep = RawDependency(**entry)
         except ValidationError as e:
-            print(
-                f"Validation error for dependency '{entry.get('id', '?')}': {e}")
+            print(f"Validation error for dependency '{entry.get('id', '?')}': {e}")
             continue
         # If 'after' is missing and there is only one 'depends', set 'after' to that dependency
         if dep.after is None:
@@ -39,9 +39,11 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
                     dep.after = dep.depends[0]
                 else:
                     print(
-                        f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'.")
+                        f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'."
+                    )
         dependencies.append(dep)
     return dependencies
+
 
 # Build a dependency tree starting from root_id, following 'after' recursively
 # Returns a tuple (tree, extra_depends) where:
@@ -50,8 +52,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[RawDependency]:
 
 
 def build_dependency_tree(
-    dependencies: list[RawDependency],
-    root_id: str
+    dependencies: list[RawDependency], root_id: str
 ) -> tuple[dict, set[str]]:
     """
     Build a dependency tree starting from root_id, following 'after' recursively.

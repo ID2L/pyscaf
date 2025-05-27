@@ -39,8 +39,7 @@ def collect_cli_options():
         action_class_by_id[action_id] = action_cls
     order = best_execution_order(
         [
-            {"id": d["id"], "fullfilled": [d["id"]],
-                "external": d["depends"] or []}
+            {"id": d["id"], "fullfilled": [d["id"]], "external": d["depends"] or []}
             for d in deps
         ]
     )
@@ -60,8 +59,7 @@ def add_dynamic_options(command):
         if opt.type == "int":
             click_opts["type"] = int
         elif opt.type == "choice" and opt.choices:
-            click_opts["type"] = click.Choice(
-                opt.choices, case_sensitive=False)
+            click_opts["type"] = click.Choice(opt.choices, case_sensitive=False)
             if opt.multiple:
                 click_opts["multiple"] = True
         elif opt.type == "str":

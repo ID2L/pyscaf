@@ -1,7 +1,6 @@
 def best_execution_order(nodes):
     # Compute reverse dependencies: who depends on what
-    external_map = {node['id']: set(node.get('external', []))
-                    for node in nodes}
+    external_map = {node["id"]: set(node.get("external", [])) for node in nodes}
 
     # Initialize sets to track satisfied and executed nodes, and the final order
     satisfied = set()
@@ -13,7 +12,7 @@ def best_execution_order(nodes):
     while len(executed) < len(nodes):
         candidates = []
         for node in nodes:
-            node_id = node['id']
+            node_id = node["id"]
             if node_id in executed:
                 continue
             # A candidate is a node whose external dependencies are all satisfied
@@ -24,23 +23,23 @@ def best_execution_order(nodes):
             # If no candidate is found, there is a cycle or unsatisfiable dependency
             # Pick the first remaining node (stable order) and record a violation
             remaining = sorted(
-                [node for node in nodes if node['id'] not in executed], key=lambda n: n['id'])
+                [node for node in nodes if node["id"] not in executed],
+                key=lambda n: n["id"],
+            )
             chosen = remaining[0]
-            violations.append(chosen['id'])
+            violations.append(chosen["id"])
         else:
             # Greedy: choose the candidate that contributes the most new fulfilled dependencies
             chosen = max(
-                candidates,
-                key=lambda node: len(set(node['fullfilled']) - satisfied)
+                candidates, key=lambda node: len(set(node["fullfilled"]) - satisfied)
             )
 
         # Update the execution order and mark the node as executed
-        execution_order.append(chosen['id'])
-        satisfied.update(chosen['fullfilled'])
-        executed.add(chosen['id'])
+        execution_order.append(chosen["id"])
+        satisfied.update(chosen["fullfilled"])
+        executed.add(chosen["id"])
 
     if violations:
-        print(
-            f"Warning: Circular or unsatisfiable dependencies for: {violations}")
+        print(f"Warning: Circular or unsatisfiable dependencies for: {violations}")
 
     return execution_order

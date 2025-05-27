@@ -1,73 +1,56 @@
-# Tests for pyscaf
+# Suite de tests pour pyscaf
 
-This directory contains tests for the pyscaf project. The tests are organized into several categories:
+Ce dossier contient l'ensemble des tests automatisés pour le projet `pyscaf`. Les tests couvrent le fonctionnement du CLI, l'interactivité, la génération de structure de projet, et la robustesse face aux entrées utilisateur.
 
-- `test_cli.py`: Tests for the command-line interface
-- `test_actions.py`: Tests for individual action classes
-- `test_manager.py`: Tests for the action manager
-- `test_interactive.py`: Tests for the interactive mode
+## Organisation des tests
 
-## Running Tests
+- **test_cli_interactive.py** :
+  - Couvre tous les cas d'utilisation du CLI (commandes, options dynamiques, erreurs).
+  - Teste l'interactivité (mockée) pour simuler les réponses utilisateur aux questions.
+  - Vérifie la structure de projet générée selon les options/actions activées.
+  - Teste la robustesse face aux entrées invalides.
+- **test_actions.py, test_manager.py** :
+  - Tests unitaires des actions et du gestionnaire d'actions (création de squelette, initialisation, installation).
 
-To run the tests, you can use the following commands:
+## Outils utilisés
 
+- **pytest** : Framework principal pour l'exécution des tests.
+- **click.testing.CliRunner** : Pour simuler l'exécution du CLI et capturer les sorties.
+- **unittest.mock** : Pour mocker les fonctions interactives (`questionary`) et simuler les réponses utilisateur.
+
+## Lancer les tests
+
+### Avec pytest directement
 ```bash
-# Run all tests
 pytest
-
-# Run tests with coverage report
-pytest --cov=pyscaf
-
-# Run specific test categories
-pytest -m cli
-pytest -m actions
-pytest -m manager
-pytest -m interactive
-
-# Run tests in parallel
-pytest -n auto
+```
+Ou pour un fichier précis :
+```bash
+pytest tests/test_cli_interactive.py
 ```
 
-## Test Structure
+### Avec poetry
+```bash
+poetry run pytest
+```
+Ou pour un fichier précis :
+```bash
+poetry run pytest tests/test_cli_interactive.py
+```
 
-The tests are organized as follows:
+## Ajouter de nouveaux tests
 
-### CLI Tests
-- Test version command
-- Test project initialization for different project types
-- Test interactive mode
-- Test error handling
+- Créez un nouveau fichier `test_*.py` ou ajoutez une fonction commençant par `test_` dans un fichier existant.
+- Utilisez les fixtures `tmp_path` ou `CliRunner` pour isoler les tests et éviter les effets de bord.
+- Pour tester l'interactivité, mockez les appels à `questionary` avec `unittest.mock.patch` et retournez un objet avec une méthode `.ask()`.
+- Vérifiez toujours la structure générée sur le disque (fichiers, dossiers) et la sortie du CLI.
 
-### Action Tests
-- Test Poetry action
-- Test Git action
-- Test Jupyter action
-- Test abstract base class
+## Bonnes pratiques
 
-### Manager Tests
-- Test package project creation
-- Test notebook project creation
-- Test mixed project creation
-- Test project creation without versioning
+- Un test = un comportement précis (nom explicite, docstring en anglais, commentaires en français si besoin)
+- Nettoyez toujours les fichiers/dossiers temporaires créés
+- Privilégiez la robustesse : testez les cas d'erreur et les entrées inattendues
 
-### Interactive Tests
-- Test package project configuration
-- Test notebook project configuration
-- Test mixed project configuration
+---
 
-## Test Fixtures
-
-The tests use several fixtures:
-
-- `runner`: A Click CLI runner for testing commands
-- `temp_project_dir`: A temporary directory for project testing
-- `project_config`: A test project configuration
-
-## Best Practices
-
-1. Use fixtures for common setup and teardown
-2. Mock external dependencies
-3. Test both success and failure cases
-4. Keep tests focused and atomic
-5. Use descriptive test names
-6. Add comments for complex test scenarios 
+Pour toute question ou contribution, ouvrez une issue ou une pull request sur le dépôt principal. 

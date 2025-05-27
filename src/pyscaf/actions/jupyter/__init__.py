@@ -1,6 +1,7 @@
 """
 Jupyter initialization actions.
 """
+
 import os
 import subprocess
 from pathlib import Path
@@ -18,16 +19,17 @@ console = Console()
 class JupyterAction(Action):
     """Action to initialize Jupyter notebook support in a project."""
 
-    depends = ['poetry']
-    run_preferably_after = 'poetry'
+    depends = ["poetry"]
+    run_preferably_after = "poetry"
     cli_options = [
         CLIOption(
             name="--jupyter",
             type="bool",
             help="Handle Jupyter notebook support",
             prompt="Does this project will use Jupyter notebook ?",
-            default=True
-        ),]  # Add Jupyter-specific options if needed
+            default=True,
+        ),
+    ]  # Add Jupyter-specific options if needed
 
     def __init__(self, project_path):
         super().__init__(project_path)
@@ -80,8 +82,7 @@ ipython_config.py
 
         This will add the necessary dependencies to pyproject.toml.
         """
-        console.print(
-            "[bold blue]Initializing Jupyter notebook support...[/bold blue]")
+        console.print("[bold blue]Initializing Jupyter notebook support...[/bold blue]")
 
         try:
             # Change to project directory
@@ -89,7 +90,8 @@ ipython_config.py
 
             # Add Jupyter dependencies to poetry dev group
             console.print(
-                "[bold cyan]Adding Jupyter dependencies to poetry dev group...[/bold cyan]")
+                "[bold cyan]Adding Jupyter dependencies to poetry dev group...[/bold cyan]"
+            )
 
             jupyter_deps = [
                 "jupyter",
@@ -113,25 +115,27 @@ ipython_config.py
             if "group" not in pyproject["tool"]["poetry"]:
                 pyproject["tool"]["poetry"]["group"] = {}
             if "dev" not in pyproject["tool"]["poetry"]["group"]:
-                pyproject["tool"]["poetry"]["group"]["dev"] = {
-                    "dependencies": {}}
+                pyproject["tool"]["poetry"]["group"]["dev"] = {"dependencies": {}}
 
             # Add each dependency to the dev group
             for dep in jupyter_deps:
                 pyproject["tool"]["poetry"]["group"]["dev"]["dependencies"][dep] = "*"
                 console.print(
-                    f"[bold green]Added {dep} to dev dependencies[/bold green]")
+                    f"[bold green]Added {dep} to dev dependencies[/bold green]"
+                )
 
             # Write back to pyproject.toml
             with open(pyproject_path, "wb") as f:
                 tomli_w.dump(pyproject, f)
 
             console.print(
-                "[bold green]Jupyter dependencies added to poetry.dev group![/bold green]")
+                "[bold green]Jupyter dependencies added to poetry.dev group![/bold green]"
+            )
 
         except FileNotFoundError:
             console.print(
-                "[bold yellow]pyproject.toml not found. Please ensure you are in a Poetry project.[/bold yellow]")
+                "[bold yellow]pyproject.toml not found. Please ensure you are in a Poetry project.[/bold yellow]"
+            )
 
     def install(self, context: dict) -> None:
         """
@@ -140,7 +144,8 @@ ipython_config.py
         This will create a Jupyter kernel specific to this project.
         """
         console.print(
-            "[bold blue]Setting up Jupyter kernel for the project...[/bold blue]")
+            "[bold blue]Setting up Jupyter kernel for the project...[/bold blue]"
+        )
 
         try:
             # Ensure we're in the right directory
@@ -148,16 +153,25 @@ ipython_config.py
 
             # Create a Jupyter kernel for this project
             console.print(
-                "[bold cyan]Creating Jupyter kernel for this project...[/bold cyan]")
+                "[bold cyan]Creating Jupyter kernel for this project...[/bold cyan]"
+            )
 
             project_name = context.get("project_name", "myproject")
 
             # Run the ipykernel installation via poetry
             result = subprocess.call(
                 [
-                    "poetry", "run", "python", "-m", "ipykernel",
-                    "install", "--user", "--name", project_name,
-                    "--display-name", f"{project_name} (Poetry)"
+                    "poetry",
+                    "run",
+                    "python",
+                    "-m",
+                    "ipykernel",
+                    "install",
+                    "--user",
+                    "--name",
+                    project_name,
+                    "--display-name",
+                    f"{project_name} (Poetry)",
                 ],
                 stdin=None,
                 stdout=None,
@@ -166,14 +180,18 @@ ipython_config.py
 
             if result == 0:
                 console.print(
-                    "[bold green]Jupyter kernel created successfully![/bold green]")
+                    "[bold green]Jupyter kernel created successfully![/bold green]"
+                )
                 console.print(
-                    f"[bold green]You can now use the '{project_name} (Poetry)' kernel in Jupyter.[/bold green]")
+                    f"[bold green]You can now use the '{project_name} (Poetry)' kernel in Jupyter.[/bold green]"
+                )
             else:
                 console.print(
-                    f"[bold yellow]Jupyter kernel creation exited with code {result}[/bold yellow]")
+                    f"[bold yellow]Jupyter kernel creation exited with code {result}[/bold yellow]"
+                )
 
         except FileNotFoundError:
             console.print(
-                "[bold yellow]Poetry or Jupyter not found. Make sure they are installed.[/bold yellow]")
+                "[bold yellow]Poetry or Jupyter not found. Make sure they are installed.[/bold yellow]"
+            )
             console.print("https://python-poetry.org/docs/#installation")
