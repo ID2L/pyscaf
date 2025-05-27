@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.7.0 (2025-05-27)
+
+### Bug Fixes
+
+- Cli click flag support properly handle mixing option with the interactive call
+  ([`ea390b6`](https://github.com/ID2L/pyscaf/commit/ea390b63b0506e25585abdbfd07150a199e27935))
+
+### Features
+
+- Added bool suport as CLI click options
+  ([`4ea9405`](https://github.com/ID2L/pyscaf/commit/4ea940528a004c79095f4338bec78012668f6f23))
+
+
 ## v0.6.0 (2025-05-27)
 
 ### Features
