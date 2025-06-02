@@ -13,4 +13,7 @@
     "notebook.source.organizeImports": "explicit"
   },
   "ruff.lineLength": 88,
+  "python.analysis.ignore": [
+    "src/pyscaf/actions/*/template*"
+  ]
 }

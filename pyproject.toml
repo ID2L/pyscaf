@@ -42,17 +42,34 @@ ruff = "^0.11.11"
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.ruff]
+# Exclude template files in actions from linting
+exclude = [
+    "src/pyscaf/actions/*/template*"
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short --cov=pyscaf --cov-report=term-missing"
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--strict-config",
+    "--color=yes",
+    "--cov=pyscaf",
+    "--cov-report=term-missing"
+]
 markers = [
     "cli: tests for CLI functionality",
     "actions: tests for action classes",
     "manager: tests for action manager",
     "interactive: tests for interactive mode",
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests"
 ]
 
 [tool.semantic_release]
