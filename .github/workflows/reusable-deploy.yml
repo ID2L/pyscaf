@@ -16,9 +16,6 @@ on:
       PYPI_PASSWORD:
         description: 'PyPI password or token'
         required: true
-      GITHUB_TOKEN:
-        description: 'GitHub token'
-        required: true
 
 jobs:
   release:
