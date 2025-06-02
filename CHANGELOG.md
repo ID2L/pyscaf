@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.0 (2025-06-02)
+
+### Features
+
+- Renamed PoetryAction to CoreAction & added ruff to it
+  ([`0bdb60e`](https://github.com/ID2L/pyscaf/commit/0bdb60ece6ec8aeda8372e5ba8eefecc4e74f263))
+
+
 ## v0.8.0 (2025-05-27)
 
 ### Features
