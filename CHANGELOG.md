@@ -1,9 +1,15 @@
 # CHANGELOG
 
 
+## v0.10.2 (2025-06-02)
+
+
 ## v0.10.1 (2025-06-02)
 
 ### Bug Fixes
+
+- Manual deployment to pypi
+  ([`87c7337`](https://github.com/ID2L/pyscaf/commit/87c7337fdfc4edcf4f16ffb474ddeed811389ae0))
 
 - Old release job
   ([`89ee1ab`](https://github.com/ID2L/pyscaf/commit/89ee1ab187207db5a75ce9739469cb4d4e90038e))
