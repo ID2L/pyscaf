@@ -1,5 +1,5 @@
 [project]
-name = "pyscaf"
+name = "open-pyscaf"
 version = "0.10.2"
 description = "A python scaffolder with quarto and other utilities out-of-the-box"
 authors = [
