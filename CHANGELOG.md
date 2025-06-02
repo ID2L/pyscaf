@@ -1,7 +1,50 @@
 # CHANGELOG
 
 
+## v0.10.0 (2025-06-02)
+
+### Chores
+
+- Update configuration for ruff and pytest
+  ([`997a84d`](https://github.com/ID2L/pyscaf/commit/997a84d9750f8198ae1df6d98f2fe5ee4a3214af))
+
+This commit enhances the configuration for the `ruff` linter and `pytest` testing framework in the
+  `pyproject.toml` and `.vscode/settings.json` files.
+
+Key changes include: - Exclusion of template files from linting in the `ruff` configuration to avoid
+  unnecessary warnings. - Updated `pytest` options to include strict markers and configuration
+  checks, as well as enabling colored output for better readability. - Addition of new markers for
+  categorizing tests, including `slow`, `integration`, and `unit`.
+
+These adjustments aim to improve the development workflow and maintain code quality standards across
+  the project.
+
+### Features
+
+- Integrate pytest testing action and update dependencies
+  ([`150be5d`](https://github.com/ID2L/pyscaf/commit/150be5d94f1c09584533625e840bd94ee1ea52ac))
+
+This commit introduces a new `TestAction` class to initialize a project with the pytest testing
+  framework, enhancing the testing capabilities of the project. Key changes include:
+
+- Addition of a new `src/pyscaf/actions/test/__init__.py` file containing the `TestAction` class,
+  which manages the setup and configuration of pytest. - Creation of a `config.toml` file for pytest
+  configuration, specifying test paths, file patterns, and markers. - Inclusion of a `README.md`
+  file detailing the pytest integration, features, and best practices for writing tests. - A
+  template for test examples is provided in `template_test_example.py`, demonstrating basic test
+  structure and usage of fixtures. - Updates to existing `GitAction` and `JupyterAction` classes to
+  change their dependencies from `poetry` to `core`, ensuring consistency across actions.
+
+These enhancements aim to streamline the testing process and improve code quality through better
+  test organization and documentation.
+
+
 ## v0.9.0 (2025-06-02)
+
+### Code Style
+
+- Minor writting fix
+  ([`bd61236`](https://github.com/ID2L/pyscaf/commit/bd61236d83bd83d2c8d97803dc5ae549d9dce738))
 
 ### Features
 
