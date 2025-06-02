@@ -29,7 +29,7 @@ def get_local_git_author():
     return default_author
 
 
-class PoetryAction(Action):
+class CoreAction(Action):
     """Action to initialize a project with Poetry."""
 
     depends = []  # Poetry is the root action
@@ -49,7 +49,7 @@ class PoetryAction(Action):
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
-        Define the filesystem skeleton for Poetry initialization.
+        Define the filesystem skeleton for Core initialization.
 
         Returns:
             Dictionary mapping paths to content
@@ -61,25 +61,32 @@ class PoetryAction(Action):
         poetry_doc_path = Path(__file__).parent / "README.md"
         poetry_doc = poetry_doc_path.read_text() if poetry_doc_path.exists() else ""
 
+        # Add default ruff settings for VSCode
+        vscode_settings_path = Path(__file__).parent / "default_settings.json"
+        vscode_settings = (
+            vscode_settings_path.read_text() if vscode_settings_path.exists() else ""
+        )
         # Return skeleton dictionary
-        return {
+        skeleton = {
             Path("README.md"): (
                 f"# {project_name}\n\nA Python project created with pyscaf\n\n"
                 f"{poetry_doc}\n"
             ),
             Path(f"{currated_projet_name}"): None,  # Create directory
             Path(f"{currated_projet_name}/__init__.py"): (
-                f'"""\n{project_name} package.\n"""\n\n__version__ = "0.1.0"\n'
+                f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'
             ),
+            Path(".vscode/settings.json"): vscode_settings,
         }
+        return skeleton
 
     def init(self, context: dict) -> None:
         """
-        Initialize Poetry after skeleton creation.
+        Initialize Core after skeleton creation.
 
         This will run 'poetry init' in interactive mode, allowing user input.
         """
-        console.print("[bold blue]Initializing poetry project...[/bold blue]")
+        console.print("[bold blue]Initializing core project...[/bold blue]")
 
         try:
             # Change to project directory
@@ -130,7 +137,6 @@ class PoetryAction(Action):
 
             # Run poetry install
             console.print("[bold cyan]Running poetry install...[/bold cyan]")
-
             result = subprocess.call(
                 ["poetry", "install"], stdin=None, stdout=None, stderr=None
             )
@@ -151,3 +157,16 @@ class PoetryAction(Action):
                 "[bold yellow]Poetry not found. Please install it first:[/bold yellow]"
             )
             console.print("https://python-poetry.org/docs/#installation")
+            return
+
+        # Bloc séparé pour l'installation de l'extension VSCode Ruff
+        try:
+            console.print("[bold cyan]Installing VSCode Ruff extension...[/bold cyan]")
+            subprocess.call(
+                ["code", "--install-extension", "charliermarsh.ruff", "--force"]
+            )
+        except FileNotFoundError:
+            console.print(
+                "[bold yellow]VSCode not found. Please install it first:[/bold yellow]"
+            )
+            console.print("https://code.visualstudio.com/download")
