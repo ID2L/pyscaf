@@ -1,6 +1,7 @@
 """
 Data models for pyscaf CLI.
 """
+
 from enum import Enum
 from typing import List, Optional
 
@@ -9,6 +10,7 @@ from pydantic import BaseModel
 
 class ProjectType(str, Enum):
     """Type of project to generate."""
+
     PACKAGE = "package"
     NOTEBOOK = "notebook"
     BOOK = "book"
@@ -17,6 +19,7 @@ class ProjectType(str, Enum):
 
 class CIOption(str, Enum):
     """CI/CD options to configure."""
+
     EXECUTE = "execute"
     BUILD = "build"
     PUBLISH = "publish"
@@ -24,6 +27,7 @@ class CIOption(str, Enum):
 
 class OutputFormat(str, Enum):
     """Output formats to generate."""
+
     HTML = "html"
     PDF = "pdf"
     IPYNB = "ipynb"
@@ -31,6 +35,7 @@ class OutputFormat(str, Enum):
 
 class ProjectConfig(BaseModel):
     """Configuration for a new project."""
+
     project_name: str
     project_type: List[ProjectType]
     author: str = ""
