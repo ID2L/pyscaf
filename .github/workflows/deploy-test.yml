@@ -8,9 +8,11 @@ on:
 jobs:
   deploy-test:
     uses: ./.github/workflows/reusable-deploy.yml
+    permissions:
+      contents: write
+      id-token: write
     with:
       environment: test
       pypi_repository_url: 'https://test.pypi.org/legacy/'
     secrets:
-      PYPI_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      PYPI_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }} 

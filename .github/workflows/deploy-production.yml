@@ -8,9 +8,11 @@ on:
 jobs:
   deploy-production:
     uses: ./.github/workflows/reusable-deploy.yml
+    permissions:
+      contents: write
+      id-token: write
     with:
       environment: production
       pypi_repository_url: 'https://upload.pypi.org/legacy/'
     secrets:
-      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }} 
