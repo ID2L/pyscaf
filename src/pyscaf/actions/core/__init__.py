@@ -72,11 +72,10 @@ class CoreAction(Action):
                 f"# {project_name}\n\nA Python project created with pyscaf\n\n"
                 f"{poetry_doc}\n"
             ),
-            Path(f"{currated_projet_name}"): None,  # Create directory
             Path(f"{currated_projet_name}/__init__.py"): (
                 f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'
             ),
-            Path(".vscode/settings.json"): vscode_settings,
+            Path(".vscode/settings.json"): vscode_settings if vscode_settings else None,
         }
         return skeleton
 

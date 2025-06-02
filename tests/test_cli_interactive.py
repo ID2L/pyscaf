@@ -39,8 +39,8 @@ def test_cli_version():
     assert "version" in result.output
 
 
-def test_cli_init_poetry_only(temp_project_dir):
-    """Test CLI init with only poetry (minimal options)."""
+def test_cli_init_core_only(temp_project_dir):
+    """Test CLI init with only core (minimal options)."""
     runner = CliRunner()
     result = runner.invoke(
         cli, ["init", "myproj", "--author", "John Doe <john@doe.com>", "--no-install"]
@@ -53,8 +53,8 @@ def test_cli_init_poetry_only(temp_project_dir):
     assert (temp_project_dir / "myproj" / "README.md").exists()
 
 
-def test_cli_init_poetry_git(temp_project_dir):
-    """Test CLI init with poetry and git enabled."""
+def test_cli_init_core_git(temp_project_dir):
+    """Test CLI init with core and git enabled."""
     runner = CliRunner()
     result = runner.invoke(
         cli,
@@ -76,8 +76,8 @@ def test_cli_init_poetry_git(temp_project_dir):
     assert (temp_project_dir / "mygitproj" / ".git").exists() or True
 
 
-def test_cli_init_poetry_jupyter(temp_project_dir):
-    """Test CLI init with poetry and jupyter enabled."""
+def test_cli_init_core_jupyter(temp_project_dir):
+    """Test CLI init with core and jupyter enabled."""
     runner = CliRunner()
     result = runner.invoke(
         cli,
@@ -97,7 +97,7 @@ def test_cli_init_poetry_jupyter(temp_project_dir):
 
 
 def test_cli_init_all_options(temp_project_dir):
-    """Test CLI init with all options enabled (poetry, git, jupyter)."""
+    """Test CLI init with all options enabled (core, git, jupyter)."""
     runner = CliRunner()
     result = runner.invoke(
         cli,
