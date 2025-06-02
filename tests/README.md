@@ -9,8 +9,6 @@ Ce dossier contient l'ensemble des tests automatisés pour le projet `pyscaf`. L
   - Teste l'interactivité (mockée) pour simuler les réponses utilisateur aux questions.
   - Vérifie la structure de projet générée selon les options/actions activées.
   - Teste la robustesse face aux entrées invalides.
-- **test_actions.py, test_manager.py** :
-  - Tests unitaires des actions et du gestionnaire d'actions (création de squelette, initialisation, installation).
 
 ## Outils utilisés
 
@@ -50,7 +48,3 @@ poetry run pytest tests/test_cli_interactive.py
 - Un test = un comportement précis (nom explicite, docstring en anglais, commentaires en français si besoin)
 - Nettoyez toujours les fichiers/dossiers temporaires créés
 - Privilégiez la robustesse : testez les cas d'erreur et les entrées inattendues
-
----
-
-Pour toute question ou contribution, ouvrez une issue ou une pull request sur le dépôt principal. 

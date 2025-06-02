@@ -19,8 +19,8 @@ console = Console()
 class JupyterAction(Action):
     """Action to initialize Jupyter notebook support in a project."""
 
-    depends = ["poetry"]
-    run_preferably_after = "poetry"
+    depends = ["core"]
+    run_preferably_after = "core"
     cli_options = [
         CLIOption(
             name="--jupyter",
