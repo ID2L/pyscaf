@@ -2,4 +2,4 @@
 pyscaf - Project generator for laboratory, teaching and data analysis.
 """
 
-__version__ = "0.10.0"
+__version__ = "0.10.1-rc.1"

@@ -1,9 +1,57 @@
 # CHANGELOG
 
 
+## v0.10.1-rc.1 (2025-06-02)
+
+### Bug Fixes
+
+- Add permissions for deployment workflows
+  ([`23ddbf9`](https://github.com/ID2L/pyscaf/commit/23ddbf978936fb96a5ffa9e2766535833037d4bc))
+
+This commit enhances the `deploy-production.yml` and `deploy-test.yml` workflow files by adding
+  necessary permissions for the deployment jobs. The changes include:
+
+- Introduction of `permissions` settings to allow write access for `contents` and `id-token`, which
+  are essential for the deployment processes. - Ensuring that the workflows can effectively manage
+  the required resources during deployment to both Production and Test PyPI.
+
+These modifications aim to improve the functionality and security of the deployment workflows,
+  facilitating smoother operations within the GitHub Actions environment.
+
+- Remove GITHUB_TOKEN from reusable-deploy.yml
+  ([`1f88d3f`](https://github.com/ID2L/pyscaf/commit/1f88d3fe0c5a5ae67efaf42f49b0b6fe01c5a804))
+
+This commit updates the `reusable-deploy.yml` workflow file by removing the `GITHUB_TOKEN` secret
+  requirement. The change aims to simplify the deployment process by eliminating unnecessary token
+  requirements, thereby enhancing security and reducing potential configuration issues.
+
+Key changes include: - Deletion of the `GITHUB_TOKEN` entry from the secrets section, which was
+  previously marked as required for the deployment workflow.
+
+These modifications contribute to a more streamlined and secure deployment configuration within the
+  GitHub Actions workflows.
+
+
 ## v0.10.0 (2025-06-02)
 
 ### Chores
+
+- Remove pytest configuration and add GitHub workflows for deployment
+  ([`71818dc`](https://github.com/ID2L/pyscaf/commit/71818dc5a02a4ebe12318e197c58700b09372a62))
+
+This commit removes the `pytest.ini` configuration file, which was previously used for setting up
+  pytest testing parameters. In its place, new GitHub workflows have been introduced to automate
+  deployment processes to both TestPyPI and Production PyPI. Key changes include:
+
+- Deletion of the `pytest.ini` file, eliminating the previous testing configuration. - Addition of
+  `deploy-production.yml` for deploying to Production PyPI upon pushes to the `main` branch. -
+  Addition of `deploy-test.yml` for deploying to TestPyPI upon pushes to the `develop` branch. -
+  Creation of `README.md` in the workflows directory to document the new workflow structure and
+  required secrets for deployment. - Introduction of `reusable-deploy.yml` to encapsulate common
+  deployment logic, enhancing maintainability and clarity.
+
+These changes aim to streamline the deployment process and improve the overall project structure by
+  leveraging GitHub Actions for automated workflows.
 
 - Update configuration for ruff and pytest
   ([`997a84d`](https://github.com/ID2L/pyscaf/commit/997a84d9750f8198ae1df6d98f2fe5ee4a3214af))
