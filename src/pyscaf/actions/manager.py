@@ -115,6 +115,7 @@ class ActionManager:
         # First pass: Create all skeletons
         for action in self.actions:
             if not action.activate(self.context):
+                print(f"Skipping {action.__class__.__name__}")
                 continue
             action_name = action.__class__.__name__
             console.print(

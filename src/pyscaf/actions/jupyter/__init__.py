@@ -35,7 +35,7 @@ class JupyterAction(Action):
         super().__init__(project_path)
 
     def activate(self, context: dict) -> bool:
-        return context.get("is_jupyter") is None or context.get("is_jupyter", True)
+        return context.get("jupyter") is None or context.get("jupyter", True)
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
         """
