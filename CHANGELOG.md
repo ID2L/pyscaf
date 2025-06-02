@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.10.3 (2025-06-02)
+
+### Bug Fixes
+
+- Ci/cd for release on Pypitest
+  ([`d829b38`](https://github.com/ID2L/pyscaf/commit/d829b3868c59f109b6a62d731f7b1b9a341640a6))
+
+### Chores
+
+- Change name to publish on pypi
+  ([`ece0f02`](https://github.com/ID2L/pyscaf/commit/ece0f02324aa697e0ed953eb16a3dd89201ca1d8))
+
+
 ## v0.10.2 (2025-06-02)
 
 
