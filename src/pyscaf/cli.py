@@ -109,7 +109,6 @@ def init(project_name, interactive, no_install, **kwargs):
     context["project_name"] = project_name
     context["interactive"] = interactive
     context["no_install"] = no_install
-    print("context", context)
     manager = ActionManager(project_name, context)
     if interactive:
         context = manager.ask_interactive_questions(context)

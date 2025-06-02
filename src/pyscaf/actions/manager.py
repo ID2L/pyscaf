@@ -1,6 +1,7 @@
 """
 Project action manager module.
 """
+
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
@@ -25,8 +26,7 @@ class ActionManager:
             context: Project context
         """
         self.project_path = Path.cwd() / project_name
-        console.print(
-            f"[bold green]Project path: [/bold green]{self.project_path}")
+        console.print(f"[bold green]Project path: [/bold green]{self.project_path}")
         self.context = context
         self.actions: List[Action] = []
 
@@ -41,25 +41,26 @@ class ActionManager:
         deps = []
         action_class_by_id = {}
         for action_cls in action_classes:
-            action_id = action_cls.__name__.replace('Action', '').lower()
-            deps.append({
-                "id": action_id,
-                "depends": getattr(action_cls, "depends", []),
-                "after": getattr(action_cls, "run_preferably_after", None)
-            })
+            action_id = action_cls.__name__.replace("Action", "").lower()
+            deps.append(
+                {
+                    "id": action_id,
+                    "depends": getattr(action_cls, "depends", []),
+                    "after": getattr(action_cls, "run_preferably_after", None),
+                }
+            )
             action_class_by_id[action_id] = action_cls
         # Determine best execution order
-        order = best_execution_order([
-            {
-                "id": d["id"],
-                "fullfilled": [d["id"]],
-                "external": d["depends"] or []
-            }
-            for d in deps
-        ])
+        order = best_execution_order(
+            [
+                {"id": d["id"], "fullfilled": [d["id"]], "external": d["depends"] or []}
+                for d in deps
+            ]
+        )
         # Instantiate actions in the optimal order
-        self.actions = [action_class_by_id[action_id](
-            self.project_path) for action_id in order]
+        self.actions = [
+            action_class_by_id[action_id](self.project_path) for action_id in order
+        ]
 
     def ask_interactive_questions(self, context: dict) -> dict:
         """
@@ -69,8 +70,6 @@ class ActionManager:
         """
         for action in self.actions:
             for opt in getattr(action, "cli_options", []):
-                print(opt)
-                print(action.activate(context))
                 if action.activate(context):
                     name = opt.name.lstrip("-").replace("-", "_")
                     if name in context and context[name] not in (None, ""):
@@ -79,22 +78,28 @@ class ActionManager:
                     default = opt.default() if callable(opt.default) else opt.default
                     if opt.type == "bool":
                         answer = questionary.confirm(
-                            prompt, default=bool(default)).ask()
+                            prompt, default=bool(default)
+                        ).ask()
                     elif opt.type == "int":
-                        answer = questionary.text(prompt, default=str(
-                            default) if default is not None else "").ask()
-                        answer = int(
-                            answer) if answer is not None and answer != "" else None
+                        answer = questionary.text(
+                            prompt, default=str(default) if default is not None else ""
+                        ).ask()
+                        answer = (
+                            int(answer) if answer is not None and answer != "" else None
+                        )
                     elif opt.type == "choice" and opt.choices:
                         if opt.multiple:
                             answer = questionary.checkbox(
-                                prompt, choices=opt.choices, default=default).ask()
+                                prompt, choices=opt.choices, default=default
+                            ).ask()
                         else:
                             answer = questionary.select(
-                                prompt, choices=opt.choices, default=default).ask()
+                                prompt, choices=opt.choices, default=default
+                            ).ask()
                     else:  # str or fallback
                         answer = questionary.text(
-                            prompt, default=default if default is not None else "").ask()
+                            prompt, default=default if default is not None else ""
+                        ).ask()
                     context[name] = answer
         return context
 
@@ -104,7 +109,8 @@ class ActionManager:
         self.project_path.mkdir(parents=True, exist_ok=True)
 
         console.print(
-            f"[bold green]Creating project at: [/bold green]{self.project_path}")
+            f"[bold green]Creating project at: [/bold green]{self.project_path}"
+        )
 
         # First pass: Create all skeletons
         for action in self.actions:
@@ -112,7 +118,8 @@ class ActionManager:
                 continue
             action_name = action.__class__.__name__
             console.print(
-                f"[bold blue]Creating skeleton for: [/bold blue]{action_name}")
+                f"[bold blue]Creating skeleton for: [/bold blue]{action_name}"
+            )
             action.create_skeleton(self.context)
 
         # Second pass: Initialize all actions
@@ -120,8 +127,7 @@ class ActionManager:
             if not action.activate(self.context):
                 continue
             action_name = action.__class__.__name__
-            console.print(
-                f"[bold blue]Initializing: [/bold blue]{action_name}")
+            console.print(f"[bold blue]Initializing: [/bold blue]{action_name}")
             action.init(self.context)
 
         # Third pass: Install dependencies if not skipped
@@ -131,7 +137,8 @@ class ActionManager:
                     continue
                 action_name = action.__class__.__name__
                 console.print(
-                    f"[bold blue]Installing dependencies for: [/bold blue]{action_name}")
+                    f"[bold blue]Installing dependencies for: [/bold blue]{action_name}"
+                )
                 action.install(self.context)
         else:
             console.print("[bold yellow]Skipping installation.[/bold yellow]")

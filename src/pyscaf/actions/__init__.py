@@ -1,6 +1,7 @@
 """
 Action classes for project scaffolding.
 """
+
 import importlib
 import os
 import pkgutil
@@ -41,7 +42,11 @@ class Action(ABC):
 
     def __init_subclass__(cls):
         # Validation: if multiple depends and no run_preferably_after, raise error
-        if hasattr(cls, 'depends') and len(cls.depends) > 1 and not getattr(cls, 'run_preferably_after', None):
+        if (
+            hasattr(cls, "depends")
+            and len(cls.depends) > 1
+            and not getattr(cls, "run_preferably_after", None)
+        ):
             raise ValueError(
                 f"Action '{cls.__name__}' has multiple depends but no run_preferably_after"
             )
@@ -104,8 +109,8 @@ class Action(ABC):
                 # Create file with content or append if exists
                 if full_path.exists():
                     # Append content to existing file
-                    with open(full_path, 'a') as f:
-                        f.write('\n' + content)
+                    with open(full_path, "a") as f:
+                        f.write("\n" + content)
                 else:
                     # Create new file with content
                     full_path.write_text(content)
@@ -130,7 +135,7 @@ def discover_actions():
     actions = []
     actions_dir = os.path.dirname(__file__)
     for _, module_name, is_pkg in pkgutil.iter_modules([actions_dir]):
-        if module_name in ('base', 'manager', '__pycache__'):
+        if module_name in ("base", "manager", "__pycache__"):
             continue
         mod = importlib.import_module(f"pyscaf.actions.{module_name}")
         for attr in dir(mod):
