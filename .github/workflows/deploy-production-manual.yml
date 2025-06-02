@@ -1,0 +1,60 @@
+name: Manual Deploy to Production PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag to deploy (e.g., v1.2.3)'
+        required: true
+        type: string
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Download release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create dist directory
+          mkdir -p dist
+          
+          # Download release assets
+          gh release download ${{ inputs.release_tag }} --pattern "*.whl" --dir dist
+          gh release download ${{ inputs.release_tag }} --pattern "*.tar.gz" --dir dist
+          
+          # List downloaded files
+          echo "Downloaded files:"
+          ls -la dist/
+
+      - name: Verify artifacts
+        run: |
+          if [ -z "$(ls -A dist/)" ]; then
+            echo "Error: No distribution files found for release ${{ inputs.release_tag }}"
+            exit 1
+          fi
+          echo "Found distribution files:"
+          ls -la dist/
+
+      - name: Publish package distributions to Production PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_PASSWORD }}
+          repository-url: 'https://upload.pypi.org/legacy/'
+          packages-dir: dist
+          print-hash: true
+          verbose: true 
