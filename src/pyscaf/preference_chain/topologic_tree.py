@@ -1,7 +1,6 @@
 def best_execution_order(nodes):
     # Compute reverse dependencies: who depends on what
     external_map = {node["id"]: set(node.get("external", [])) for node in nodes}
-
     # Initialize sets to track satisfied and executed nodes, and the final order
     satisfied = set()
     executed = set()

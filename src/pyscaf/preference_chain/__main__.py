@@ -34,7 +34,10 @@ def build_node(dep, dependencies):
 
 def recursive_best_order(dependencies, current_id):
     direct_dependants = get_direct_dependants(dependencies, current_id)
+    print(f"Current id: {current_id}")
+    print(f"Direct dependants: {direct_dependants}")
     if not direct_dependants:
+        print(f"No direct dependants for {current_id}, added to the pile")
         return [current_id]
     nodes = [build_node(dep, dependencies) for dep in direct_dependants]
     local_order = best_execution_order(nodes)
@@ -48,6 +51,7 @@ if __name__ == "__main__":
     # Load and complete dependencies from YAML
     yaml_path = os.path.join(os.path.dirname(__file__), "dependencies.yaml")
     dependencies = load_and_complete_dependencies(yaml_path)
+    # print(dependencies)
     # Recursive optimal order from 'root'
     order = recursive_best_order(dependencies, "root")
     print("Ordre optimal récursif :", order)
