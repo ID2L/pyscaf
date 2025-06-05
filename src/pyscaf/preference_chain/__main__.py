@@ -1,15 +1,19 @@
+import logging
 import os
+import sys
+
+from pyscaf.preference_chain.new_preference_chain import build_chains, extend_nodes
 
 from .dependency_loader import load_and_complete_dependencies
 from .topologic_tree import best_execution_order
 from .tree_walker import DependencyTreeWalker
 
 # Utility to get direct dependants of a node
-# Returns the list of RawDependency that directly depend on parent_id
+# Returns the list of Node that directly depend on parent_id
 
 
 def get_direct_dependants(dependencies, parent_id):
-    """Return the list of RawDependency that directly depend on parent_id."""
+    """Return the list of Node that directly depend on parent_id."""
     return [dep for dep in dependencies if dep.depends and parent_id in dep.depends]
 
 
@@ -48,10 +52,30 @@ def recursive_best_order(dependencies, current_id):
 
 
 if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    if "-v" in sys.argv:
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format="%(levelname)s %(name)s::%(funcName)s: \n    %(message)s",
+        )
+        logger.debug("Mode debug activé")
+    else:
+        logging.basicConfig(
+            level=logging.WARNING, format="\n    %(levelname)s: %(message)s"
+        )
+
     # Load and complete dependencies from YAML
     yaml_path = os.path.join(os.path.dirname(__file__), "dependencies.yaml")
     dependencies = load_and_complete_dependencies(yaml_path)
-    # print(dependencies)
+    tree = DependencyTreeWalker(dependencies, "root")
+    extended_dependencies = extend_nodes(dependencies)
+    # for dep in extended_dependencies:
+    #     print(dep)
+    #     print("\n")
+    clusters = build_chains(extended_dependencies)
+    for cluster in clusters:
+        logger.debug(cluster.ids)
+    logger.debug(tree.print_tree())
     # Recursive optimal order from 'root'
-    order = recursive_best_order(dependencies, "root")
-    print("Ordre optimal récursif :", order)
+    # order = recursive_best_order(dependencies, "root")
+    # print("Ordre optimal récursif :", order)

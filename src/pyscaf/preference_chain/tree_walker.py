@@ -1,10 +1,10 @@
 from collections import defaultdict
 
-from .dependency_loader import RawDependency
+from .new_preference_chain import Node
 
 
 class DependencyTreeWalker:
-    def __init__(self, dependencies: list[RawDependency], root_id: str):
+    def __init__(self, dependencies: list[Node], root_id: str):
         self.dependencies = dependencies
         self.root_id = root_id
         self.tree = None
@@ -14,7 +14,7 @@ class DependencyTreeWalker:
 
     def _build_tree(self):
         # Build a reverse index: for each id, who has after == id ?
-        after_targets: defaultdict[str, list[RawDependency]] = defaultdict(list)
+        after_targets: defaultdict[str, list[Node]] = defaultdict(list)
         for dep in self.dependencies:
             if dep.after:
                 after_targets[dep.after].append(dep)
@@ -61,13 +61,6 @@ class DependencyTreeWalker:
                 if children:
                     extension = "    " if idx == len(items) - 1 else "│   "
                     _print_subtree(children, prefix + extension)
-                # Show external dependencies at this level
-                if node in self.external_depends:
-                    print(
-                        prefix
-                        + ("    " if idx == len(items) - 1 else "│   ")
-                        + f"{RED}{node} (external){RESET}"
-                    )
 
         # Print the main tree
         _print_subtree(self.tree)
