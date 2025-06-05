@@ -2,7 +2,11 @@ import logging
 import os
 import sys
 
-from pyscaf.preference_chain.new_preference_chain import build_chains, extend_nodes
+from pyscaf.preference_chain.new_preference_chain import (
+    build_chains,
+    compute_all_resolution_pathes,
+    extend_nodes,
+)
 
 from .dependency_loader import load_and_complete_dependencies
 from .topologic_tree import best_execution_order
@@ -76,6 +80,10 @@ if __name__ == "__main__":
     for cluster in clusters:
         logger.debug(cluster.ids)
     logger.debug(tree.print_tree())
+    all_resolution_pathes = list(compute_all_resolution_pathes(clusters))
+    logger.debug(f"Found {len(all_resolution_pathes)} resolution pathes")
+    # for path in all_resolution_pathes:
+    #     logger.debug(path)
     # Recursive optimal order from 'root'
     # order = recursive_best_order(dependencies, "root")
     # print("Ordre optimal récursif :", order)

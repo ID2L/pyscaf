@@ -1,3 +1,4 @@
+import itertools
 import logging
 from typing import List
 
@@ -161,7 +162,37 @@ def build_chains(tree: list[ExtendedNode]) -> list[ChainLink]:
         logger.debug(f"Chain (before merging): {chain.ids}")
         chain = merge_chains(chain, chains)
         logger.debug(
-            f"Chain: {chain.ids} referenced by {chain.referenced_by} depends on {chain.external_dependencies}\n"
+            f"Chain: {chain.ids} referenced by {chain.referenced_by}"
+            f"  depends on {chain.external_dependencies}\n"
         )
 
     return chains
+
+
+def compute_all_resolution_pathes(chains: list[ChainLink]):
+    satisfied = set[str]()
+    cartesian_product: list[list[ChainLink]] = []
+    iteration = 0
+    while (
+        len(satisfied) != len(set().union(*(chain.ids for chain in chains)))
+        and iteration < 10
+    ):
+        candidates: list[ChainLink] = []
+        for chain in chains:
+            if chain.head is None:
+                candidates.append(chain)
+            if chain.head is not None and chain.head.after in satisfied:
+                candidates.append(chain)
+        cartesian_product.append(candidates)
+        satisfied = satisfied.union(set().union(*(chain.ids for chain in candidates)))
+        iteration += 1
+    # print(cartesian_product)
+    # return cartesian_product
+    return itertools.product(*cartesian_product)
+
+
+def compute_path_score(path: list[ChainLink]):
+    score = 0
+    for chain in path:
+        score += len(chain.children)
+    return score
