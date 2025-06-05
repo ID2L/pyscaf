@@ -77,9 +77,9 @@ def update_chains(node: ExtendedNode, chains: list[ChainLink]):
                 == 0  # The chain has no external dependencies
             )
         ):
+            logger.debug(f"HEAD updated chain {chain.ids} with {node.id}")
             chain.head = node
             chain.children.append(node)
-            logger.debug(f"HEAD merged chain {chain.ids} with {node.id}")
             return chain
         # If the node has it's dependance fulffiled by a chain, append it to the chain
         # A node is fulfilled by a chain if all of it's dependencies are in the chain
@@ -88,13 +88,12 @@ def update_chains(node: ExtendedNode, chains: list[ChainLink]):
             node.after is not None
             and node.after == chain.queue.id
             and set(node.external_dependencies).issubset(chain.external_dependencies)
-            # and len(chain.queue.referenced_by)
-            # <= 1  # The node is referenced by only one other node (after relation), or is a leaf node
+            and len(chain.queue.referenced_by)
+            <= 1  # The node is referenced by only one other node (after relation), or is a leaf node
         ):
-            logger.debug(f"chain.queue.referenced_by: {chain.queue.referenced_by}")
+            logger.debug(f"QUEUED updated chain {chain.ids} with {node.id}")
             chain.queue = node
             chain.children.append(node)
-            logger.debug(f"QUEUED merged chain {chain.ids} with {node.id}")
             return chain
 
     # If the node is not in a chain, create a new one
@@ -145,11 +144,7 @@ def merge_chains(chain: ChainLink, chains: list[ChainLink]) -> ChainLink:
             and len(other_chain.queue.referenced_by)
             <= 1  # The chain is referenced by only one other chain (after relation), or is a leaf chain
         ):
-            logger.debug(
-                f"QUEUED merged chain {other_chain.ids} with {chain.ids}\n"
-                f"other_chain.external_dependencies: {other_chain.external_dependencies}\n"
-                f"chain.external_dependencies: {chain.external_dependencies}"
-            )
+            logger.debug(f"QUEUED merged chain {other_chain.ids} with {chain.ids}\n")
             other_chain.queue = chain.queue
             other_chain.children.extend(chain.children)
             chains.remove(chain)

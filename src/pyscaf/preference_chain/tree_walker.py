@@ -73,9 +73,3 @@ class DependencyTreeWalker:
                 _collect_shown(children)
 
         _collect_shown(self.tree)
-        for ext in self.external_depends:
-            if ext not in shown:
-                print(f"{RED}{ext} (external){RESET}")
-        # Print all fulfilled dependencies
-        for internal in self.fullfilled_depends:
-            print(f"{GREEN}{internal} (fullfilled){RESET}")
