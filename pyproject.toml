@@ -47,6 +47,9 @@ build-backend = "poetry.core.masonry.api"
 exclude = [
     "src/pyscaf/actions/*/template*"
 ]
+select = ["E", "F", "N"]
+line-length = 120
+
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
