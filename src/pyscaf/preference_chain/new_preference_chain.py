@@ -28,8 +28,8 @@ class ExtendedNode(Node):
 
 class ChainLink(BaseModel):
     children: list[ExtendedNode]
-    head: ExtendedNode | None = None
-    queue: ExtendedNode
+    head: ExtendedNode
+    tail: ExtendedNode
 
     @property
     def ids(self) -> list[str]:
@@ -87,20 +87,18 @@ def update_chains(node: ExtendedNode, chains: list[ChainLink]):
         # Or if the chain has the same external dependencies as the node
         if (
             node.after is not None
-            and node.after == chain.queue.id
+            and node.after == chain.tail.id
             and set(node.external_dependencies).issubset(chain.external_dependencies)
-            and len(chain.queue.referenced_by)
+            and len(chain.tail.referenced_by)
             <= 1  # The node is referenced by only one other node (after relation), or is a leaf node
         ):
             logger.debug(f"QUEUED updated chain {chain.ids} with {node.id}")
-            chain.queue = node
+            chain.tail = node
             chain.children.append(node)
             return chain
 
     # If the node is not in a chain, create a new one
-    chain = ChainLink(children=[node], queue=node)
-    if node.after:
-        chain.head = node
+    chain = ChainLink(children=[node], head=node, tail=node)
     chains.append(chain)
     return chain
 
@@ -113,10 +111,8 @@ def merge_chains(chain: ChainLink, chains: list[ChainLink]) -> ChainLink:
         # If the chain is the after of a chain, append it to the chain
         # And set the after other_chain of the other_chain to the chain's after
         if (
-            other_chain.head is not None
-            and chain.queue.id
-            == other_chain.head.id  # chain is at the head of the chain
-            and chain.queue.referenced_by.issubset(
+            chain.tail.id == other_chain.head.id  # chain is at the head of the chain
+            and chain.tail.referenced_by.issubset(
                 other_chain.ids
             )  # all the chains that reference the chain are in the chain
             and (
@@ -137,16 +133,15 @@ def merge_chains(chain: ChainLink, chains: list[ChainLink]) -> ChainLink:
         # A chain is fulfilled by a other_chain if all of it's dependencies are in the chain
         # Or if the other_chain has the same external dependencies as the chain
         if (
-            chain.head is not None
-            and chain.head.after == other_chain.queue.id
+            chain.head.after == other_chain.tail.id
             and set(chain.external_dependencies).issubset(
                 other_chain.external_dependencies.union(set(other_chain.ids))
             )
-            and len(other_chain.queue.referenced_by)
+            and len(other_chain.tail.referenced_by)
             <= 1  # The chain is referenced by only one other chain (after relation), or is a leaf chain
         ):
             logger.debug(f"QUEUED merged chain {other_chain.ids} with {chain.ids}\n")
-            other_chain.queue = chain.queue
+            other_chain.tail = chain.tail
             other_chain.children.extend(chain.children)
             chains.remove(chain)
             return other_chain
@@ -170,29 +165,57 @@ def build_chains(tree: list[ExtendedNode]) -> list[ChainLink]:
 
 
 def compute_all_resolution_pathes(chains: list[ChainLink]):
-    satisfied = set[str]()
-    cartesian_product: list[list[ChainLink]] = []
-    iteration = 0
-    while (
-        len(satisfied) != len(set().union(*(chain.ids for chain in chains)))
-        and iteration < 10
-    ):
-        candidates: list[ChainLink] = []
-        for chain in chains:
-            if chain.head is None:
-                candidates.append(chain)
-            if chain.head is not None and chain.head.after in satisfied:
-                candidates.append(chain)
-        cartesian_product.append(candidates)
-        satisfied = satisfied.union(set().union(*(chain.ids for chain in candidates)))
-        iteration += 1
-    # print(cartesian_product)
-    # return cartesian_product
-    return itertools.product(*cartesian_product)
+    all_pathes: list[list[ChainLink]] = [
+        list(path) for path in itertools.permutations(chains)
+    ]
+
+    # Filter valid paths: check head dependencies and external dependencies
+    valid_pathes: list[list[ChainLink]] = []
+    for path in all_pathes:
+        is_valid = True
+        for i, chain in enumerate(path):
+            # Get previous chains' ids
+            previous_ids = (
+                set().union(*(prev_chain.ids for prev_chain in path[:i]))
+                if i > 0
+                else set()
+            )
+
+            # Check head dependency
+            if (
+                i > 0
+                and chain.head is not None
+                and chain.head.after not in previous_ids
+            ):
+                print(
+                    f"Path rejected: chain {chain.ids} head {chain.head.id} not in previous ids {previous_ids}"
+                )
+                is_valid = False
+                break
+
+            # Check external dependencies
+            if i > 0 and not chain.external_dependencies.issubset(previous_ids):
+                print(
+                    f"Path rejected: chain {chain.ids} external deps {chain.external_dependencies} not in previous ids {previous_ids}"
+                )
+                is_valid = False
+                break
+
+        if is_valid:
+            valid_pathes.append(path)
+
+    return valid_pathes
 
 
 def compute_path_score(path: list[ChainLink]):
     score = 0
-    for chain in path:
-        score += len(chain.children)
+    # Start from the second element (index 1) to the end
+    for i in range(1, len(path)):
+        chain = path[i]
+        previous_chain = path[i - 1]
+
+        # Check if chain.head.id is different from previous chain's queue.id
+        if chain.head.after != previous_chain.tail.id:
+            score -= 1
+
     return score
