@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.4 (2025-06-06)
+
+### Bug Fixes
+
+- Use the new preference_chain in the cli
+  ([`16218d8`](https://github.com/ID2L/pyscaf/commit/16218d8f003f8e276ba517d8d28c6045d6917fe2))
+
+
 ## v0.10.3 (2025-06-02)
 
 ### Bug Fixes
