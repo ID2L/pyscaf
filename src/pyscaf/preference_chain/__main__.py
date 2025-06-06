@@ -5,6 +5,7 @@ import sys
 from pyscaf.preference_chain.new_preference_chain import (
     build_chains,
     compute_all_resolution_pathes,
+    compute_path_score,
     extend_nodes,
 )
 
@@ -77,13 +78,15 @@ if __name__ == "__main__":
     #     print(dep)
     #     print("\n")
     clusters = build_chains(extended_dependencies)
-    for cluster in clusters:
-        logger.debug(cluster.ids)
-    logger.debug(tree.print_tree())
+
+    # for cluster in clusters:
+    #     logger.debug(cluster)
+    #     print("\n")
+    # logger.debug(tree.print_tree())
     all_resolution_pathes = list(compute_all_resolution_pathes(clusters))
     logger.debug(f"Found {len(all_resolution_pathes)} resolution pathes")
-    # for path in all_resolution_pathes:
-    #     logger.debug(path)
-    # Recursive optimal order from 'root'
-    # order = recursive_best_order(dependencies, "root")
-    # print("Ordre optimal récursif :", order)
+    all_resolution_pathes.sort(key=lambda path: -compute_path_score(list(path)))
+    for path in all_resolution_pathes:
+        logger.debug(f"Score : {compute_path_score(path)}")
+        for chain in list(path):
+            logger.debug(f"Chain: {chain.ids}")
