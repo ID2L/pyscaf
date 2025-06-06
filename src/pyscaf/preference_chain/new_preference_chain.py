@@ -187,7 +187,7 @@ def compute_all_resolution_pathes(chains: list[ChainLink]):
                 and chain.head is not None
                 and chain.head.after not in previous_ids
             ):
-                print(
+                logger.debug(
                     f"Path rejected: chain {chain.ids} head {chain.head.id} not in previous ids {previous_ids}"
                 )
                 is_valid = False
@@ -195,7 +195,7 @@ def compute_all_resolution_pathes(chains: list[ChainLink]):
 
             # Check external dependencies
             if i > 0 and not chain.external_dependencies.issubset(previous_ids):
-                print(
+                logger.debug(
                     f"Path rejected: chain {chain.ids} external deps {chain.external_dependencies} not in previous ids {previous_ids}"
                 )
                 is_valid = False

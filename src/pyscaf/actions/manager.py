@@ -2,6 +2,7 @@
 Project action manager module.
 """
 
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
@@ -9,9 +10,17 @@ import questionary
 from rich.console import Console
 
 from pyscaf.actions import Action, discover_actions
-from pyscaf.preference_chain.topologic_tree import best_execution_order
+from pyscaf.preference_chain.new_preference_chain import (
+    Node,
+    build_chains,
+    compute_all_resolution_pathes,
+    compute_path_score,
+    extend_nodes,
+)
+from pyscaf.preference_chain.topologic_tree import CircularDependencyError
 
 console = Console()
+logger = logging.getLogger(__name__)
 
 
 class ActionManager:
@@ -34,32 +43,61 @@ class ActionManager:
         self._determine_actions()
 
     def _determine_actions(self) -> None:
-        """Determine which actions to include based on configuration."""
+        """Determine which actions to include based on configuration using the new preference chain logic."""
         # Discover all available Action classes
         action_classes = discover_actions()
-        # Build dependency/preference dicts for preference_chain
-        deps = []
+
+        # Build Node objects for the new preference chain logic
+        nodes = []
         action_class_by_id = {}
+
         for action_cls in action_classes:
             action_id = action_cls.__name__.replace("Action", "").lower()
-            deps.append(
-                {
-                    "id": action_id,
-                    "depends": getattr(action_cls, "depends", []),
-                    "after": getattr(action_cls, "run_preferably_after", None),
-                }
-            )
+            depends = getattr(action_cls, "depends", [])
+            after = getattr(action_cls, "run_preferably_after", None)
+
+            # Create Node object
+            node = Node(id=action_id, depends=depends, after=after)
+            nodes.append(node)
             action_class_by_id[action_id] = action_cls
-        # Determine best execution order
-        order = best_execution_order(
-            [
-                {"id": d["id"], "fullfilled": [d["id"]], "external": d["depends"] or []}
-                for d in deps
-            ]
-        )
+
+        logger.debug(f"Created {len(nodes)} action nodes")
+
+        # Use the new preference chain logic to determine optimal execution order
+        extended_dependencies = extend_nodes(nodes)
+        clusters = build_chains(extended_dependencies)
+
+        logger.debug(f"Built {len(clusters)} chains from actions")
+
+        # Compute all possible resolution paths
+        all_resolution_paths = list(compute_all_resolution_pathes(clusters))
+
+        if not all_resolution_paths:
+            # No valid resolution path found - this indicates a serious dependency issue
+            action_ids = [node.id for node in nodes]
+            error_msg = (
+                f"No valid resolution path found for actions: {action_ids}. "
+                "This indicates circular dependencies or unsatisfiable constraints between actions."
+            )
+            logger.error(error_msg)
+            raise CircularDependencyError(error_msg)
+
+        logger.debug(f"Found {len(all_resolution_paths)} resolution paths for actions")
+
+        # Sort paths by score (best score first)
+        all_resolution_paths.sort(key=lambda path: -compute_path_score(list(path)))
+
+        # Extract the final execution order from the best path
+        best_path = all_resolution_paths[0]
+        order = [action_id for chain in best_path for action_id in chain.ids]
+
+        logger.debug(f"Final action execution order: {order}")
+
         # Instantiate actions in the optimal order
         self.actions = [
-            action_class_by_id[action_id](self.project_path) for action_id in order
+            action_class_by_id[action_id](self.project_path)
+            for action_id in order
+            if action_id in action_class_by_id
         ]
 
     def ask_interactive_questions(self, context: dict) -> dict:

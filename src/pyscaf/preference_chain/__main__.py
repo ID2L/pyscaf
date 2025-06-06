@@ -90,3 +90,5 @@ if __name__ == "__main__":
         logger.debug(f"Score : {compute_path_score(path)}")
         for chain in list(path):
             logger.debug(f"Chain: {chain.ids}")
+    final_path = [id for chain in all_resolution_pathes[0] for id in chain.ids]
+    logger.info(f"Best resolution path: {final_path}")
