@@ -4,7 +4,7 @@ from typing import List
 import yaml
 from pydantic import ValidationError
 
-from .new_preference_chain import Node
+from .model import Node
 
 # Load dependencies from a YAML file and complete the 'after' property if possible
 # Returns a list of Node objects

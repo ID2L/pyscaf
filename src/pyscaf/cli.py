@@ -10,7 +10,7 @@ from rich.console import Console
 from pyscaf import __version__
 from pyscaf.actions import discover_actions
 from pyscaf.actions.manager import ActionManager
-from pyscaf.preference_chain.topologic_tree import best_execution_order
+from pyscaf.preference_chain import best_execution_order
 
 console = Console()
 

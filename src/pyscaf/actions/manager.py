@@ -10,14 +10,14 @@ import questionary
 from rich.console import Console
 
 from pyscaf.actions import Action, discover_actions
-from pyscaf.preference_chain.new_preference_chain import (
-    Node,
+from pyscaf.preference_chain import (
+    CircularDependencyError,
     build_chains,
     compute_all_resolution_pathes,
     compute_path_score,
     extend_nodes,
 )
-from pyscaf.preference_chain.topologic_tree import CircularDependencyError
+from pyscaf.preference_chain.model import Node
 
 console = Console()
 logger = logging.getLogger(__name__)

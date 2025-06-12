@@ -158,7 +158,7 @@ class CoreAction(Action):
             console.print("https://python-poetry.org/docs/#installation")
             return
 
-        # Bloc séparé pour l'installation de l'extension VSCode Ruff
+        # Separate block for VSCode Ruff extension installation
         try:
             console.print("[bold cyan]Installing VSCode Ruff extension...[/bold cyan]")
             subprocess.call(
