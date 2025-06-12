@@ -1,0 +1,12 @@
+# Simple linear dependency chain example
+# Expected order: root -> setup -> build -> test -> deploy
+
+- id: root
+- id: setup
+  depends: [root]
+- id: build
+  depends: [setup]
+- id: test
+  depends: [build]
+- id: deploy
+  depends: [test] 

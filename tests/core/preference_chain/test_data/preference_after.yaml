@@ -1,0 +1,12 @@
+- id: root
+- depends:
+  - root
+  id: test
+- after: test
+  depends:
+  - test
+  - reporting
+  id: coverage
+- depends:
+  - root
+  id: reporting

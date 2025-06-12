@@ -1,0 +1,19 @@
+# Complex dependency example with preferences
+# Based on the original dependencies.yaml but simplified
+
+- id: root
+- id: versionning
+  depends: [root]
+- id: github
+  depends: [versionning]
+- id: github-actions
+  depends: [github]
+- id: ci-pipeline
+  depends: [github-actions]
+- id: pytest
+  depends: [ci-pipeline]
+- id: test
+  depends: [root]
+- id: github-action-test
+  depends: [test, github]
+  after: test 

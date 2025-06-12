@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from .new_preference_chain import Node
+from .model import Node
 
 
 class DependencyTreeWalker:
