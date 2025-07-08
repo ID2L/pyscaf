@@ -1,0 +1,27 @@
+- id: root
+- depends:
+  - root
+  id: versionning
+- depends:
+  - versionning
+  id: github
+- depends:
+  - github
+  id: github-actions
+- depends:
+  - github-actions
+  id: ci-pipeline
+- depends:
+  - ci-pipeline
+  id: pytest
+- depends:
+  - pytest
+  id: coverage
+- depends:
+  - root
+  id: test
+- after: test
+  depends:
+  - test
+  - github
+  id: github-action-test
