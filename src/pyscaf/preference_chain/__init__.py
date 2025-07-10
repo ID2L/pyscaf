@@ -9,17 +9,12 @@ from pyscaf.preference_chain.chain import (
 )
 from pyscaf.preference_chain.model import Node
 
+from .circular_dependency_error import CircularDependencyError
 from .dependency_loader import load_and_complete_dependencies
 from .model import Node
 from .tree_walker import DependencyTreeWalker
 
 logger = logging.getLogger(__name__)
-
-
-class CircularDependencyError(Exception):
-    """Raised when circular dependencies or unsatisfiable constraints are detected."""
-
-    pass
 
 
 def best_execution_order(nodes: List[Node]) -> List[str]:
@@ -40,7 +35,7 @@ def best_execution_order(nodes: List[Node]) -> List[str]:
     for node in nodes:
         # If node has dependencies but no 'after' is specified, use the first dependency
         if node.depends and node.after is None:
-            after = node.depends[0]
+            after = next(iter(node.depends))
         else:
             after = node.after
 

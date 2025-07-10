@@ -36,7 +36,7 @@ class Action(ABC):
     """
 
     # Explicit dependencies and preferences
-    depends: List[str] = []
+    depends: set[str] = set()
     run_preferably_after: Optional[str] = None
     cli_options: List[CLIOption] = []
 

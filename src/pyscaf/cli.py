@@ -30,12 +30,12 @@ def collect_cli_options():
     action_class_by_id = {}
     for action_cls in action_classes:
         action_id = action_cls.__name__.replace("Action", "").lower()
-        depends = getattr(action_cls, "depends", [])
+        depends = getattr(action_cls, "depends", set())
         after = getattr(action_cls, "run_preferably_after", None)
 
         # If there are dependencies but no 'after' is specified, use the first dependency
         if depends and after is None:
-            after = depends[0]
+            after = next(iter(depends))
 
         # Create Node object
         node = Node(id=action_id, depends=depends, after=after)

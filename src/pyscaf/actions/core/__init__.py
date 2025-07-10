@@ -32,7 +32,7 @@ def get_local_git_author():
 class CoreAction(Action):
     """Action to initialize a project with Poetry."""
 
-    depends = []  # Poetry is the root action
+    depends = set()  # Poetry is the root action
     run_preferably_after = None
     cli_options = [
         CLIOption(

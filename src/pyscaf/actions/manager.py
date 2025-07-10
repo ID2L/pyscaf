@@ -53,7 +53,7 @@ class ActionManager:
 
         for action_cls in action_classes:
             action_id = action_cls.__name__.replace("Action", "").lower()
-            depends = getattr(action_cls, "depends", [])
+            depends = getattr(action_cls, "depends", set())
             after = getattr(action_cls, "run_preferably_after", None)
 
             # Create Node object

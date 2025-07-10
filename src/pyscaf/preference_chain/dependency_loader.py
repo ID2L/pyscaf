@@ -26,7 +26,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[Node]:
             # Convert entry to Node format
             node_data = {
                 "id": entry["id"],
-                "depends": entry.get("depends", []),
+                "depends": set(entry.get("depends", [])),
                 "after": entry.get("after"),
             }
             dep = Node(**node_data)
@@ -37,7 +37,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[Node]:
         if dep.after is None:
             if dep.depends:
                 if len(dep.depends) == 1:
-                    dep.after = dep.depends[0]
+                    dep.after = next(iter(dep.depends))
                 else:
                     print(
                         f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'."

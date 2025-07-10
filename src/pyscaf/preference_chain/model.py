@@ -1,24 +1,18 @@
 import logging
-from typing import List
 
 from pydantic import BaseModel
-
-satisfied = set[str]()
-executed = set[str]()
 
 logger = logging.getLogger(__name__)
 
 
 class Node(BaseModel):
     id: str
-    depends: List[str] = []
+    depends: set[str] = set()
     after: str | None = None
 
     @property
     def external_dependencies(self) -> set[str]:
-        return set(self.depends) - (
-            set([self.after]) if self.after is not None else set()
-        )
+        return self.depends - (set([self.after]) if self.after is not None else set())
 
 
 class ExtendedNode(Node):
@@ -39,6 +33,10 @@ class ChainLink(BaseModel):
         return set().union(
             *[node.external_dependencies for node in self.children]
         ) - set(self.ids)
+
+    @property
+    def depends(self) -> set[str]:
+        return set().union(*[node.depends for node in self.children]) - set(self.ids)
 
     @property
     def referenced_by(self) -> set[str]:
