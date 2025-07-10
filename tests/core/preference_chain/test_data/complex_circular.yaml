@@ -1,0 +1,12 @@
+- id: root
+  depends:
+  - A
+- depends:
+  - A
+  id: B
+- depends:
+  - C
+  id: B
+- depends:
+  - A
+  id: C

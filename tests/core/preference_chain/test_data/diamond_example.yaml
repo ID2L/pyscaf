@@ -1,0 +1,11 @@
+# Diamond dependency pattern example
+# A is the root, B and C depend on A, D depends on both B and C
+# Expected: A first, D last, B and C in between (order flexible)
+
+- id: A
+- id: B
+  depends: [A]
+- id: C
+  depends: [A]
+- id: D
+  depends: [B, C] 

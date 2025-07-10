@@ -1,0 +1,9 @@
+- depends:
+  - B
+  id: A
+- depends:
+  - C
+  id: B
+- depends:
+  - A
+  id: C

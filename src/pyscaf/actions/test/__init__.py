@@ -19,7 +19,7 @@ console = Console()
 class TestAction(Action):
     """Action to initialize a project with pytest testing framework."""
 
-    depends = ["core"]
+    depends = {"core"}
     run_preferably_after = "core"
     cli_options = [
         CLIOption(

@@ -1,0 +1,8 @@
+- id: root1
+- id: root2
+- depends:
+  - root1
+  id: child1
+- depends:
+  - root2
+  id: child2

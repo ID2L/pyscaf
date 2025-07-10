@@ -18,7 +18,7 @@ console = Console()
 class GitAction(Action):
     """Action to initialize a Git repository in a project."""
 
-    depends = ["core"]
+    depends = {"core"}
     run_preferably_after = "core"
     cli_options = [
         CLIOption(

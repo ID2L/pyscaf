@@ -11,6 +11,7 @@ from pyscaf import __version__
 from pyscaf.actions import discover_actions
 from pyscaf.actions.manager import ActionManager
 from pyscaf.preference_chain import best_execution_order
+from pyscaf.preference_chain.model import Node
 
 console = Console()
 
@@ -29,20 +30,18 @@ def collect_cli_options():
     action_class_by_id = {}
     for action_cls in action_classes:
         action_id = action_cls.__name__.replace("Action", "").lower()
-        deps.append(
-            {
-                "id": action_id,
-                "depends": getattr(action_cls, "depends", []),
-                "after": getattr(action_cls, "run_preferably_after", None),
-            }
-        )
+        depends = getattr(action_cls, "depends", set())
+        after = getattr(action_cls, "run_preferably_after", None)
+
+        # If there are dependencies but no 'after' is specified, use the first dependency
+        if depends and after is None:
+            after = next(iter(depends))
+
+        # Create Node object
+        node = Node(id=action_id, depends=depends, after=after)
+        deps.append(node)
         action_class_by_id[action_id] = action_cls
-    order = best_execution_order(
-        [
-            {"id": d["id"], "fullfilled": [d["id"]], "external": d["depends"] or []}
-            for d in deps
-        ]
-    )
+    order = best_execution_order(deps)
     cli_options = []
     for action_id in order:
         action_cls = action_class_by_id[action_id]
