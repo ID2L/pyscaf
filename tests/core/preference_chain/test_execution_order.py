@@ -14,9 +14,9 @@ class TestBestExecutionOrder:
     def test_simple_linear_execution_order(self):
         """Test simple linear dependency chain using the API format."""
         nodes = [
-            Node(id="A", depends=[], after=None),
-            Node(id="B", depends=["A"], after="A"),
-            Node(id="C", depends=["B"], after="B"),
+            Node(id="A", depends=set(), after=None),
+            Node(id="B", depends={"A"}, after="A"),
+            Node(id="C", depends={"B"}, after="B"),
         ]
 
         result = best_execution_order(nodes)
@@ -27,10 +27,10 @@ class TestBestExecutionOrder:
     def test_diamond_execution_order(self):
         """Test diamond dependency pattern."""
         nodes = [
-            Node(id="A", depends=[], after=None),
-            Node(id="B", depends=["A"], after="A"),
-            Node(id="C", depends=["A"], after="A"),
-            Node(id="D", depends=["B", "C"], after="B"),
+            Node(id="A", depends=set(), after=None),
+            Node(id="B", depends={"A"}, after="A"),
+            Node(id="C", depends={"A"}, after="A"),
+            Node(id="D", depends={"B", "C"}, after="B"),
         ]
 
         result = best_execution_order(nodes)
@@ -51,9 +51,9 @@ class TestBestExecutionOrder:
     def test_single_dependency_auto_after(self):
         """Test that single dependencies automatically set 'after' preference."""
         nodes = [
-            Node(id="root", depends=[], after=None),
-            Node(id="setup", depends=["root"], after="root"),
-            Node(id="build", depends=["setup"], after="setup"),
+            Node(id="root", depends=set(), after=None),
+            Node(id="setup", depends={"root"}, after="root"),
+            Node(id="build", depends={"setup"}, after="setup"),
         ]
 
         result = best_execution_order(nodes)
@@ -64,9 +64,9 @@ class TestBestExecutionOrder:
     def test_multiple_external_dependencies(self):
         """Test nodes with multiple external dependencies."""
         nodes = [
-            Node(id="A", depends=[], after=None),
-            Node(id="B", depends=[], after=None),
-            Node(id="C", depends=["A", "B"], after="A"),
+            Node(id="A", depends=set(), after=None),
+            Node(id="B", depends=set(), after=None),
+            Node(id="C", depends={"A", "B"}, after="A"),
         ]
 
         result = best_execution_order(nodes)
@@ -83,9 +83,21 @@ class TestBestExecutionOrder:
     def test_circular_dependency_detection(self):
         """Test that circular dependencies are detected."""
         nodes = [
-            Node(id="A", depends=["B"], after="B"),
-            Node(id="B", depends=["C"], after="C"),
-            Node(id="C", depends=["A"], after="A"),
+            Node(id="A", depends={"C"}, after="C"),
+            Node(id="B", depends={"A"}, after="A"),
+            Node(id="C", depends={"B"}, after="B"),
+        ]
+
+        with pytest.raises(CircularDependencyError):
+            best_execution_order(nodes)
+
+    def test_complex_circular_dependency_detection(self):
+        """Test that circular dependencies are detected."""
+        nodes = [
+            Node(id="root", depends={"A"}, after="A"),
+            Node(id="A", depends={"C"}, after="C"),
+            Node(id="B", depends={"A"}, after="A"),
+            Node(id="C", depends={"B"}, after="B"),
         ]
 
         with pytest.raises(CircularDependencyError):
@@ -94,15 +106,15 @@ class TestBestExecutionOrder:
     def test_complex_real_world_scenario(self):
         """Test a complex scenario resembling real CI/CD pipeline dependencies."""
         nodes = [
-            Node(id="checkout", depends=[], after=None),
-            Node(id="install-deps", depends=["checkout"], after="checkout"),
-            Node(id="lint", depends=["install-deps"], after="install-deps"),
-            Node(id="test", depends=["install-deps"], after="install-deps"),
-            Node(id="build", depends=["lint", "test"], after="lint"),
-            Node(id="docker-build", depends=["build"], after="build"),
-            Node(id="deploy-staging", depends=["docker-build"], after="docker-build"),
-            Node(id="e2e-tests", depends=["deploy-staging"], after="deploy-staging"),
-            Node(id="deploy-prod", depends=["e2e-tests"], after="e2e-tests"),
+            Node(id="checkout", depends=set(), after=None),
+            Node(id="install-deps", depends={"checkout"}, after="checkout"),
+            Node(id="lint", depends={"install-deps"}, after="install-deps"),
+            Node(id="test", depends={"install-deps"}, after="install-deps"),
+            Node(id="build", depends={"lint", "test"}, after="lint"),
+            Node(id="docker-build", depends={"build"}, after="build"),
+            Node(id="deploy-staging", depends={"docker-build"}, after="docker-build"),
+            Node(id="e2e-tests", depends={"deploy-staging"}, after="deploy-staging"),
+            Node(id="deploy-prod", depends={"e2e-tests"}, after="e2e-tests"),
         ]
 
         result = best_execution_order(nodes)
@@ -146,15 +158,15 @@ class TestBestExecutionOrder:
 
     def test_single_node(self):
         """Test with a single node."""
-        nodes = [Node(id="single", depends=[], after=None)]
+        nodes = [Node(id="single", depends=set(), after=None)]
         result = best_execution_order(nodes)
         assert result == ["single"], f"Expected ['single'], got {result}"
 
     def test_invalid_after_field(self):
         """Test that invalid 'after' field raises an error."""
         nodes = [
-            Node(id="A", depends=[], after=None),
-            Node(id="B", depends=["A"], after="C"),  # 'C' is not in depends
+            Node(id="A", depends=set(), after=None),
+            Node(id="B", depends={"A"}, after="C"),  # 'C' is not in depends
         ]
 
         with pytest.raises(
@@ -165,8 +177,8 @@ class TestBestExecutionOrder:
     def test_auto_after_for_single_dependency(self):
         """Test that 'after' is automatically set for single dependency."""
         nodes = [
-            Node(id="A", depends=[], after=None),
-            Node(id="B", depends=["A"], after=None),  # Should auto-set to "A"
+            Node(id="A", depends=set(), after=None),
+            Node(id="B", depends={"A"}, after=None),  # Should auto-set to "A"
         ]
 
         result = best_execution_order(nodes)
@@ -183,9 +195,9 @@ if __name__ == "__main__":
 
     # Run a simple test
     nodes = [
-        Node(id="A", depends=[], after=None),
-        Node(id="B", depends=["A"], after="A"),
-        Node(id="C", depends=["B"], after="B"),
+        Node(id="A", depends=set(), after=None),
+        Node(id="B", depends={"A"}, after="A"),
+        Node(id="C", depends={"B"}, after="B"),
     ]
 
     result = best_execution_order(nodes)

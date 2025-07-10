@@ -3,6 +3,8 @@ import logging
 
 from pyscaf.preference_chain.model import ChainLink, ExtendedNode, Node
 
+from .circular_dependency_error import CircularDependencyError
+
 logger = logging.getLogger(__name__)
 
 
@@ -128,6 +130,13 @@ def build_chains(tree: list[ExtendedNode]) -> list[ChainLink]:
         chain = update_chains(node, chains)
         logger.debug(f"Chain (before merging): {chain.ids}")
         chain = merge_chains(chain, chains)
+
+        if (
+            chain.tail.referenced_by is not None
+            and chain.head.id in chain.tail.referenced_by
+        ):
+            logger.debug(f"Chain (after merging): {chain.ids} is a loop")
+            raise CircularDependencyError("Circular dependency detected")
         logger.debug(
             f"Chain (after merging):"
             f"Chain: {chain.ids} referenced by {chain.referenced_by}"
@@ -154,21 +163,8 @@ def compute_all_resolution_pathes(chains: list[ChainLink]):
                 else set()
             )
 
-            # Check head dependency
-            if (
-                i > 0
-                and chain.head is not None
-                and chain.head.after is not None
-                and chain.head.after not in previous_ids
-            ):
-                logger.debug(
-                    f"Path rejected: chain {chain.ids} head {chain.head.id} not in previous ids {previous_ids}"
-                )
-                is_valid = False
-                break
-
-            # Check external dependencies
-            if i > 0 and not chain.external_dependencies.issubset(previous_ids):
+            # Check dependencies
+            if not chain.depends.issubset(previous_ids):
                 logger.debug(
                     f"Path rejected: chain {chain.ids} external deps {chain.external_dependencies} not in previous ids {previous_ids}"
                 )
