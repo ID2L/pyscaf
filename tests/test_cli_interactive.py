@@ -137,6 +137,7 @@ def test_cli_init_interactive(
     mock_confirm.side_effect = [
         MagicMock(ask=lambda: True),
         MagicMock(ask=lambda: True),
+        MagicMock(ask=lambda: True),
     ]
     mock_select.side_effect = []
     mock_checkbox.side_effect = []
