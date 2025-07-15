@@ -19,8 +19,8 @@ console = Console()
 class TestAction(Action):
     """Action to initialize a project with pytest testing framework."""
 
-    depends = {"core"}
-    run_preferably_after = "core"
+    depends = {"core", "git"}
+    run_preferably_after = "git"
     cli_options = [
         CLIOption(
             name="--testing",
@@ -64,13 +64,20 @@ class TestAction(Action):
             project_name=project_name, curated_project_name=curated_project_name
         )
 
-        # Return skeleton dictionary
-        return {
+        # Ajout conditionnel du .gitignore si git est activé
+        skeleton = {
             Path("tests"): None,  # Create tests directory
             Path("tests/__init__.py"): "",  # Empty init file for tests package
             Path(f"tests/test_{curated_project_name}.py"): test_example,
             Path("tests/README.md"): pytest_doc,
         }
+        if context.get("versionning"):
+            gitignore_path = Path(__file__).parent / "template.gitignore"
+            gitignore_content = (
+                gitignore_path.read_text() if gitignore_path.exists() else ""
+            )
+            skeleton[Path(".gitignore")] = gitignore_content
+        return skeleton
 
     def init(self, context: dict) -> None:
         """

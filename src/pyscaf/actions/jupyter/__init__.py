@@ -19,8 +19,8 @@ console = Console()
 class JupyterAction(Action):
     """Action to initialize Jupyter notebook support in a project."""
 
-    depends = {"core"}
-    run_preferably_after = "core"
+    depends = {"core", "git"}
+    run_preferably_after = "git"
     cli_options = [
         CLIOption(
             name="--jupyter",
@@ -58,23 +58,18 @@ This directory contains Jupyter notebooks for the {project_name} project.
 {jupyter_doc}
 """
 
-        # Create .gitignore for notebooks to ignore checkpoints
-        gitignore_content = """# Jupyter Notebook
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-
-# IPython
-profile_default/
-ipython_config.py
-"""
-
-        # Return skeleton dictionary
-        return {
+        # Ajout conditionnel du .gitignore si git est activé
+        skeleton = {
             Path("notebooks"): None,  # Create main notebook directory
             Path("notebooks/README.md"): notebook_readme,
-            # Append Jupyter gitignore to root .gitignore
-            Path(".gitignore"): gitignore_content,
         }
+        if context.get("versionning"):
+            gitignore_path = Path(__file__).parent / "template.gitignore"
+            gitignore_content = (
+                gitignore_path.read_text() if gitignore_path.exists() else ""
+            )
+            skeleton[Path(".gitignore")] = gitignore_content
+        return skeleton
 
     def init(self, context: dict) -> None:
         """
