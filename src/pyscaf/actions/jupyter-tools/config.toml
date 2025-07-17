@@ -1,0 +1,8 @@
+# Jupyter Tools Configuration
+
+[tool.pyscaf.jupyter-tools]
+# Default output directories
+python_notebook_dir = "notebooks/python"
+jupyter_notebook_dir = "notebooks/ipynb"
+pdf_dir = "generated/pdfs"
+html_dir = "generated/html"
