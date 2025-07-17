@@ -71,67 +71,6 @@ This directory contains Jupyter notebooks for the {project_name} project.
             skeleton[Path(".gitignore")] = gitignore_content
         return skeleton
 
-    def init(self, context: dict) -> None:
-        """
-        Initialize Jupyter notebook support after skeleton creation.
-
-        This will add the necessary dependencies to pyproject.toml.
-        """
-        console.print("[bold blue]Initializing Jupyter notebook support...[/bold blue]")
-
-        try:
-            # Change to project directory
-            os.chdir(self.project_path)
-
-            # Add Jupyter dependencies to poetry dev group
-            console.print(
-                "[bold cyan]Adding Jupyter dependencies to poetry dev group...[/bold cyan]"
-            )
-
-            jupyter_deps = [
-                "jupyter",
-                "notebook",
-                "nbconvert",
-                "ipykernel",
-                "matplotlib",
-                "pandas",
-            ]
-
-            # Read current pyproject.toml
-            pyproject_path = Path("pyproject.toml")
-            with open(pyproject_path, "rb") as f:
-                pyproject = tomli.load(f)
-
-            # Ensure tool.poetry.group.dev exists
-            if "tool" not in pyproject:
-                pyproject["tool"] = {}
-            if "poetry" not in pyproject["tool"]:
-                pyproject["tool"]["poetry"] = {}
-            if "group" not in pyproject["tool"]["poetry"]:
-                pyproject["tool"]["poetry"]["group"] = {}
-            if "dev" not in pyproject["tool"]["poetry"]["group"]:
-                pyproject["tool"]["poetry"]["group"]["dev"] = {"dependencies": {}}
-
-            # Add each dependency to the dev group
-            for dep in jupyter_deps:
-                pyproject["tool"]["poetry"]["group"]["dev"]["dependencies"][dep] = "*"
-                console.print(
-                    f"[bold green]Added {dep} to dev dependencies[/bold green]"
-                )
-
-            # Write back to pyproject.toml
-            with open(pyproject_path, "wb") as f:
-                tomli_w.dump(pyproject, f)
-
-            console.print(
-                "[bold green]Jupyter dependencies added to poetry.dev group![/bold green]"
-            )
-
-        except FileNotFoundError:
-            console.print(
-                "[bold yellow]pyproject.toml not found. Please ensure you are in a Poetry project.[/bold yellow]"
-            )
-
     def install(self, context: dict) -> None:
         """
         Set up the Jupyter kernel for the project.

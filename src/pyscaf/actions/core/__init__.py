@@ -83,7 +83,7 @@ class CoreAction(Action):
         """
         Initialize Core after skeleton creation.
 
-        This will run 'poetry init' in interactive mode, allowing user input.
+        This will run 'poetry init' in non-interactive mode.
         """
         console.print("[bold blue]Initializing core project...[/bold blue]")
 
