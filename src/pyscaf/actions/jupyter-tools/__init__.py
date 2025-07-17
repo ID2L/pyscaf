@@ -12,6 +12,7 @@ import tomli_w
 from rich.console import Console
 
 from pyscaf.actions import Action, CLIOption
+from pyscaf.tools.toml_merge import merge_toml_files
 
 console = Console()
 
@@ -77,15 +78,12 @@ class JupyterToolsAction(Action):
                     f"[bold yellow]Warning: Could not parse config.toml: {e}[/bold yellow]"
                 )
 
-        # Create tools directory structure with embedded documentation
-
         # Copy scripts from the source
         scripts_dir = Path(__file__).parent / "scripts"
 
         skeleton = {
             Path("jupyter_tools"): None,  # Create tools directory
             Path("README.md"): readme_content,  # Add to configuration
-            Path("pyproject.toml"): config_content,
         }
 
         # Add configured directories to skeleton
@@ -99,80 +97,6 @@ class JupyterToolsAction(Action):
                 skeleton[Path(f"jupyter_tools/{script_file.name}")] = script_content
 
         return skeleton
-
-    def init(self, context: dict) -> None:
-        """
-        Initialize Jupyter tools after skeleton creation.
-
-        This will add the necessary dependencies to pyproject.toml and register CLI scripts in [project][scripts].
-        """
-        console.print("[bold blue]Initializing Jupyter tools...[/bold blue]")
-
-        try:
-            # Change to project directory
-            os.chdir(self.project_path)
-
-            # Add Jupyter tools dependencies to poetry dev group
-            console.print(
-                "[bold cyan]Adding Jupyter tools dependencies to poetry dev group...[/bold cyan]"
-            )
-
-            jupyter_tools_deps = [
-                "jupytext",
-                "nbconvert",
-                "weasyprint",
-                "pandoc",
-            ]
-
-            # Read current pyproject.toml
-            pyproject_path = Path("pyproject.toml")
-            with open(pyproject_path, "rb") as f:
-                pyproject = tomli.load(f)
-
-            # Ensure tool.poetry.group.dev exists
-            if "tool" not in pyproject:
-                pyproject["tool"] = {}
-            if "poetry" not in pyproject["tool"]:
-                pyproject["tool"]["poetry"] = {}
-            if "group" not in pyproject["tool"]["poetry"]:
-                pyproject["tool"]["poetry"]["group"] = {}
-            if "dev" not in pyproject["tool"]["poetry"]["group"]:
-                pyproject["tool"]["poetry"]["group"]["dev"] = {"dependencies": {}}
-
-            # Add each dependency to the dev group
-            for dep in jupyter_tools_deps:
-                pyproject["tool"]["poetry"]["group"]["dev"]["dependencies"][dep] = "*"
-                console.print(
-                    f"[bold green]Added {dep} to dev dependencies[/bold green]"
-                )
-
-            # Ensure project.scripts exists
-            if "project" not in pyproject:
-                pyproject["project"] = {}
-            if "scripts" not in pyproject["project"]:
-                pyproject["project"]["scripts"] = {}
-            scripts = pyproject["project"]["scripts"]
-
-            # Register the scripts (user must provide arguments manually)
-            scripts["py-to-nb"] = "jupyter_tools.py_to_notebook:main"
-            scripts["exec-nb"] = "jupyter_tools.execute_notebook:main"
-            scripts["nb-to-html"] = "jupyter_tools.notebook_to_html:main"
-
-            # Write back to pyproject.toml
-            with open(pyproject_path, "wb") as f:
-                tomli_w.dump(pyproject, f)
-
-            console.print(
-                "[bold green]Jupyter tools dependencies and scripts added to pyproject.toml ([project][scripts])![/bold green]"
-            )
-            console.print(
-                "[bold blue]You can now use the scripts via poetry run py-to-nb, exec-nb, nb-to-html (arguments required).[/bold blue]"
-            )
-
-        except FileNotFoundError:
-            console.print(
-                "[bold yellow]pyproject.toml not found. Please ensure you are in a Poetry project.[/bold yellow]"
-            )
 
     def install(self, context: dict) -> None:
         """
