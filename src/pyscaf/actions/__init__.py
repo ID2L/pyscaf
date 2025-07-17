@@ -3,6 +3,7 @@ Action classes for project scaffolding.
 """
 
 import importlib
+import logging
 import os
 import pkgutil
 from abc import ABC, abstractmethod
@@ -10,6 +11,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import BaseModel
+
+from pyscaf.tools.toml_merge import merge_toml_files
+
+logger = logging.getLogger(__name__)
 
 
 class CLIOption(BaseModel):
@@ -70,12 +75,19 @@ class Action(ABC):
 
     def init(self, context: dict) -> None:
         """
-        Initialize the action after skeleton creation, using the provided context.
-
-        This method is called after all skeletons have been created.
-        Use it to run tools, modify files, etc.
+        Default implementation: merges config.toml from the concrete action's directory into pyproject.toml in the project root (if it exists).
         """
-        pass
+        # Find the module where the concrete action is defined
+        module = importlib.import_module(self.__class__.__module__)
+        module_file = module.__file__
+        if not module_file:
+            raise RuntimeError(f"Module {module} has no __file__ attribute")
+        action_dir = Path(module_file).parent
+        config_path = action_dir / "config.toml"
+        pyproject_path = self.project_path / "pyproject.toml"
+        if config_path.exists():
+            merge_toml_files(input_path=config_path, output_path=pyproject_path)
+            print(f"[INFO] Merged {config_path} into {pyproject_path}")
 
     def install(self, context: dict) -> None:
         """
@@ -109,6 +121,7 @@ class Action(ABC):
                 # Create file with content or append if exists
                 if full_path.exists():
                     # Append content to existing file
+                    print(f"Appending content to {full_path}")
                     with open(full_path, "a") as f:
                         f.write("\n" + content)
                 else:
@@ -142,4 +155,5 @@ def discover_actions():
             obj = getattr(mod, attr)
             if isinstance(obj, type) and issubclass(obj, Action) and obj is not Action:
                 actions.append(obj)
+    return actions
     return actions
