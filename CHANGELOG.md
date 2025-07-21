@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.11.0 (2025-07-21)
+
+### Features
+
+- Jupyter-tool action for jupyter ease of use
+  ([`6a87020`](https://github.com/ID2L/pyscaf/commit/6a870203bb6e196f568cae22be0965c1a90db0b2))
+
+
 ## v0.10.4 (2025-06-06)
 
 ### Bug Fixes
