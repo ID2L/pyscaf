@@ -51,8 +51,14 @@ def exec_nb_all():
 
 def nb_to_html_all():
     config = load_project_config()
-    src_dir = config["tool"]["pyscaf"]["jupyter-tools"]["jupyter_notebook_dir"]
-    html_dir = config["tool"]["pyscaf"]["jupyter-tools"]["html_dir"]
+    section = config["tool"]["pyscaf"]["jupyter-tools"]
+    src_dir = section["jupyter_notebook_dir"]
+    html_dir = section["html_dir"]
+    hide_input = section.get("hide_input", False)
+    hide_output = section.get("hide_output", False)
+    template_name = section.get("template_name", "classic")
+    template_path = section.get("template_path", "")
+    template_file = section.get("template_file", "")
     for root, _, files in os.walk(src_dir):
         for file in files:
             if file.endswith(".ipynb"):
@@ -62,8 +68,14 @@ def nb_to_html_all():
                     html_dir, os.path.splitext(rel_path)[0] + ".html"
                 )
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                convert_notebook_to_html(input_path, output_path)
+                convert_notebook_to_html(
+                    input_path,
+                    output_path,
+                    hide_input=hide_input,
+                    hide_output=hide_output,
+                    template_name=template_name or None,
+                    template_path=template_path or None,
+                    template_file=template_file or None,
+                )
                 print(f"Converted {input_path} -> {output_path}")
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                convert_notebook_to_html(input_path, output_path)
                 print(f"Converted {input_path} -> {output_path}")

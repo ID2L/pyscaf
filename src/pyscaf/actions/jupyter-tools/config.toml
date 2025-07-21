@@ -7,6 +7,13 @@ jupyter_notebook_dir = "notebooks/ipynb"
 pdf_dir = "generated/pdfs"
 html_dir = "generated/html"
 
+# notebook_to_html.py options
+hide_input = false
+hide_output = false
+template_name = "classic"
+template_path = ""
+template_file = ""
+
 [project.scripts]
 # Convenient scripts
 py-to-nb = "jupyter_tools.py_to_notebook:main"
