@@ -1,0 +1,30 @@
+# Jupyter Tools Configuration
+
+[tool.pyscaf.jupyter-tools]
+# Default output directories
+python_notebook_dir = "notebooks/python"
+jupyter_notebook_dir = "notebooks/ipynb"
+pdf_dir = "generated/pdfs"
+html_dir = "generated/html"
+
+# notebook_to_html.py options
+hide_input = false
+hide_output = false
+template_name = "classic"
+template_path = ""
+template_file = ""
+
+[project.scripts]
+# Convenient scripts
+py-to-nb = "jupyter_tools.py_to_notebook:main"
+exec-nb = "jupyter_tools.execute_notebook:main"
+nb-to-html = "jupyter_tools.notebook_to_html:main"
+py-to-nb-all = "jupyter_tools.main:py_to_nb_all"
+exec-nb-all = "jupyter_tools.main:exec_nb_all"
+nb-to-html-all = "jupyter_tools.main:nb_to_html_all"
+
+[tool.poetry.group.dev.dependencies]
+jupytext = "*"
+nbconvert = "*"
+# weasyprint = "*"
+# pandoc = "*"
