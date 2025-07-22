@@ -7,6 +7,8 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Optional
 
+import tomli
+import tomli_w
 from rich.console import Console
 
 from pyscaf.actions import Action, CLIOption
@@ -72,7 +74,7 @@ class CoreAction(Action):
                 f"# {project_name}\n\nA Python project created with pyscaf\n\n"
                 f"{poetry_doc}\n"
             ),
-            Path(f"{currated_projet_name}/__init__.py"): (
+            Path(f"src/{currated_projet_name}/__init__.py"): (
                 f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'
             ),
             Path(".vscode/settings.json"): vscode_settings if vscode_settings else None,
@@ -106,6 +108,39 @@ class CoreAction(Action):
                 stdout=None,
                 stderr=None,
             )
+
+            project_name = context.get("project_name", "myproject")
+            currated_projet_name = project_name.replace("-", "_")
+
+            # Ajout dynamique de la clé packages dans [tool.poetry] du pyproject.toml
+            pyproject_path = Path("pyproject.toml")
+            print("pyproject_path", pyproject_path)
+            if pyproject_path.exists():
+                print("pyproject_path exists")
+                with pyproject_path.open("rb") as f:
+                    pyproject_data = tomli.load(f)
+                try:
+                    # Ensure tool.poetry.group.dev exists
+                    if "tool" not in pyproject_data:
+                        pyproject_data["tool"] = {}
+                    if "poetry" not in pyproject_data["tool"]:
+                        pyproject_data["tool"]["poetry"] = {}
+                    pyproject_data["tool"]["poetry"]["packages"] = [
+                        {"include": currated_projet_name, "from": "src"}
+                    ]
+                    with pyproject_path.open("wb") as f:
+                        f.write(tomli_w.dumps(pyproject_data).encode("utf-8"))
+                    console.print(
+                        f"[bold green]Added [tool.poetry].packages for {currated_projet_name} in pyproject.toml[/bold green]"
+                    )
+                except Exception as e:
+                    console.print(
+                        f"[bold yellow]Section [tool.poetry] not found or error: {e}[/bold yellow]"
+                    )
+            else:
+                console.print(
+                    "[bold yellow]pyproject.toml not found after poetry init.[/bold yellow]"
+                )
 
             if result == 0:
                 console.print(
