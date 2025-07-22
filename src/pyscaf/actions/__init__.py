@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import BaseModel
 
+from pyscaf.tools.format_toml import format_toml
 from pyscaf.tools.toml_merge import merge_toml_files
 
 logger = logging.getLogger(__name__)
@@ -87,6 +88,7 @@ class Action(ABC):
         pyproject_path = self.project_path / "pyproject.toml"
         if config_path.exists():
             merge_toml_files(input_path=config_path, output_path=pyproject_path)
+            format_toml(pyproject_path)
             print(f"[INFO] Merged {config_path} into {pyproject_path}")
 
     def install(self, context: dict) -> None:

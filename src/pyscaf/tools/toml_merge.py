@@ -1,52 +1,53 @@
 from pathlib import Path
 
-import tomli
-import tomli_w
+import tomlkit
 
 
 def merge_toml_files(input_path: Path, output_path: Path):
     """
     Merges all content from input_path TOML file into output_path TOML file.
     Recursively merges sections and avoids duplicates by intelligently combining content.
+    Preserves and merges comments at the correct location (inline, under section, etc.).
     """
-    # Read files
-    input_data = {}
-    output_data = {}
-    if input_path.exists():
-        with open(input_path, "rb") as f:
-            input_data = tomli.load(f)
-    if output_path.exists():
-        with open(output_path, "rb") as f:
-            output_data = tomli.load(f)
+    # Read files as TOML documents (preserving comments)
+    input_doc = (
+        tomlkit.parse(input_path.read_text(encoding="utf-8"))
+        if input_path.exists()
+        else tomlkit.document()
+    )
+    output_doc = (
+        tomlkit.parse(output_path.read_text(encoding="utf-8"))
+        if output_path.exists()
+        else tomlkit.document()
+    )
 
-    def deep_merge(source, destination):
+    def deep_merge(source, dest):
         """
-        Recursively merge source dict into destination dict.
-        For lists, extend them. For other types, source overwrites destination.
+        Recursively merge source into dest, preserving comments and structure.
         """
-        for key, value in source.items():
-            if key in destination:
-                if isinstance(destination[key], dict) and isinstance(value, dict):
-                    # Both are dicts, merge recursively
-                    deep_merge(value, destination[key])
-                elif isinstance(destination[key], list) and isinstance(value, list):
-                    # Both are lists, extend destination with new items
-                    for item in value:
-                        if item not in destination[key]:
-                            print(f"Adding {item} to {key}\n")
-                            destination[key].append(item)
+        for key in source:
+            if key in dest:
+                if isinstance(source[key], dict) and isinstance(dest[key], dict):
+                    print("table merge")
+                    # Both are tables, merge recursively
+                    deep_merge(source[key], dest[key])
+                elif isinstance(source[key], list) and isinstance(dest[key], list):
+                    print("array merge")
+                    # Both are arrays, extend with unique items
+                    for item in source[key]:
+                        if item not in dest[key]:
+                            dest[key].append(item)
                 else:
-                    # Source overwrites destination for other types
-                    print(f"Overwriting {key} with {value}\n")
-                    destination[key] = value
+                    print("value merge")
+                    # Overwrite value, preserve inline comment if present
+                    dest[key] = source[key]
             else:
-                # Key doesn't exist in destination, add it
-                print(f"Adding {key} to {destination}\n")
-                destination[key] = value
+                print("new key")
+                # New key: insert with its comments
+                dest[key] = source[key]
+                # tomlkit preserves comments automatically for new keys
 
-    # Merge all content from input into output
-    deep_merge(input_data, output_data)
+    deep_merge(input_doc, output_doc)
 
-    # Write output file
-    with open(output_path, "wb") as f:
-        tomli_w.dump(output_data, f)
+    # Write output, preserving comments
+    output_path.write_text(tomlkit.dumps(output_doc), encoding="utf-8")

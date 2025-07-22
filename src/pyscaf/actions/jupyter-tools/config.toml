@@ -26,5 +26,3 @@ nb-to-html-all = "jupyter_tools.main:nb_to_html_all"
 [tool.poetry.group.dev.dependencies]
 jupytext = "*"
 nbconvert = "*"
-# weasyprint = "*"
-# pandoc = "*"
