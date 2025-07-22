@@ -28,21 +28,17 @@ def merge_toml_files(input_path: Path, output_path: Path):
         for key in source:
             if key in dest:
                 if isinstance(source[key], dict) and isinstance(dest[key], dict):
-                    print("table merge")
                     # Both are tables, merge recursively
                     deep_merge(source[key], dest[key])
                 elif isinstance(source[key], list) and isinstance(dest[key], list):
-                    print("array merge")
                     # Both are arrays, extend with unique items
                     for item in source[key]:
                         if item not in dest[key]:
                             dest[key].append(item)
                 else:
-                    print("value merge")
                     # Overwrite value, preserve inline comment if present
                     dest[key] = source[key]
             else:
-                print("new key")
                 # New key: insert with its comments
                 dest[key] = source[key]
                 # tomlkit preserves comments automatically for new keys
