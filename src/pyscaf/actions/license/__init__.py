@@ -4,12 +4,12 @@ from typing import Dict, Optional
 from pyscaf.actions import Action, CLIOption
 
 LICENSES = {
-    "MIT": "template_MIT.txt",
-    "Apache-2.0": "template_Apache-2.0.txt",
-    "GPL-3.0": "template_GPL-3.0.txt",
-    "BSD-3-Clause": "template_BSD-3-Clause.txt",
-    "Mozilla": "template_MPL-2.0.txt",
-    "Unlicense": "template_Unlicense.txt",
+    "MIT (permissive, suitable for most open source projects)": "template_MIT.txt",
+    "Apache-2.0 (permissive, protects against patent claims, recommended for companies)": "template_Apache-2.0.txt",
+    "GPL-3.0 (copyleft, requires sharing source code of derivatives)": "template_GPL-3.0.txt",
+    "BSD-3-Clause (permissive, good for academic or enterprise projects)": "template_BSD-3-Clause.txt",
+    "Mozilla (MPL-2.0, weak copyleft, for libraries or modules)": "template_MPL-2.0.txt",
+    "Unlicense (public domain, no restrictions)": "template_Unlicense.txt",
 }
 
 
@@ -25,7 +25,7 @@ class LicenseAction(Action):
             help="Choose a license for your project",
             prompt="Which license do you want to use?",
             choices=list(LICENSES.keys()),
-            default="MIT",
+            default=list(LICENSES.keys())[0],
         ),
     ]
 
@@ -39,8 +39,8 @@ class LicenseAction(Action):
         """
         import datetime
 
-        license_name = context.get("license", "MIT")
-        template_file = LICENSES.get(license_name, LICENSES["MIT"])
+        license_name = context.get("license", list(LICENSES.keys())[0])
+        template_file = LICENSES.get(license_name, list(LICENSES.keys())[0])
         template_path = Path(__file__).parent / template_file
         license_content = (
             template_path.read_text()
