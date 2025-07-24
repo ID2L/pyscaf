@@ -36,8 +36,10 @@ class JupyterToolsAction(Action):
         super().__init__(project_path)
 
     def activate(self, context: dict) -> bool:
-        return context.get("jupyter_tools") is None or context.get(
-            "jupyter_tools", True
+        return (
+            context.get("jupyter", True)
+            and context.get("jupyter_tools") is None
+            or context.get("jupyter_tools", True)
         )
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
