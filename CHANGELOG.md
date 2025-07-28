@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.1.0 (2025-07-28)
+
+### Features
+
+- **documentation**: Added readme
+  ([`166616b`](https://github.com/ID2L/pyscaf/commit/166616b255d1a66d8b60ac626164fe0cd6e9af9e))
+
+
 ## v1.0.0 (2025-07-28)
 
 ### Bug Fixes
@@ -10,9 +18,8 @@
 
 BREAKING CHANGE: scaffolded scripts pathes has change
 
-### Breaking Changes
-
-- Scaffolded scripts pathes has change
+- **readme**: Removed deprecated info
+  ([`a9aed8c`](https://github.com/ID2L/pyscaf/commit/a9aed8c9f823c0f50eb133820a3941cce61236e3))
 
 
 ## v0.11.0 (2025-07-21)
