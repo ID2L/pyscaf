@@ -33,10 +33,11 @@ class DocumentationAction(Action):
         doc_type = DOC_TYPES.get(doc_choice, "pdoc")
         skeleton = {}
         if doc_type == "pdoc":
-            skeleton[Path("docs/README.md")] = (
-                "# API Documentation\n\nThis documentation is auto-generated using [pdoc](https://pdoc.dev/).\n"
-            )
-            skeleton[Path("docs/.gitkeep")] = ""  # To keep the docs folder in git
+            # Read documentation README
+            doc_readme_path = Path(__file__).parent / "README.md"
+            doc_readme = doc_readme_path.read_text() if doc_readme_path.exists() else ""
+
+            skeleton[Path("README.md")] = doc_readme
 
             # Copy scripts from the source
             scripts_dir = Path(__file__).parent / "scripts"
