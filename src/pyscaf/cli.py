@@ -58,7 +58,9 @@ def add_dynamic_options(command):
         if opt.type == "int":
             click_opts["type"] = int
         elif opt.type == "choice" and opt.choices:
-            click_opts["type"] = click.Choice(opt.choices, case_sensitive=False)
+            # Use choice keys for CLI
+            choice_keys = opt.get_choice_keys()
+            click_opts["type"] = click.Choice(choice_keys, case_sensitive=False)
             if opt.multiple:
                 click_opts["multiple"] = True
         elif opt.type == "str":

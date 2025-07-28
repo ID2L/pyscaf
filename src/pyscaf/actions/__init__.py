@@ -18,16 +18,118 @@ from pyscaf.tools.toml_merge import merge_toml_files
 logger = logging.getLogger(__name__)
 
 
+class ChoiceOption(BaseModel):
+    """Represents a choice option with different display formats for CLI and interactive modes.
+    
+    This class allows you to define choices with:
+    - key: Short identifier for CLI usage (e.g., "mit", "pdoc")
+    - display: Verbose description for interactive mode (e.g., "MIT License (permissive)")
+    - value: The actual value stored in context (e.g., "template_MIT.txt")
+    
+    Example:
+        choices = [
+            ChoiceOption(
+                key="mit",
+                display="MIT License (permissive, suitable for most projects)",
+                value="template_MIT.txt"
+            ),
+            ChoiceOption(
+                key="apache",
+                display="Apache-2.0 License (permissive, protects against patent claims)",
+                value="template_Apache-2.0.txt"
+            ),
+        ]
+        
+        option = CLIOption(
+            name="--license",
+            type="choice",
+            choices=choices,
+            default=0  # Index of the default choice
+        )
+    """
+    key: str  # Short key for CLI usage
+    display: str  # Verbose display for interactive mode
+    value: Any  # The actual value to be stored in context
+
+
 class CLIOption(BaseModel):
     name: str  # e.g. '--author'
     type: str = "str"  # 'str', 'bool', 'int', 'choice', etc.
     help: Optional[str] = None
-    default: Any = None
+    default: Any = None  # For choice type, this should be an index (int)
     prompt: Optional[str] = None
-    choices: Optional[List[Any]] = None  # For choice type
+    choices: Optional[List[Any]] = None  # For choice type - can be List[str] or List[ChoiceOption]
     is_flag: Optional[bool] = None  # For bool
     multiple: Optional[bool] = None  # For multi-choice
     required: Optional[bool] = None
+
+    def get_choice_keys(self) -> List[str]:
+        """Get the list of choice keys for CLI usage."""
+        if not self.choices:
+            return []
+        
+        if isinstance(self.choices[0], ChoiceOption):
+            return [choice.key for choice in self.choices]
+        return self.choices
+
+    def get_choice_displays(self) -> List[str]:
+        """Get the list of choice displays for interactive mode."""
+        if not self.choices:
+            return []
+        
+        if isinstance(self.choices[0], ChoiceOption):
+            return [choice.display for choice in self.choices]
+        return self.choices
+
+    def get_choice_values(self) -> List[Any]:
+        """Get the list of choice values."""
+        if not self.choices:
+            return []
+        
+        if isinstance(self.choices[0], ChoiceOption):
+            return [choice.value for choice in self.choices]
+        return self.choices
+
+    def get_choice_by_key(self, key: str) -> Optional[Any]:
+        """Get the value corresponding to a choice key."""
+        if not self.choices:
+            return None
+        
+        if isinstance(self.choices[0], ChoiceOption):
+            for choice in self.choices:
+                if choice.key == key:
+                    return choice.value
+        else:
+            # For backward compatibility with simple string choices
+            if key in self.choices:
+                return key
+        return None
+
+    def get_choice_by_display(self, display: str) -> Optional[Any]:
+        """Get the value corresponding to a choice display."""
+        if not self.choices:
+            return None
+        
+        if isinstance(self.choices[0], ChoiceOption):
+            for choice in self.choices:
+                if choice.display == display:
+                    return choice.value
+        else:
+            # For backward compatibility with simple string choices
+            if display in self.choices:
+                return display
+        return None
+
+    def get_default_value(self) -> Any:
+        """Get the default value, handling both index and direct value."""
+        if self.type == "choice" and self.choices and isinstance(self.default, int):
+            # Default is an index
+            if 0 <= self.default < len(self.choices):
+                if isinstance(self.choices[0], ChoiceOption):
+                    return self.choices[self.default].value
+                else:
+                    return self.choices[self.default]
+        return self.default
 
 
 class Action(ABC):
