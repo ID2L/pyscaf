@@ -1,12 +1,14 @@
 from pathlib import Path
 from typing import Dict, Optional
 
-from pyscaf.actions import Action, CLIOption
+from pyscaf.actions import Action, ChoiceOption, CLIOption
 
-DOC_TYPES = {
-    "None (no documentation)": None,
-    "pdoc (simple, auto-generated API docs)": "pdoc",
-}
+DOC_CHOICES = [
+    ChoiceOption(key="none", display="None (no documentation)", value=None),
+    ChoiceOption(
+        key="pdoc", display="pdoc (simple, auto-generated API docs)", value="pdoc"
+    ),
+]
 
 
 class DocumentationAction(Action):
@@ -20,8 +22,8 @@ class DocumentationAction(Action):
             type="choice",
             help="Choose a documentation system for your project",
             prompt="Which documentation system do you want to use?",
-            choices=list(DOC_TYPES.keys()),
-            default=list(DOC_TYPES.keys())[0],
+            choices=DOC_CHOICES,
+            default=0,  # Index of the default choice
         ),
     ]
 
@@ -29,10 +31,9 @@ class DocumentationAction(Action):
         super().__init__(project_path)
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
-        doc_choice = context.get("documentation", list(DOC_TYPES.keys())[0])
-        doc_type = DOC_TYPES.get(doc_choice, "pdoc")
+        doc_choice = context.get("documentation", None)
         skeleton = {}
-        if doc_type == "pdoc":
+        if doc_choice == "pdoc":
             # Read documentation README
             doc_readme_path = Path(__file__).parent / "README.md"
             doc_readme = doc_readme_path.read_text() if doc_readme_path.exists() else ""
@@ -52,13 +53,12 @@ class DocumentationAction(Action):
                     skeleton[
                         Path(f"pyscaf/documentation/scripts/{script_file.name}")
                     ] = script_content
-        # If doc_type is None, do not add anything
+        # If doc_choice is None, do not add anything
         return skeleton
 
     def install(self, context: dict) -> None:
         pass
 
-    def activate(self, context: dict) -> bool:
-        doc_choice = context.get("documentation", list(DOC_TYPES.keys())[0])
-        doc_type = DOC_TYPES.get(doc_choice, "pdoc")
-        return doc_type is not None
+    # def activate(self, context: dict) -> bool:
+    #     doc_choice = context.get("documentation", )
+    #     return doc_choice is not None
