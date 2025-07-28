@@ -3,8 +3,8 @@ pdoc = "*"
 tomli = "*"
 
 [tool.poetry.scripts]
-gen-doc = "documentation.scripts.parse_doc:gen_doc"
-serve-doc = "documentation.scripts.parse_doc:serve_doc"
+gen-doc = "pyscaf.documentation.scripts.parse_doc:gen_doc"
+serve-doc = "pyscaf.documentation.scripts.parse_doc:serve_doc"
 
 [tool.pyscaf.documentation]
 output_path = "docs"

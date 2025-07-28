@@ -84,7 +84,7 @@ class JupyterToolsAction(Action):
         scripts_dir = Path(__file__).parent / "scripts"
 
         skeleton = {
-            Path("jupyter_tools"): None,  # Create tools directory
+            Path("pyscaf/jupyter-tools"): None,  # Create tools directory
             Path("README.md"): readme_content,  # Add to configuration
         }
 
@@ -94,9 +94,16 @@ class JupyterToolsAction(Action):
 
         # Add all script files
         if scripts_dir.exists():
+            # Add __init__.py for pyscaf directory
+            skeleton[Path("pyscaf/__init__.py")] = ""
+            skeleton[Path("pyscaf/jupyter-tools/__init__.py")] = ""
+            skeleton[Path("pyscaf/jupyter-tools/scripts/__init__.py")] = ""
+
             for script_file in scripts_dir.glob("*.py"):
                 script_content = script_file.read_text()
-                skeleton[Path(f"jupyter_tools/{script_file.name}")] = script_content
+                skeleton[Path(f"pyscaf/jupyter-tools/scripts/{script_file.name}")] = (
+                    script_content
+                )
 
         return skeleton
 
