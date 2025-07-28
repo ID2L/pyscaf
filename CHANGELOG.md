@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v1.0.0 (2025-07-28)
+
+### Bug Fixes
+
+- Deploy release
+  ([`9ce4f25`](https://github.com/ID2L/pyscaf/commit/9ce4f251fea18e731ba35177fdccca0a71e6b52f))
+
+BREAKING CHANGE: scaffolded scripts pathes has change
+
+### Breaking Changes
+
+- Scaffolded scripts pathes has change
+
+
 ## v0.11.0 (2025-07-21)
 
 ### Features
