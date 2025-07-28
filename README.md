@@ -74,10 +74,6 @@ In its current version, `pyscaf` automatically configures:
 - `pytest-cov` integration for code coverage
 - Ready-to-use test structure
 
-## Important Note
-
-The package is published under the name `open-pyscaf` on PyPI (not `pyscaf`) because this name was already taken.
-
 ## Development
 
 This project is developed to simplify Python project creation with integrated best practices from the start.
