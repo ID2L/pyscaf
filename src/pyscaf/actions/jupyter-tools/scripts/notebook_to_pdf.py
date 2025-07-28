@@ -28,9 +28,10 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from jupyter_factory.shared.exporter import create_exporter
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat import read as nb_read
+
+from .shared.exporter import create_exporter
 
 
 def process_cell_tags(cell: Any) -> None:
@@ -167,4 +168,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    main()
     main()

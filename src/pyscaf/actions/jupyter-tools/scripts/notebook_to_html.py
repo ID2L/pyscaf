@@ -36,7 +36,8 @@ import argparse
 import os
 
 import nbformat
-from jupyter_factory.shared.exporter import create_exporter
+
+from .shared.exporter import create_exporter
 
 
 def process_cell_tags(cell: nbformat.NotebookNode) -> None:
@@ -153,4 +154,5 @@ def main():
 
 
 if __name__ == "__main__":
+    main()
     main()

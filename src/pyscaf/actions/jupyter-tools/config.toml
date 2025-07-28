@@ -14,7 +14,7 @@ template_name = "classic"
 template_path = ""
 template_file = ""
 
-[project.scripts]
+[tool.poetry.scripts]
 # Convenient scripts
 py-to-nb = "jupyter_tools.py_to_notebook:main"
 exec-nb = "jupyter_tools.execute_notebook:main"
@@ -26,3 +26,4 @@ nb-to-html-all = "jupyter_tools.main:nb_to_html_all"
 [tool.poetry.group.dev.dependencies]
 jupytext = "*"
 nbconvert = "*"
+tomli = "*"
