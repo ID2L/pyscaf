@@ -3,12 +3,13 @@ Command-line interface for pyscaf.
 """
 
 import sys
+from typing import Type
 
 import click
 from rich.console import Console
 
 from pyscaf import __version__
-from pyscaf.actions import discover_actions
+from pyscaf.actions import Action, discover_actions
 from pyscaf.actions.manager import ActionManager
 from pyscaf.preference_chain import best_execution_order
 from pyscaf.preference_chain.model import Node
@@ -27,7 +28,7 @@ def print_version(ctx, param, value):
 def collect_cli_options():
     action_classes = discover_actions()
     deps = []
-    action_class_by_id = {}
+    action_class_by_id: dict[str, Type[Action]] = {}
     for action_cls in action_classes:
         action_id = action_cls.__name__.replace("Action", "").lower()
         depends = getattr(action_cls, "depends", set())
@@ -47,6 +48,44 @@ def collect_cli_options():
         action_cls = action_class_by_id[action_id]
         cli_options.extend(getattr(action_cls, "cli_options", []))
     return cli_options
+
+
+def fill_default_context(context: dict) -> dict:
+    """
+    Fill the context with default values from all actions.
+
+    This function discovers all actions and fills the context with their default values
+    for options that are not already set in the context.
+
+    Args:
+        context: The current context dictionary
+
+    Returns:
+        Updated context with default values filled in
+    """
+    action_classes = discover_actions()
+
+    for action_cls in action_classes:
+        if hasattr(action_cls, "cli_options"):
+            for opt in action_cls.cli_options:
+                # Convert option name to context key
+                name = opt.name.lstrip("-").replace("-", "_")
+
+                # Only set default if not already present in context
+                if name not in context or context[name] is None:
+                    if opt.type == "choice":
+                        default_value = (
+                            opt.get_default_value()()
+                            if callable(opt.get_default_value())
+                            else opt.get_default_value()
+                        )
+                    else:
+                        default_value = (
+                            opt.default() if callable(opt.default) else opt.default
+                        )
+                    context[name] = default_value
+
+    return context
 
 
 def add_dynamic_options(command):
@@ -110,6 +149,10 @@ def init(project_name, interactive, no_install, **kwargs):
     context["project_name"] = project_name
     context["interactive"] = interactive
     context["no_install"] = no_install
+
+    if not interactive:
+        context = fill_default_context(context)
+
     manager = ActionManager(project_name, context)
     if interactive:
         context = manager.ask_interactive_questions(context)

@@ -239,7 +239,7 @@ def discover_actions():
     Dynamically discover all Action subclasses in the actions package (excluding base/manager/pycache).
     Returns a list of Action classes.
     """
-    actions = []
+    actions: List[type[Action]] = []
     actions_dir = os.path.dirname(__file__)
     for _, module_name, is_pkg in pkgutil.iter_modules([actions_dir]):
         if module_name in ("base", "manager", "__pycache__"):
@@ -249,5 +249,4 @@ def discover_actions():
             obj = getattr(mod, attr)
             if isinstance(obj, type) and issubclass(obj, Action) and obj is not Action:
                 actions.append(obj)
-    return actions
     return actions

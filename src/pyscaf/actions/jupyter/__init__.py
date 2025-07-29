@@ -27,7 +27,7 @@ class JupyterAction(Action):
             type="bool",
             help="Handle Jupyter notebook support",
             prompt="Does this project will use Jupyter notebook ?",
-            default=True,
+            default=False,
         ),
     ]  # Add Jupyter-specific options if needed
 
