@@ -6,16 +6,16 @@ This directory contains the testing framework for pyscaf actions using YAML conf
 
 ```
 tests/actions/
-├── test_actions.py          # Main test runner
-├── core/                    # Tests for core action
-│   ├── test1.yaml
-│   ├── test2.yaml
-│   └── test3.yaml
-├── documentation/           # Tests for documentation action
+├── conftest.py             # Pytest hooks for test filtering
+├── test_actions.py         # Main test runner
+├── core/                   # Tests for core action
+│   ├── test_author.yaml
+│   └── test_default.yaml
+├── documentation/          # Tests for documentation action
 │   └── ...
-├── git/                    # Tests for git action
+├── git/                   # Tests for git action
 │   └── ...
-└── ...
+└── ...                    # Other action tests
 ```
 
 ## YAML Configuration Format
@@ -69,39 +69,32 @@ checks:
 
 ## Running Tests
 
-### Using the utility script (recommended)
+### Using pytest with custom filtering (recommended)
 
-To run all action tests:
+The `conftest.py` in this directory provides custom pytest hooks for filtering tests by module and test name.
+
+#### Run all action tests:
 ```bash
-python tests/actions/run_tests.py
+pytest tests/actions/ -v
 ```
 
-To run tests for a specific module:
+#### Run tests for a specific module:
 ```bash
-python tests/actions/run_tests.py core
+pytest tests/actions/ --action-filter="core" -v
 ```
 
-To run a specific test:
+#### Run a specific test:
 ```bash
-python tests/actions/run_tests.py core:test_author
+pytest tests/actions/ --action-filter="core:test_author" -v
 ```
 
-### Using pytest directly
-
-To run all action tests:
+#### Run tests for multiple modules:
 ```bash
-pytest tests/actions/test_actions.py -v
+# Run core and documentation tests
+pytest tests/actions/ --action-filter="core" -v
+pytest tests/actions/ --action-filter="documentation" -v
 ```
 
-To run tests for a specific module:
-```bash
-PYSCAF_TEST_MODULE=core pytest tests/actions/test_actions.py -v
-```
-
-To run a specific test:
-```bash
-PYSCAF_TEST_NAME=test_author pytest tests/actions/test_actions.py -v
-```
 
 ## Adding New Tests
 
@@ -119,4 +112,23 @@ PYSCAF_TEST_NAME=test_author pytest tests/actions/test_actions.py -v
 ## Example Test Files
 
 - `core/test_default.yaml`: Testing default behavior (no CLI arguments)
-- `core/test_author.yaml`: Testing with specific CLI arguments (author) 
+- `core/test_author.yaml`: Testing with specific CLI arguments (author)
+
+## How It Works
+
+### Test Execution Flow
+
+1. **Discovery**: `discover_test_files()` scans YAML files in subdirectories
+2. **Parametrization**: Tests are parametrized with `@pytest.mark.parametrize`
+3. **Filtering**: The `conftest.py` hooks filter tests based on `--action-filter`
+4. **Execution**: Each test creates a temporary directory and runs the pyscaf command
+5. **Validation**: Checks verify the expected files and content
+
+### Pytest Hooks
+
+The `conftest.py` provides two main hooks:
+
+- `pytest_addoption()`: Adds the `--action-filter` command-line option
+- `pytest_collection_modifyitems()`: Filters test collection based on the filter option
+
+This allows for efficient test execution by running only the tests you need during development. 
