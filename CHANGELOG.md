@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.1.2 (2025-07-29)
+
+### Bug Fixes
+
+- **cli**: Gracefully handle default value in non-interactive mod
+  ([`01aa9c0`](https://github.com/ID2L/pyscaf/commit/01aa9c04266868130f78b92536c7d4be6c66e31f))
+
+
 ## v1.1.1 (2025-07-29)
 
 ### Bug Fixes
