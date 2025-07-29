@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v1.1.1 (2025-07-29)
+
+### Bug Fixes
+
+- First draw for the better choices cli options
+  ([`40b56f0`](https://github.com/ID2L/pyscaf/commit/40b56f09bcbb7ba419a3fba669460c6c49a82c47))
+
+Doesn't display well the default value for action documentation
+
+- **cliOption**: Properly handle default option display
+  ([`b86c59d`](https://github.com/ID2L/pyscaf/commit/b86c59dc8ad716a150460001e3ad80b0670a6195))
+
+
 ## v1.1.0 (2025-07-28)
 
 ### Features
