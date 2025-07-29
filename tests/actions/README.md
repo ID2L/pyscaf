@@ -69,14 +69,38 @@ checks:
 
 ## Running Tests
 
+### Using the utility script (recommended)
+
+To run all action tests:
+```bash
+python tests/actions/run_tests.py
+```
+
+To run tests for a specific module:
+```bash
+python tests/actions/run_tests.py core
+```
+
+To run a specific test:
+```bash
+python tests/actions/run_tests.py core:test_author
+```
+
+### Using pytest directly
+
 To run all action tests:
 ```bash
 pytest tests/actions/test_actions.py -v
 ```
 
-To run tests for a specific action:
+To run tests for a specific module:
 ```bash
-pytest tests/actions/test_actions.py -k "test1.yaml" -v
+PYSCAF_TEST_MODULE=core pytest tests/actions/test_actions.py -v
+```
+
+To run a specific test:
+```bash
+PYSCAF_TEST_NAME=test_author pytest tests/actions/test_actions.py -v
 ```
 
 ## Adding New Tests
@@ -94,8 +118,5 @@ pytest tests/actions/test_actions.py -k "test1.yaml" -v
 
 ## Example Test Files
 
-- `core/test1.yaml`: Basic file existence checks
-- `core/test2.yaml`: Content verification checks
-- `core/test3.yaml`: Negative checks (files that should not exist)
 - `core/test_default.yaml`: Testing default behavior (no CLI arguments)
-- `core/test_empty_args.yaml`: Testing with empty CLI arguments 
+- `core/test_author.yaml`: Testing with specific CLI arguments (author) 
