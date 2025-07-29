@@ -10,9 +10,13 @@ import questionary
 from rich.console import Console
 
 from pyscaf.actions import Action, ChoiceOption, discover_actions
-from pyscaf.preference_chain import (CircularDependencyError, build_chains,
-                                     compute_all_resolution_pathes,
-                                     compute_path_score, extend_nodes)
+from pyscaf.preference_chain import (
+    CircularDependencyError,
+    build_chains,
+    compute_all_resolution_pathes,
+    compute_path_score,
+    extend_nodes,
+)
 from pyscaf.preference_chain.model import Node
 
 console = Console()
@@ -103,7 +107,7 @@ class ActionManager:
         Skips questions for which a value is already present in the context (e.g. provided via CLI).
         """
         for action in self.actions:
-            for opt in getattr(action, "cli_options", []):
+            for opt in action.cli_options:
                 if action.activate(context):
                     name = opt.name.lstrip("-").replace("-", "_")
                     if name in context and context[name] not in (None, ""):
@@ -114,7 +118,11 @@ class ActionManager:
                                 context[name] = opt.get_choice_by_key(context[name])
                         continue  # Skip if already provided
                     prompt = opt.prompt or name
-                    default = opt.get_default_value() if opt.type == "choice" else (opt.default() if callable(opt.default) else opt.default)
+                    default = (
+                        opt.get_default_value()
+                        if opt.type == "choice"
+                        else (opt.default() if callable(opt.default) else opt.default)
+                    )
                     if opt.type == "bool":
                         answer = questionary.confirm(
                             prompt, default=bool(default)
@@ -129,50 +137,27 @@ class ActionManager:
                     elif opt.type == "choice" and opt.choices:
                         if opt.multiple:
                             # For multiple choice, we need to handle ChoiceOption specially
-                            if isinstance(opt.choices[0], ChoiceOption):
-                                choices = opt.get_choice_displays()
-                                default_displays = []
-                                if isinstance(default, list):
-                                    for val in default:
-                                        for choice in opt.choices:
-                                            if choice.value == val:
-                                                default_displays.append(choice.display)
-                                                break
-                                else:
-                                    for choice in opt.choices:
-                                        if choice.value == default:
-                                            default_displays = [choice.display]
-                                            break
-                                answer = questionary.checkbox(
-                                    prompt, choices=choices, default=default_displays
-                                ).ask()
-                                # Convert displays back to values
-                                if answer:
-                                    answer = [opt.get_choice_by_display(display) for display in answer]
-                            else:
-                                answer = questionary.checkbox(
-                                    prompt, choices=opt.choices, default=default
-                                ).ask()
+                            default_display = opt.get_default_display()
+                            choices = opt.get_choice_displays()
+                            answer = questionary.checkbox(
+                                prompt, choices=choices, default=default_display
+                            ).ask()
+                            # Convert displays back to values
+                            if answer:
+                                answer = [
+                                    opt.get_choice_by_display(display)
+                                    for display in answer
+                                ]
                         else:
-                            # For single choice, use displays for interactive mode
-                            if isinstance(opt.choices[0], ChoiceOption):
-                                choices = opt.get_choice_displays()
-                                default_display = None
-                                if default is not None:
-                                    for choice in opt.choices:
-                                        if choice.value == default:
-                                            default_display = choice.display
-                                            break
-                                answer = questionary.select(
-                                    prompt, choices=choices, default=default_display
-                                ).ask()
-                                # Convert display back to value
-                                if answer:
-                                    answer = opt.get_choice_by_display(answer)
-                            else:
-                                answer = questionary.select(
-                                    prompt, choices=opt.choices, default=default
-                                ).ask()
+                            choices = opt.get_choice_displays()
+                            default_display = opt.get_default_display()
+                            answer = questionary.select(
+                                prompt, choices=choices, default=default_display
+                            ).ask()
+                            # Convert display back to value
+                            if answer:
+                                answer = opt.get_choice_by_display(answer)
+
                     else:  # str or fallback
                         answer = questionary.text(
                             prompt, default=default if default is not None else ""

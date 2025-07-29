@@ -9,7 +9,7 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from pyscaf.actions import discover_actions
+from pyscaf.actions import ChoiceOption, CLIOption, discover_actions
 from pyscaf.cli import cli
 
 
@@ -176,3 +176,147 @@ def test_cli_invalid_type(temp_project_dir):
                 return
     # Si aucune option int, on passe ce test
     assert True
+
+
+def test_choice_option_structure():
+    """Test that ChoiceOption structure works correctly."""
+    choices = [
+        ChoiceOption(key="test1", display="Test Option 1", value="value1"),
+        ChoiceOption(key="test2", display="Test Option 2", value="value2"),
+    ]
+
+    option = CLIOption(
+        name="--test",
+        type="choice",
+        choices=choices,
+        default=0
+    )
+
+    # Test get_choice_keys
+    assert option.get_choice_keys() == ["test1", "test2"]
+
+    # Test get_choice_displays
+    assert option.get_choice_displays() == ["Test Option 1", "Test Option 2"]
+
+    # Test get_choice_values
+    assert option.get_choice_values() == ["value1", "value2"]
+
+    # Test get_choice_by_key
+    assert option.get_choice_by_key("test1") == "value1"
+    assert option.get_choice_by_key("test2") == "value2"
+    assert option.get_choice_by_key("nonexistent") is None
+
+    # Test get_choice_by_display
+    assert option.get_choice_by_display("Test Option 1") == "value1"
+    assert option.get_choice_by_display("Test Option 2") == "value2"
+    assert option.get_choice_by_display("Nonexistent") is None
+
+    # Test get_default_value
+    assert option.get_default_value() == "value1"
+
+
+def test_choice_option_backward_compatibility():
+    """Test that ChoiceOption maintains backward compatibility with simple string choices."""
+    option = CLIOption(
+        name="--test",
+        type="choice",
+        choices=["option1", "option2"],
+        default="option1"
+    )
+
+    # Test that simple string choices still work
+    assert option.get_choice_keys() == ["option1", "option2"]
+    assert option.get_choice_displays() == ["option1", "option2"]
+    assert option.get_choice_values() == ["option1", "option2"]
+    assert option.get_choice_by_key("option1") == "option1"
+    assert option.get_choice_by_display("option1") == "option1"
+    assert option.get_default_value() == "option1"
+
+
+def test_cli_with_new_choice_structure(temp_project_dir):
+    """Test CLI with the new ChoiceOption structure."""
+    runner = CliRunner()
+    
+    # Test with documentation choice using CLI
+    result = runner.invoke(
+        cli,
+        [
+            "init",
+            "testproj",
+            "--documentation",
+            "pdoc",
+            "--no-install",
+        ],
+        catch_exceptions=False
+    )
+    
+    assert result.exit_code == 0
+    
+    # Check that the project was created
+    project_path = temp_project_dir / "testproj"
+    assert project_path.exists()
+    
+    # Test with license choice using CLI
+    result = runner.invoke(
+        cli,
+        [
+            "init",
+            "testproj2",
+            "--license",
+            "mit",
+            "--no-install",
+        ],
+        catch_exceptions=False
+    )
+    
+    assert result.exit_code == 0
+    
+    # Check that the project was created
+    project_path2 = temp_project_dir / "testproj2"
+    assert project_path2.exists()
+
+
+def test_interactive_with_new_choice_structure(temp_project_dir, monkeypatch):
+    """Test interactive mode with the new ChoiceOption structure."""
+    runner = CliRunner()
+    
+    # Mock questionary to simulate user input
+    def mock_questionary_select(*args, **kwargs):
+        class MockAnswer:
+            def ask(self):
+                return kwargs.get("choices", [])[0] if kwargs.get("choices") else None
+        return MockAnswer()
+    
+    def mock_questionary_text(*args, **kwargs):
+        class MockAnswer:
+            def ask(self):
+                return kwargs.get("default", "")
+        return MockAnswer()
+    
+    def mock_questionary_confirm(*args, **kwargs):
+        class MockAnswer:
+            def ask(self):
+                return kwargs.get("default", True)
+        return MockAnswer()
+    
+    # Apply mocks
+    monkeypatch.setattr("questionary.select", mock_questionary_select)
+    monkeypatch.setattr("questionary.text", mock_questionary_text)
+    monkeypatch.setattr("questionary.confirm", mock_questionary_confirm)
+    
+    result = runner.invoke(
+        cli,
+        [
+            "init",
+            "testproj3",
+            "--interactive",
+            "--no-install",
+        ],
+        catch_exceptions=False
+    )
+    
+    assert result.exit_code == 0
+    
+    # Check that the project was created
+    project_path = temp_project_dir / "testproj3"
+    assert project_path.exists()
