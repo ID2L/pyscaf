@@ -20,12 +20,12 @@ logger = logging.getLogger(__name__)
 
 class ChoiceOption(BaseModel):
     """Represents a choice option with different display formats for CLI and interactive modes.
-    
+
     This class allows you to define choices with:
     - key: Short identifier for CLI usage (e.g., "mit", "pdoc")
     - display: Verbose description for interactive mode (e.g., "MIT License (permissive)")
     - value: The actual value stored in context (e.g., "template_MIT.txt")
-    
+
     Example:
         choices = [
             ChoiceOption(
@@ -39,7 +39,7 @@ class ChoiceOption(BaseModel):
                 value="template_Apache-2.0.txt"
             ),
         ]
-        
+
         option = CLIOption(
             name="--license",
             type="choice",
@@ -47,6 +47,7 @@ class ChoiceOption(BaseModel):
             default=0  # Index of the default choice
         )
     """
+
     key: str  # Short key for CLI usage
     display: str  # Verbose display for interactive mode
     value: Any  # The actual value to be stored in context
@@ -58,66 +59,55 @@ class CLIOption(BaseModel):
     help: Optional[str] = None
     default: Any = None  # For choice type, this should be an index (int)
     prompt: Optional[str] = None
-    choices: Optional[List[Any]] = None  # For choice type - can be List[str] or List[ChoiceOption]
+    choices: Optional[List[ChoiceOption]] = (
+        None  # For choice type - can be List[str] or List[ChoiceOption]
+    )
     is_flag: Optional[bool] = None  # For bool
     multiple: Optional[bool] = None  # For multi-choice
     required: Optional[bool] = None
 
     def get_choice_keys(self) -> List[str]:
         """Get the list of choice keys for CLI usage."""
-        if not self.choices:
-            return []
-        
-        if isinstance(self.choices[0], ChoiceOption):
+        if self.choices and isinstance(self.choices[0], ChoiceOption):
             return [choice.key for choice in self.choices]
-        return self.choices
+        return []
 
     def get_choice_displays(self) -> List[str]:
         """Get the list of choice displays for interactive mode."""
-        if not self.choices:
-            return []
-        
-        if isinstance(self.choices[0], ChoiceOption):
+        if self.choices and isinstance(self.choices[0], ChoiceOption):
             return [choice.display for choice in self.choices]
-        return self.choices
+        return []
 
     def get_choice_values(self) -> List[Any]:
         """Get the list of choice values."""
-        if not self.choices:
-            return []
-        
-        if isinstance(self.choices[0], ChoiceOption):
+        if self.choices and isinstance(self.choices[0], ChoiceOption):
             return [choice.value for choice in self.choices]
-        return self.choices
+        return []
 
     def get_choice_by_key(self, key: str) -> Optional[Any]:
         """Get the value corresponding to a choice key."""
-        if not self.choices:
-            return None
-        
-        if isinstance(self.choices[0], ChoiceOption):
+
+        if self.choices and isinstance(self.choices[0], ChoiceOption):
             for choice in self.choices:
                 if choice.key == key:
                     return choice.value
-        else:
-            # For backward compatibility with simple string choices
-            if key in self.choices:
-                return key
         return None
 
     def get_choice_by_display(self, display: str) -> Optional[Any]:
         """Get the value corresponding to a choice display."""
-        if not self.choices:
-            return None
-        
-        if isinstance(self.choices[0], ChoiceOption):
+
+        if self.choices and isinstance(self.choices[0], ChoiceOption):
             for choice in self.choices:
                 if choice.display == display:
                     return choice.value
-        else:
-            # For backward compatibility with simple string choices
-            if display in self.choices:
-                return display
+        return None
+
+    def get_default_display(self) -> Optional[str]:
+        """Get the default display."""
+        if self.type == "choice" and self.choices and isinstance(self.default, int):
+            if 0 <= self.default < len(self.choices):
+                if isinstance(self.choices[0], ChoiceOption):
+                    return self.choices[self.default].display
         return None
 
     def get_default_value(self) -> Any:

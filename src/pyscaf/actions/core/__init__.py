@@ -114,9 +114,7 @@ class CoreAction(Action):
 
             # Ajout dynamique de la clé packages dans [tool.poetry] du pyproject.toml
             pyproject_path = Path("pyproject.toml")
-            print("pyproject_path", pyproject_path)
             if pyproject_path.exists():
-                print("pyproject_path exists")
                 with pyproject_path.open("rb") as f:
                     pyproject_data = tomli.load(f)
                 try:
