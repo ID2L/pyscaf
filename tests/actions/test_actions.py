@@ -2,6 +2,7 @@
 Test suite for pyscaf actions using YAML configuration files.
 """
 
+import os
 import subprocess
 import tempfile
 from pathlib import Path
@@ -177,26 +178,59 @@ class ActionTestRunner:
                 shutil.rmtree(self.temp_dir)
 
 
-def discover_test_files() -> List[Path]:
+def discover_test_files(
+    module_filter: str | None = None, test_filter: str | None = None
+) -> List[tuple[Path, str]]:
     """Discover all YAML test files in the tests/actions directory."""
     tests_dir = Path(__file__).parent
     test_files = []
 
     for yaml_file in tests_dir.rglob("*.yaml"):
-        test_files.append(yaml_file)
+        # Extract module name from path (e.g., "core" from "tests/actions/core/test1.yaml")
+        relative_path = yaml_file.relative_to(tests_dir)
+        module_name = relative_path.parts[0] if len(relative_path.parts) > 1 else "root"
+        test_name = yaml_file.stem
+
+        # Apply filters
+        if module_filter and module_name != module_filter:
+            continue
+        if test_filter and test_name != test_filter:
+            continue
+
+        # Create a descriptive test name
+        test_id = f"{module_name}:{test_name}"
+        test_files.append((yaml_file, test_id))
 
     return test_files
 
 
-@pytest.mark.parametrize("test_file", discover_test_files())
-def test_action(test_file: Path):
+def get_test_files_from_args():
+    """Get test files based on environment variables."""
+    # Check for environment variables
+    module_filter = os.environ.get("PYSCAF_TEST_MODULE")
+    test_filter = os.environ.get("PYSCAF_TEST_NAME")
+
+    if module_filter or test_filter:
+        return discover_test_files(module_filter, test_filter)
+
+    # Default: all tests
+    return discover_test_files()
+
+
+# Use a simpler approach that works better with pytest
+test_files_data = get_test_files_from_args()
+test_ids = [test_id for _, test_id in test_files_data]
+
+
+@pytest.mark.parametrize("test_file,test_id", test_files_data, ids=test_ids)
+def test_action(test_file: Path, test_id: str):
     """Test an action using its YAML configuration file."""
     runner = ActionTestRunner(test_file)
     result = runner.run_test()
 
     # Assert that all checks passed
     assert result["all_checks_passed"], (
-        f"Test failed for {test_file}:\n"
+        f"Test failed for {test_id}:\n"
         f"Command: {result['command']}\n"
         f"Return code: {result['return_code']}\n"
         f"Check results: {result['check_results']}\n"
