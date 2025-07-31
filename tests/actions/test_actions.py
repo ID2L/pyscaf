@@ -51,6 +51,8 @@ class ActionTestRunner:
                 if isinstance(value, bool):
                     if value:
                         cmd.append(f"--{key}")
+                    else:
+                        cmd.append(f"--no-{key}")
                 else:
                     cmd.append(f"--{key}")
                     cmd.append(str(value))
