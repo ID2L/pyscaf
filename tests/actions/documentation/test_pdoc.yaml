@@ -1,0 +1,48 @@
+cli_arguments:
+  documentation: "pdoc"
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists and contains documentation content"
+    type: contains
+    file_path: "tmp_project/README.md"
+    content: "documentation"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: "pyscaf directory exists"
+    type: exist
+    file_path: "tmp_project/pyscaf"
+  
+  - name: "pyscaf/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/__init__.py"
+  
+  - name: "pyscaf/documentation directory exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/documentation"
+  
+  - name: "pyscaf/documentation/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/documentation/__init__.py"
+  
+  - name: "pyscaf/documentation/scripts directory exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/documentation/scripts"
+  
+  - name: "pyscaf/documentation/scripts/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/documentation/scripts/__init__.py" 

@@ -1,0 +1,44 @@
+cli_arguments:
+  testing: true
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "tmp_project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: "tests directory exists"
+    type: exist
+    file_path: "tmp_project/tests"
+  
+  - name: "tests/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/tests/__init__.py"
+  
+  - name: "tests/test_tmp_project.py exists"
+    type: exist
+    file_path: "tmp_project/tests/test_tmp_project.py"
+  
+  - name: "tests/README.md exists"
+    type: exist
+    file_path: "tmp_project/tests/README.md"
+  
+  - name: "test file contains project name"
+    type: contains
+    file_path: "tmp_project/tests/test_tmp_project.py"
+    content: "tmp_project" 

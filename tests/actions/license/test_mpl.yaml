@@ -1,0 +1,32 @@
+cli_arguments:
+  license: "mpl"
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "tmp_project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: "LICENSE exists"
+    type: exist
+    file_path: "tmp_project/LICENSE"
+  
+  - name: "LICENSE contains MPL license"
+    type: contains
+    file_path: "tmp_project/LICENSE"
+    content: "Mozilla Public License" 

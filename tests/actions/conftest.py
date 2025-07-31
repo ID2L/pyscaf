@@ -30,6 +30,10 @@ def pytest_collection_modifyitems(config, items):
     # test_name_filter = config.getoption("--test-name")
     action_filter = config.getoption("--action-filter")
 
+    # Initialize filters to None by default
+    module_filter = None
+    test_name_filter = None
+
     if action_filter:
         if ":" in action_filter:
             module_filter, test_name_filter = action_filter.split(":", 1)

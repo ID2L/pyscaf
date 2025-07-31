@@ -1,0 +1,11 @@
+cli_arguments:
+  versionning: false
+
+checks:
+  - name: ".git directory should not exist when git is disabled"
+    type: not_exist
+    file_path: "tmp_project/.git"
+  
+  - name: ".gitignore should not exist when git is disabled"
+    type: not_exist
+    file_path: "tmp_project/.gitignore" 
