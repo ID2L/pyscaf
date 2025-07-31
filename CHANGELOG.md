@@ -1,6 +1,39 @@
 # CHANGELOG
 
 
+## v1.2.0 (2025-07-31)
+
+### Bug Fixes
+
+- **cli**: Handle boolean options with True default value
+  ([`6aba861`](https://github.com/ID2L/pyscaf/commit/6aba8610782648e153094d47f39018c77d9ee802))
+
+- **cli**: Proper handling of interactive/non-interactive mod with choices cli options
+  ([`3728004`](https://github.com/ID2L/pyscaf/commit/372800423a1b1035ae5b45ae0bd9719893e34e4d))
+
+- **cli**: Uniformize handle boolean options for consitency
+  ([`86164ec`](https://github.com/ID2L/pyscaf/commit/86164ec6069a707d23db264a4294494c8c88467f))
+
+### Features
+
+- **test**: Pytest compatible way of declaring dynamic testing
+  ([`1c67389`](https://github.com/ID2L/pyscaf/commit/1c67389502bbffcaa660454c6706b4e03f5a2b85))
+
+### Testing
+
+- **actions**: Basic tests for actions
+  ([`99ef790`](https://github.com/ID2L/pyscaf/commit/99ef790c8506e9178cfdb4969689d152a7ca814d))
+
+- **actions**: Dynamics integration tests for actions
+  ([`de8e0d5`](https://github.com/ID2L/pyscaf/commit/de8e0d5a7c2c7dc0306a91695880530aaffc3764))
+
+- **actions**: Handle boolean value
+  ([`6e20981`](https://github.com/ID2L/pyscaf/commit/6e2098173d71476964d1c62ad22c700d5e0a69be))
+
+- **actions**: Updated dynamic testing and a bunch of tests
+  ([`505d224`](https://github.com/ID2L/pyscaf/commit/505d224b70c1254f86c32a429f214cd815d5a499))
+
+
 ## v1.1.2 (2025-07-29)
 
 ### Bug Fixes
