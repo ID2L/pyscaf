@@ -6,10 +6,32 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, TypedDict
 
 import pytest
 import yaml
+from rich.console import Console
+from rich.text import Text
+
+console = Console()
+
+
+class CheckResult(TypedDict):
+    name: str
+    type: str
+    file_path: str
+    success: bool
+    error: str | None
+
+
+class TestResult(TypedDict):
+    test_file: str
+    command: str
+    return_code: int
+    stdout: str
+    stderr: str
+    check_results: List[CheckResult]
+    all_checks_passed: bool
 
 
 class ActionTestRunner:
@@ -107,7 +129,7 @@ class ActionTestRunner:
             print(f"Error executing custom check {function_path}: {e}")
             return False
 
-    def _run_checks(self) -> List[Dict[str, Any]]:
+    def _run_checks(self) -> List[CheckResult]:
         """Run all checks and return results."""
         results = []
 
@@ -118,7 +140,7 @@ class ActionTestRunner:
             content = check.get("content", "")
             function_path = check.get("function_path", "")
 
-            result = {
+            result: CheckResult = {
                 "name": check_name,
                 "type": check_type,
                 "file_path": file_path,
@@ -149,7 +171,7 @@ class ActionTestRunner:
 
         return results
 
-    def run_test(self) -> Dict[str, Any]:
+    def run_test(self) -> TestResult:
         """Run the complete test for this configuration."""
         # Create temporary directory
         temp_dir = self._create_temp_directory()
@@ -228,17 +250,36 @@ test_ids = [test_id for _, test_id in test_files_data]
 def test_action(test_file: Path, test_id: str):
     """Test an action using its YAML configuration file."""
     runner = ActionTestRunner(test_file)
-    result = runner.run_test()
+    result: TestResult = runner.run_test()
 
-    # Assert that all checks passed
-    assert result["all_checks_passed"], (
-        f"Test failed for {test_id}:\n"
-        f"Command: {result['command']}\n"
-        f"Return code: {result['return_code']}\n"
-        f"Check results: {result['check_results']}\n"
-        f"stdout: {result['stdout']}\n"
-        f"stderr: {result['stderr']}"
-    )
+    failed_checks = [c for c in result["check_results"] if not c["success"]]
+    passed_checks = [c for c in result["check_results"] if c["success"]]
+
+    if not result["all_checks_passed"]:
+        console.print(f"[bold red]Test failed for {test_id}[/bold red]")
+        console.print(f"Command: [yellow]{result['command']}[/yellow]")
+        console.print(f"Return code: {result['return_code']}")
+
+        if failed_checks:
+            console.print("[bold red]Failed checks:[/bold red]")
+            for check in failed_checks:
+                msg = f"  ✗ {check['name']} ({check['type']} on {check['file_path']})"
+                if check.get("error"):
+                    msg += f" [error: {check['error']}]"
+                console.print(Text(msg, style="bold red"))
+
+        if passed_checks:
+            console.print("[bold green]Passed checks:[/bold green]")
+            for check in passed_checks:
+                msg = f"  ✓ {check['name']} ({check['type']} on {check['file_path']})"
+                console.print(Text(msg, style="green"))
+
+        if result["stdout"]:
+            console.print(f"\n[bold]stdout:[/bold]\n{result['stdout']}")
+        if result["stderr"]:
+            console.print(f"\n[bold]stderr:[/bold]\n{result['stderr']}")
+
+        assert False, "Some checks failed (see above for details)."
 
     # Also assert that the command executed successfully
     assert result["return_code"] == 0, (

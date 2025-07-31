@@ -1,5 +1,5 @@
 cli_arguments:
-  jupyter: true
+  versionning: false
 
 checks:
   - name: "pyproject.toml exists"
@@ -22,10 +22,6 @@ checks:
     type: exist
     file_path: "tmp_project/.vscode/settings.json"
   
-  - name: "notebooks directory exists"
-    type: exist
-    file_path: "tmp_project/notebooks"
-
-  - name: "pyscaf/jupyter-tools directory should not exist when disabled"
+  - name: ".gitignore should not exist when --no-versionning is used"
     type: not_exist
-    file_path: "tmp_project/pyscaf/jupyter-tools" 
+    file_path: "tmp_project/.gitignore" 
