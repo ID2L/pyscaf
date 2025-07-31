@@ -57,7 +57,15 @@ class LicenseAction(Action):
         super().__init__(project_path)
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
-        license_choice = context.get("license", "template_MIT.txt")
+        license_key = context.get("license", "mit")  # Get the key (e.g., "mit")
+
+        # Convert key to value using LICENSE_CHOICES directly
+        license_choice = None
+        for choice in LICENSE_CHOICES:
+            if choice.key == license_key:
+                license_choice = choice.value
+                break
+
         skeleton = {}
         if license_choice:
             # Read the selected license template
@@ -68,4 +76,4 @@ class LicenseAction(Action):
         return skeleton
 
     def install(self, context: dict) -> None:
-        pass    
+        pass

@@ -74,11 +74,13 @@ def fill_default_context(context: dict) -> dict:
                 # Only set default if not already present in context
                 if name not in context or context[name] is None:
                     if opt.type == "choice":
-                        default_value = (
-                            opt.get_default_value()()
-                            if callable(opt.get_default_value())
-                            else opt.get_default_value()
-                        )
+                        # For choices, get the default key, not the default value
+                        default_index = opt.default
+                        if default_index is not None and opt.choices:
+                            default_value = opt.choices[default_index].key
+                        else:
+                            default_value = None
+                        print(f"default_key: {default_value}")
                     else:
                         default_value = (
                             opt.default() if callable(opt.default) else opt.default
@@ -108,12 +110,9 @@ def add_dynamic_options(command):
             click_opts["type"] = click.BOOL
             click_opts["default"] = None
             # Use Click's built-in --option/--no-option syntax for boolean flags
-            # For boolean flags with default=True, use --option/--no-option syntax
             base_name = opt.name.lstrip("-")
             param_decls[0] = f"--{base_name}/--no-{base_name}"
-            # if opt.default is True:
-            # else:
-            #     click_opts["is_flag"] = True
+
         # Help
         if opt.help:
             click_opts["help"] = opt.help
