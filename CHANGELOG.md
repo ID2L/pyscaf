@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v1.2.1 (2025-07-31)
+
+### Bug Fixes
+
+- **dependencies**: Add PyYAML 6.0.2 to project dev dependencies
+  ([`a7f3178`](https://github.com/ID2L/pyscaf/commit/a7f3178332133b8790aac2eaf41ea770fea093cd))
+
+### Chores
+
+- **ci/cd**: Test workflow
+  ([`027f33e`](https://github.com/ID2L/pyscaf/commit/027f33ee93f0bf300d06e31be979d3cde1abcdb9))
+
+- **ci/cd**: Workflow passes locally
+  ([`2320b24`](https://github.com/ID2L/pyscaf/commit/2320b2496df379826826a5b4503eb60e5b7b9143))
+
+
 ## v1.2.0 (2025-07-31)
 
 ### Bug Fixes
