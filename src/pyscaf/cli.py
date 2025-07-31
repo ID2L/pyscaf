@@ -106,8 +106,14 @@ def add_dynamic_options(command):
             click_opts["type"] = str
         elif opt.type == "bool":
             click_opts["type"] = click.BOOL
-            click_opts["is_flag"] = True
             click_opts["default"] = None
+            # Use Click's built-in --option/--no-option syntax for boolean flags
+            if opt.default is True:
+                # For boolean flags with default=True, use --option/--no-option syntax
+                base_name = opt.name.lstrip("-")
+                param_decls[0] = f"--{base_name}/--no-{base_name}"
+            else:
+                click_opts["is_flag"] = True
         # Help
         if opt.help:
             click_opts["help"] = opt.help
