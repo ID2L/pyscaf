@@ -1,0 +1,24 @@
+checks:
+  - name: "pyproject.toml exists by default"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists by default"
+    type: exist
+    file_path: "tmp_project/README.md"
+  
+  - name: "src directory exists by default"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists by default"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists by default"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: "notebooks directory should not exist by default"
+    type: not_exist
+    file_path: "tmp_project/notebooks" 

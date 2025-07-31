@@ -1,0 +1,51 @@
+cli_arguments:
+  jupyter: true
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "tmp_project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: "notebooks directory exists"
+    type: exist
+    file_path: "tmp_project/notebooks"
+  
+  - name: "pyscaf directory exists"
+    type: exist
+    file_path: "tmp_project/pyscaf"
+  
+  - name: "pyscaf/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/__init__.py"
+  
+  - name: "pyscaf/jupyter-tools directory exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/jupyter-tools"
+  
+  - name: "pyscaf/jupyter-tools/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/jupyter-tools/__init__.py"
+  
+  - name: "pyscaf/jupyter-tools/scripts directory exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/jupyter-tools/scripts"
+  
+  - name: "pyscaf/jupyter-tools/scripts/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/pyscaf/jupyter-tools/scripts/__init__.py" 
