@@ -31,7 +31,19 @@ class DocumentationAction(Action):
         super().__init__(project_path)
 
     def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
-        doc_choice = context.get("documentation", None)
+        doc_key = context.get(
+            "documentation", "none"
+        )  # Get the key (e.g., "none", "pdoc")
+        print(f"Documentation key: {doc_key}")
+
+        # Convert key to value using DOC_CHOICES directly
+        doc_choice = None
+        for choice in DOC_CHOICES:
+            if choice.key == doc_key:
+                doc_choice = choice.value
+                break
+        print(f"Documentation choice value: {doc_choice}")
+
         skeleton = {}
         if doc_choice == "pdoc":
             # Read documentation README

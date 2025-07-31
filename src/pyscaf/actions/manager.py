@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Union
 import questionary
 from rich.console import Console
 
-from pyscaf.actions import Action, ChoiceOption, discover_actions
+from pyscaf.actions import Action, discover_actions
 from pyscaf.preference_chain import (
     CircularDependencyError,
     build_chains,
@@ -110,13 +110,6 @@ class ActionManager:
             for opt in action.cli_options:
                 if action.activate(context):
                     name = opt.name.lstrip("-").replace("-", "_")
-                    if name in context and context[name] not in (None, ""):
-                        # Convert CLI choice to actual value if needed
-                        if opt.type == "choice" and opt.choices:
-                            if isinstance(opt.choices[0], ChoiceOption):
-                                # Convert key to value
-                                context[name] = opt.get_choice_by_key(context[name])
-                        continue  # Skip if already provided
                     prompt = opt.prompt or name
                     default = (
                         opt.get_default_value()
@@ -135,28 +128,37 @@ class ActionManager:
                             int(answer) if answer is not None and answer != "" else None
                         )
                     elif opt.type == "choice" and opt.choices:
+                        choices = opt.get_choice_displays()
+                        default_display = opt.get_default_display()
+
                         if opt.multiple:
-                            # For multiple choice, we need to handle ChoiceOption specially
-                            default_display = opt.get_default_display()
-                            choices = opt.get_choice_displays()
+                            # Use checkbox for multiple choice
                             answer = questionary.checkbox(
                                 prompt, choices=choices, default=default_display
                             ).ask()
-                            # Convert displays back to values
-                            if answer:
-                                answer = [
-                                    opt.get_choice_by_display(display)
-                                    for display in answer
-                                ]
                         else:
-                            choices = opt.get_choice_displays()
-                            default_display = opt.get_default_display()
+                            # Use select for single choice
                             answer = questionary.select(
                                 prompt, choices=choices, default=default_display
                             ).ask()
-                            # Convert display back to value
-                            if answer:
-                                answer = opt.get_choice_by_display(answer)
+
+                        # Convert displays back to keys (we always store keys)
+                        if answer:
+                            if opt.multiple:
+                                # Handle multiple choices
+                                converted_answer = []
+                                for display in answer:
+                                    for choice in opt.choices:
+                                        if choice.display == display:
+                                            converted_answer.append(choice.key)
+                                            break
+                                answer = converted_answer
+                            else:
+                                # Handle single choice
+                                for choice in opt.choices:
+                                    if choice.display == answer:
+                                        answer = choice.key
+                                        break
 
                     else:  # str or fallback
                         answer = questionary.text(
