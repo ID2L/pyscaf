@@ -28,7 +28,7 @@ class JupyterToolsAction(Action):
             type="bool",
             help="Add Jupyter notebook manipulation tools",
             prompt="Do you want to add Jupyter notebook manipulation tools ?",
-            default=True,
+            default=False,
         ),
     ]
 
