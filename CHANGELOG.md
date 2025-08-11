@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v1.4.0 (2025-08-11)
+
+### Features
+
+- **semantic-release**: Added readme ([#10](https://github.com/ID2L/pyscaf/pull/10),
+  [`c2a2a1e`](https://github.com/ID2L/pyscaf/commit/c2a2a1ebdaea23f46a32fb895d181842f39b5bef))
+
+- **semantic-release**: Implements the action for semantic-release
+  ([#10](https://github.com/ID2L/pyscaf/pull/10),
+  [`c2a2a1e`](https://github.com/ID2L/pyscaf/commit/c2a2a1ebdaea23f46a32fb895d181842f39b5bef))
+
+### Testing
+
+- Updated action test factory to handle positional arguments
+  ([#10](https://github.com/ID2L/pyscaf/pull/10),
+  [`c2a2a1e`](https://github.com/ID2L/pyscaf/commit/c2a2a1ebdaea23f46a32fb895d181842f39b5bef))
+
+
 ## v1.3.0 (2025-08-11)
 
 
