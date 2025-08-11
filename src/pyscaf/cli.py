@@ -159,6 +159,8 @@ def init(project_name, interactive, no_install, **kwargs):
         context = fill_default_context(context)
 
     manager = ActionManager(project_name, context)
+    context = manager.run_postfill_hooks(context)
+
     if interactive:
         context = manager.ask_interactive_questions(context)
     manager.create_project()

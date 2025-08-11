@@ -3,6 +3,7 @@ Git initialization actions.
 """
 
 import os
+import re
 import subprocess
 from pathlib import Path
 from typing import Dict, Optional
@@ -10,9 +11,30 @@ from typing import Dict, Optional
 import questionary
 from rich.console import Console
 
-from pyscaf.actions import Action, CLIOption
+from pyscaf.actions import Action, ChoiceOption, CLIOption
 
 console = Console()
+
+GIT_HOST_CHOICES = [
+    ChoiceOption(key="github", display="Github", value="github"),
+    ChoiceOption(key="gitlab", display="Gitlab", value="gitlab"),
+]
+
+
+def postfill_remote_url(context: dict) -> dict:
+    context["versionning"] = True
+    if re.search(r"[^\w]github\.com[^\w]", context["remote_url"]):
+        context["git_host"] = "github"
+        console.print("[bold cyan]Detected GitHub repository from URL[/bold cyan]")
+    elif re.search(r"[^\w]gitlab\.com[^\w]", context["remote_url"]):
+        context["git_host"] = "gitlab"
+        console.print("[bold cyan]Detected GitLab repository from URL[/bold cyan]")
+    return context
+
+
+def postfill_git_host(context: dict) -> dict:
+    context["versionning"] = True
+    return context
 
 
 class GitAction(Action):
@@ -33,6 +55,16 @@ class GitAction(Action):
             type="str",
             help="Provide a remote url for the git repository",
             prompt="Git remote url ?",
+            postfill_hook=postfill_remote_url,
+        ),
+        CLIOption(
+            name="--git-host",
+            type="choice",
+            help="What is the git host for this project ?",
+            prompt="Git host ?",
+            choices=GIT_HOST_CHOICES,
+            default=0,
+            postfill_hook=postfill_git_host,
         ),
     ]  # Add Git-specific options if needed
 

@@ -100,6 +100,18 @@ class ActionManager:
             if action_id in action_class_by_id
         ]
 
+    def run_postfill_hooks(self, context: dict) -> dict:
+        """Run all postfill hooks for actions in optimal order."""
+        for action in self.actions:
+            if action.activate(context):
+                for opt in action.cli_options:
+                    context_key = opt.name.lstrip("-").replace("-", "_")
+                    if context.get(context_key) is None:
+                        continue
+                    if opt.postfill_hook:
+                        context = opt.postfill_hook(context)
+        return context
+
     def ask_interactive_questions(self, context: dict) -> dict:
         """
         Ask all relevant questions for actions in optimal order, updating the context.
@@ -107,10 +119,12 @@ class ActionManager:
         Skips questions for which a value is already present in the context (e.g. provided via CLI).
         """
         for action in self.actions:
-            for opt in action.cli_options:
-                if action.activate(context):
-                    name = opt.name.lstrip("-").replace("-", "_")
-                    prompt = opt.prompt or name
+            if action.activate(context):
+                for opt in action.cli_options:
+                    context_key = opt.name.lstrip("-").replace("-", "_")
+                    if context.get(context_key) is not None:
+                        continue
+                    prompt = opt.prompt or context_key
                     default = (
                         opt.get_default_value()
                         if opt.type == "choice"
@@ -164,7 +178,7 @@ class ActionManager:
                         answer = questionary.text(
                             prompt, default=default if default is not None else ""
                         ).ask()
-                    context[name] = answer
+                    context[context_key] = answer
         return context
 
     def create_project(self) -> None:

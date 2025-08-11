@@ -8,7 +8,7 @@ import os
 import pkgutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Union
 
 from pydantic import BaseModel
 
@@ -48,9 +48,9 @@ class ChoiceOption(BaseModel):
         )
     """
 
-    key: str  # Short key for CLI usage
+    key: str  # Short key for CLI usage & store in context
     display: str  # Verbose display for interactive mode
-    value: Any  # The actual value to be stored in context
+    value: Any  # An actual value that can be used in the project
 
 
 class CLIOption(BaseModel):
@@ -65,6 +65,9 @@ class CLIOption(BaseModel):
     is_flag: Optional[bool] = None  # For bool
     multiple: Optional[bool] = None  # For multi-choice
     required: Optional[bool] = None
+    postfill_hook: Optional[Callable[[Dict[str, str]], Dict[str, str]]] = (
+        None  # Optional pre-activation function that modify context
+    )
 
     def get_choice_keys(self) -> List[str]:
         """Get the list of choice keys for CLI usage."""
