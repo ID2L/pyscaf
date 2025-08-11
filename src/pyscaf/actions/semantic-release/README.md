@@ -10,6 +10,32 @@ Semantic release automates the process of:
 - **Package publishing**: Deploy to PyPI (TestPyPI automatically, Production PyPI manually)
 - **GitHub releases**: Create GitHub releases with assets
 
+### Prerequisites
+
+- Git repository with versioning enabled
+- GitHub repository (for workflows)
+- Credential for the publisher repository
+- PyPI credentials configured as GitHub secrets:
+  - `TEST_PYPI_PASSWORD` for TestPyPI
+  - `PYPI_PASSWORD` for Production PyPI
+
+#### PyPI Token Setup
+
+1. **TestPyPI** (https://test.pypi.org):
+   - Go to Account Settings → API tokens
+   - Create a new token with "Entire account" scope
+   - Copy the token value
+
+2. **Production PyPI** (https://pypi.org):
+   - Go to Account Settings → API tokens
+   - Create a new token with "Entire account" scope
+   - Copy the token value
+
+3. **Add to GitHub Secrets**:
+   - Go to your repository → Settings → Secrets and variables → Actions
+   - Add `TEST_PYPI_PASSWORD` with your TestPyPI token
+   - Add `PYPI_PASSWORD` with your production PyPI token
+
 ### Features
 
 #### Automatic Configuration
@@ -27,13 +53,7 @@ Uses [Conventional Commits](https://www.conventionalcommits.org/) format:
 - `BREAKING CHANGE:` - Breaking changes (major version bump)
 - `docs:`, `style:`, `refactor:`, `test:`, `chore:` - No version bump
 
-### Prerequisites
 
-- Git repository with versioning enabled
-- GitHub repository (for workflows)
-- PyPI credentials configured as GitHub secrets:
-  - `TEST_PYPI_PASSWORD` for TestPyPI
-  - `PYPI_PASSWORD` for Production PyPI
 
 ### Configuration
 
