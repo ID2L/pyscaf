@@ -1,5 +1,6 @@
 cli_arguments:
-  license: "bsd"
+  options:
+    license: "bsd"
 
 checks:
   - name: "pyproject.toml exists"

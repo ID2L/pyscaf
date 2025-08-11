@@ -1,5 +1,6 @@
 cli_arguments:
-  documentation: "pdoc"
+  options:
+    documentation: "pdoc"
 
 checks:
   - name: "pyproject.toml exists"

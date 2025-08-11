@@ -1,5 +1,6 @@
 cli_arguments:
-  jupyter: true
+  options:
+    jupyter: true
 
 checks:
   - name: "pyproject.toml exists"

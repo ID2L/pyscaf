@@ -1,0 +1,66 @@
+cli_arguments:
+  options:
+    versionning: true
+    git-host: github
+    semantic-release: true
+  positionals:
+    - init
+    - my_custom_project
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "my_custom_project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "my_custom_project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "my_custom_project/src"
+  
+  - name: "src/my_custom_project/__init__.py exists"
+    type: exist
+    file_path: "my_custom_project/src/my_custom_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "my_custom_project/.vscode/settings.json"
+  
+  - name: ".gitignore exists"
+    type: exist
+    file_path: "my_custom_project/.gitignore"
+  
+  - name: "pyproject.toml contains semantic_release configuration"
+    type: contains
+    file_path: "my_custom_project/pyproject.toml"
+    content: "[tool.semantic_release]"
+  
+  - name: "pyproject.toml contains python-semantic-release dependency"
+    type: contains
+    file_path: "my_custom_project/pyproject.toml"
+    content: "python-semantic-release"
+  
+  - name: "pyproject.toml contains correct version_variables path for custom project"
+    type: contains
+    file_path: "my_custom_project/pyproject.toml"
+    content: "src/my_custom_project/__init__.py:__version__"
+  
+  - name: "pyproject.toml contains github remote type"
+    type: contains
+    file_path: "my_custom_project/pyproject.toml"
+    content: 'type = "github"'
+  
+  - name: ".github/workflows/release.yml exists"
+    type: exist
+    file_path: "my_custom_project/.github/workflows/release.yml"
+  
+  - name: ".github/workflows/deploy-production-manual.yml exists"
+    type: exist
+    file_path: "my_custom_project/.github/workflows/deploy-production-manual.yml"
+  
+  - name: "README.md contains semantic release configuration section"
+    type: contains
+    file_path: "my_custom_project/README.md"
+    content: "## Semantic Release Configuration"

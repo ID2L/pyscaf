@@ -1,7 +1,8 @@
 cli_arguments:
   options:
     versionning: true
-    remote-url: "https://github.com/testuser/testrepo.git"
+    git-host: github
+    semantic-release: false
 
 checks:
   - name: "pyproject.toml exists"
@@ -28,7 +29,16 @@ checks:
     type: exist
     file_path: "tmp_project/.gitignore"
   
-  - name: ".gitignore contains Python patterns"
-    type: contains
-    file_path: "tmp_project/.gitignore"
-    content: "__pycache__" 
+  - name: "pyproject.toml does not contain semantic_release configuration"
+    type: not_contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "[tool.semantic_release]"
+  
+  - name: "pyproject.toml does not contain python-semantic-release dependency"
+    type: not_contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "python-semantic-release"
+  
+  - name: ".github/workflows directory does not exist"
+    type: not_exist
+    file_path: "tmp_project/.github"

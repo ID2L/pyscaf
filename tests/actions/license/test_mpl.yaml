@@ -1,5 +1,6 @@
 cli_arguments:
-  license: "mpl"
+  options:
+    license: "mpl"
 
 checks:
   - name: "pyproject.toml exists"
