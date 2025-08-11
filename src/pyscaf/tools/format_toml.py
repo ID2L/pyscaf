@@ -24,6 +24,5 @@ def format_toml(path: Path):
         else:
             formatted_lines.append(line)
 
-
     # Write the formatted content back to the file
     path.write_text("\n".join(formatted_lines) + "\n", encoding="utf-8")

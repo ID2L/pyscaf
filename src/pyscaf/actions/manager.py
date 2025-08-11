@@ -10,6 +10,7 @@ import questionary
 from rich.console import Console
 
 from pyscaf.actions import Action, discover_actions
+from pyscaf.actions.cli_option_to_key import cli_option_to_key
 from pyscaf.preference_chain import (
     CircularDependencyError,
     build_chains,
@@ -95,9 +96,7 @@ class ActionManager:
 
         # Instantiate actions in the optimal order
         self.actions = [
-            action_class_by_id[action_id](self.project_path)
-            for action_id in order
-            if action_id in action_class_by_id
+            action_class_by_id[action_id](self.project_path) for action_id in order if action_id in action_class_by_id
         ]
 
     def run_postfill_hooks(self, context: dict) -> dict:
@@ -105,7 +104,7 @@ class ActionManager:
         for action in self.actions:
             if action.activate(context):
                 for opt in action.cli_options:
-                    context_key = opt.name.lstrip("-").replace("-", "_")
+                    context_key = cli_option_to_key(opt)
                     if context.get(context_key) is None:
                         continue
                     if opt.postfill_hook:
@@ -121,40 +120,29 @@ class ActionManager:
         for action in self.actions:
             if action.activate(context):
                 for opt in action.cli_options:
-                    context_key = opt.name.lstrip("-").replace("-", "_")
+                    context_key = cli_option_to_key(opt)
                     if context.get(context_key) is not None:
                         continue
                     prompt = opt.prompt or context_key
-                    default = (
-                        opt.get_default_value()
-                        if opt.type == "choice"
-                        else (opt.default() if callable(opt.default) else opt.default)
-                    )
+                    if opt.type == "choice":
+                        default = opt.get_default_value()
+                    else:
+                        default = opt.default() if callable(opt.default) else opt.default
                     if opt.type == "bool":
-                        answer = questionary.confirm(
-                            prompt, default=bool(default)
-                        ).ask()
+                        answer = questionary.confirm(prompt, default=bool(default)).ask()
                     elif opt.type == "int":
-                        answer = questionary.text(
-                            prompt, default=str(default) if default is not None else ""
-                        ).ask()
-                        answer = (
-                            int(answer) if answer is not None and answer != "" else None
-                        )
+                        answer = questionary.text(prompt, default=str(default) if default is not None else "").ask()
+                        answer = int(answer) if answer is not None and answer != "" else None
                     elif opt.type == "choice" and opt.choices:
                         choices = opt.get_choice_displays()
                         default_display = opt.get_default_display()
 
                         if opt.multiple:
                             # Use checkbox for multiple choice
-                            answer = questionary.checkbox(
-                                prompt, choices=choices, default=default_display
-                            ).ask()
+                            answer = questionary.checkbox(prompt, choices=choices, default=default_display).ask()
                         else:
                             # Use select for single choice
-                            answer = questionary.select(
-                                prompt, choices=choices, default=default_display
-                            ).ask()
+                            answer = questionary.select(prompt, choices=choices, default=default_display).ask()
 
                         # Convert displays back to keys (we always store keys)
                         if answer:
@@ -175,9 +163,7 @@ class ActionManager:
                                         break
 
                     else:  # str or fallback
-                        answer = questionary.text(
-                            prompt, default=default if default is not None else ""
-                        ).ask()
+                        answer = questionary.text(prompt, default=default if default is not None else "").ask()
                     context[context_key] = answer
         return context
 
@@ -186,9 +172,7 @@ class ActionManager:
         # Create project directory if it doesn't exist
         self.project_path.mkdir(parents=True, exist_ok=True)
 
-        console.print(
-            f"[bold green]Creating project at: [/bold green]{self.project_path}"
-        )
+        console.print(f"[bold green]Creating project at: [/bold green]{self.project_path}")
 
         # First pass: Create all skeletons
         for action in self.actions:
@@ -196,9 +180,7 @@ class ActionManager:
                 print(f"Skipping {action.__class__.__name__}")
                 continue
             action_name = action.__class__.__name__
-            console.print(
-                f"[bold blue]Creating skeleton for: [/bold blue]{action_name}"
-            )
+            console.print(f"[bold blue]Creating skeleton for: [/bold blue]{action_name}")
             action.create_skeleton(self.context)
 
         # Second pass: Initialize all actions
@@ -215,9 +197,7 @@ class ActionManager:
                 if not action.activate(self.context):
                     continue
                 action_name = action.__class__.__name__
-                console.print(
-                    f"[bold blue]Installing dependencies for: [/bold blue]{action_name}"
-                )
+                console.print(f"[bold blue]Installing dependencies for: [/bold blue]{action_name}")
                 action.install(self.context)
         else:
             console.print("[bold yellow]Skipping installation.[/bold yellow]")

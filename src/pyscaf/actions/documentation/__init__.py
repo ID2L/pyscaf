@@ -67,10 +67,3 @@ class DocumentationAction(Action):
                     ] = script_content
         # If doc_choice is None, do not add anything
         return skeleton
-
-    def install(self, context: dict) -> None:
-        pass
-
-    # def activate(self, context: dict) -> bool:
-    #     doc_choice = context.get("documentation", )
-    #     return doc_choice is not None

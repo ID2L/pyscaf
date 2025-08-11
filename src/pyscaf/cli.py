@@ -3,13 +3,14 @@ Command-line interface for pyscaf.
 """
 
 import sys
-from typing import Type
+from typing import Any, Type
 
 import click
 from rich.console import Console
 
 from pyscaf import __version__
 from pyscaf.actions import Action, discover_actions
+from pyscaf.actions.cli_option_to_key import cli_option_to_key
 from pyscaf.actions.manager import ActionManager
 from pyscaf.preference_chain import best_execution_order
 from pyscaf.preference_chain.model import Node
@@ -50,6 +51,29 @@ def collect_cli_options():
     return cli_options
 
 
+def set_option_default(opt) -> Any:
+    """
+    Get the default value for a CLI option.
+
+    Args:
+        opt: The CLI option to get default value for
+
+    Returns:
+        The default value for the option
+    """
+    if opt.type == "choice":
+        # For choices, get the default key, not the default value
+        default_index = opt.default
+        if default_index is not None and opt.choices:
+            default_value = opt.choices[default_index].key
+        else:
+            default_value = None
+        print(f"default_key: {default_value}")
+    else:
+        default_value = opt.default() if callable(opt.default) else opt.default
+    return default_value
+
+
 def fill_default_context(context: dict) -> dict:
     """
     Fill the context with default values from all actions.
@@ -69,23 +93,11 @@ def fill_default_context(context: dict) -> dict:
         if hasattr(action_cls, "cli_options"):
             for opt in action_cls.cli_options:
                 # Convert option name to context key
-                name = opt.name.lstrip("-").replace("-", "_")
+                name = cli_option_to_key(opt)
 
                 # Only set default if not already present in context
                 if name not in context or context[name] is None:
-                    if opt.type == "choice":
-                        # For choices, get the default key, not the default value
-                        default_index = opt.default
-                        if default_index is not None and opt.choices:
-                            default_value = opt.choices[default_index].key
-                        else:
-                            default_value = None
-                        print(f"default_key: {default_value}")
-                    else:
-                        default_value = (
-                            opt.default() if callable(opt.default) else opt.default
-                        )
-                    context[name] = default_value
+                    context[name] = set_option_default(opt)
 
     return context
 

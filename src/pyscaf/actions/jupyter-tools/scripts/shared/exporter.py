@@ -14,10 +14,10 @@ def create_exporter(
     hide_output: bool = False,
     template_name: str | None = None,
     template_path: str | None = None,
-    template_file: str | None = None
+    template_file: str | None = None,
 ) -> tuple[HTMLExporter, dict[str, Any]]:
     """Create and configure the HTML exporter with preprocessors.
-    
+
     Args:
         hide_input: Whether to hide all input cells by default
         hide_output: Whether to hide all output cells by default
@@ -30,24 +30,22 @@ def create_exporter(
             - custom: Custom template (requires template_path or template_file)
         template_path: Path to a custom template directory
         template_file: Path to a specific template file
-    
+
     Returns:
         Tuple of (exporter, resources)
     """
     # Create configuration
     c = Config()
-    
+
     # Configure TagRemovePreprocessor
-    c.TagRemovePreprocessor.remove_cell_tags = set(['remove_cell'])
-    c.TagRemovePreprocessor.remove_input_tags = set(['hide_input'])
-    c.TagRemovePreprocessor.remove_all_outputs_tags = set(['hide_output'])
+    c.TagRemovePreprocessor.remove_cell_tags = {"remove_cell"}
+    c.TagRemovePreprocessor.remove_input_tags = {"hide_input"}
+    c.TagRemovePreprocessor.remove_all_outputs_tags = {"hide_output"}
     c.TagRemovePreprocessor.enabled = True
-    
+
     # Configure HTMLExporter
-    c.HTMLExporter.preprocessors = [
-        'nbconvert.preprocessors.TagRemovePreprocessor'
-    ]
-    
+    c.HTMLExporter.preprocessors = ["nbconvert.preprocessors.TagRemovePreprocessor"]
+
     # Configure template
     if template_name:
         c.HTMLExporter.template_name = template_name
@@ -55,21 +53,21 @@ def create_exporter(
         c.HTMLExporter.template_paths = [template_path]
     elif template_file:
         c.HTMLExporter.template_file = template_file
-    
+
     # Create exporter with config
     exporter = HTMLExporter(config=c)
-    
+
     # Set global visibility options
     exporter.exclude_input = hide_input
     exporter.exclude_output = hide_output
-    
+
     # Create resources dictionary
     resources = {
-        'metadata': {},
-        'global_content_filter': {
-            'include_input': not hide_input,
-            'include_output': not hide_output,
-        }
+        "metadata": {},
+        "global_content_filter": {
+            "include_input": not hide_input,
+            "include_output": not hide_output,
+        },
     }
-    
-    return exporter, resources 
+
+    return exporter, resources

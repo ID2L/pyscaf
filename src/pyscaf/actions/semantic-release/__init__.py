@@ -2,7 +2,6 @@
 Semantic release configuration actions.
 """
 
-import importlib
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -11,8 +10,6 @@ import tomli_w
 from rich.console import Console
 
 from pyscaf.actions import Action, CLIOption
-from pyscaf.tools.format_toml import format_toml
-from pyscaf.tools.toml_merge import merge_toml_files
 
 console = Console()
 
