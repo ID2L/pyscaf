@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v1.3.0 (2025-08-11)
+
+
 ## v1.2.2 (2025-08-11)
 
 ### Bug Fixes
@@ -16,6 +19,11 @@
 
 - **ci/cd**: Workflow passes locally ([#9](https://github.com/ID2L/pyscaf/pull/9),
   [`777d619`](https://github.com/ID2L/pyscaf/commit/777d619e7dcfa16a6576b1ae8a7723d6871307ab))
+
+### Features
+
+- Added postfill hook for CLIoption, running before interactive questions, and after each answer
+  ([`49dae3e`](https://github.com/ID2L/pyscaf/commit/49dae3e46ee014d51c97f2d0ab535dea41ac6ece))
 
 
 ## v1.2.1 (2025-07-31)
