@@ -1,0 +1,44 @@
+cli_arguments:
+  options:
+    versionning: false
+    git-host: github
+    semantic-release: true
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "tmp_project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: ".gitignore does not exist (no git)"
+    type: not_exist
+    file_path: "tmp_project/.gitignore"
+  
+  - name: "pyproject.toml does not contain semantic_release configuration"
+    type: not_contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "[tool.semantic_release]"
+  
+  - name: "pyproject.toml does not contain python-semantic-release dependency"
+    type: not_contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "python-semantic-release"
+  
+  - name: ".github/workflows directory does not exist"
+    type: not_exist
+    file_path: "tmp_project/.github"

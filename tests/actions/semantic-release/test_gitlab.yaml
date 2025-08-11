@@ -1,0 +1,54 @@
+cli_arguments:
+  options:
+    versionning: true
+    git-host: gitlab
+    semantic-release: true
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "tmp_project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "tmp_project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "tmp_project/src"
+  
+  - name: "src/tmp_project/__init__.py exists"
+    type: exist
+    file_path: "tmp_project/src/tmp_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "tmp_project/.vscode/settings.json"
+  
+  - name: ".gitignore exists"
+    type: exist
+    file_path: "tmp_project/.gitignore"
+  
+  - name: "pyproject.toml contains semantic_release configuration"
+    type: contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "[tool.semantic_release]"
+  
+  - name: "pyproject.toml contains python-semantic-release dependency"
+    type: contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "python-semantic-release"
+  
+  - name: "pyproject.toml contains correct version_variables path"
+    type: contains
+    file_path: "tmp_project/pyproject.toml"
+    content: "src/tmp_project/__init__.py:__version__"
+  
+  - name: "pyproject.toml contains gitlab remote type"
+    type: contains
+    file_path: "tmp_project/pyproject.toml"
+    content: 'type = "gitlab"'
+  
+  - name: ".github/workflows directory does not exist"
+    type: not_exist
+    file_path: "tmp_project/.github"

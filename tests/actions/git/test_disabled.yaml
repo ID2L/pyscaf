@@ -1,5 +1,6 @@
 cli_arguments:
-  versionning: false
+  options:
+    versionning: false
 
 checks:
   - name: ".git directory should not exist when git is disabled"

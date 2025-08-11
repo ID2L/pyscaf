@@ -64,12 +64,23 @@ class ActionTestRunner:
 
     def _build_cli_command(self) -> List[str]:
         """Build the CLI command with arguments from config."""
-        cmd = ["pyscaf", "init", "tmp_project", "--no-install"]
+        cmd = ["pyscaf"]
 
-        # Add CLI arguments if they exist and are not empty
-        cli_args = self.config.get("cli_arguments", {})
-        if cli_args:
-            for key, value in cli_args.items():
+        # Add positional arguments first
+        positionals = self.config.get("cli_arguments", {}).get("positionals", [])
+        if positionals:
+            cmd.extend(positionals)
+        else:
+            # Default positional arguments if not specified
+            cmd.extend(["init", "tmp_project"])
+
+        # Add --no-install flag by default
+        cmd.append("--no-install")
+
+        # Add CLI options if they exist and are not empty
+        options = self.config.get("cli_arguments", {}).get("options", {})
+        if options:
+            for key, value in options.items():
                 if isinstance(value, bool):
                     if value:
                         cmd.append(f"--{key}")

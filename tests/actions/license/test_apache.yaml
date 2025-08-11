@@ -1,5 +1,6 @@
 cli_arguments:
-  license: "apache"
+  options:
+    license: "apache"
 
 checks:
   - name: "pyproject.toml exists"

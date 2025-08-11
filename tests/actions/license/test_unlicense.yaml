@@ -1,5 +1,6 @@
 cli_arguments:
-  license: "unlicense"
+  options:
+    license: "unlicense"
 
 checks:
   - name: "pyproject.toml exists"

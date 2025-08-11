@@ -1,0 +1,29 @@
+cli_arguments:
+  options:
+    versionning: true
+    git-host: github
+    semantic-release: true
+  positionals:
+    - init
+    - custom-project
+
+checks:
+  - name: "pyproject.toml exists"
+    type: exist
+    file_path: "custom-project/pyproject.toml"
+  
+  - name: "README.md exists"
+    type: exist
+    file_path: "custom-project/README.md"
+  
+  - name: "src directory exists"
+    type: exist
+    file_path: "custom-project/src"
+  
+  - name: "src/custom_project/__init__.py exists"
+    type: exist
+    file_path: "custom-project/src/custom_project/__init__.py"
+  
+  - name: ".vscode/settings.json exists"
+    type: exist
+    file_path: "custom-project/.vscode/settings.json"

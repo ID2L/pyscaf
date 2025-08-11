@@ -1,5 +1,6 @@
 cli_arguments:
-  author: "John Doe"
+  options:
+    author: "John Doe"
 
 checks:
   - name: "pyproject.toml exists"

@@ -1,5 +1,6 @@
 cli_arguments:
-  versionning: false
+  options:
+    versionning: false
 
 checks:
   - name: "pyproject.toml exists"
