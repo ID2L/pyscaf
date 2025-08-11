@@ -51,6 +51,12 @@ class SemanticReleaseAction(Action):
         """
         skeleton = {}
 
+        # Add README.md documentation
+        readme_path = Path(__file__).parent / "README.md"
+        if readme_path.exists():
+            skeleton[Path("README.md")] = readme_path.read_text()
+            console.print("[bold green]Added semantic-release README.md[/bold green]")
+
         # Copy GitHub workflows if git_host is github
         git_host = context.get("git_host")
         if git_host == "github":

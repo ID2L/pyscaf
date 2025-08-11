@@ -59,3 +59,8 @@ checks:
   - name: ".github/workflows/deploy-production-manual.yml exists"
     type: exist
     file_path: "my_custom_project/.github/workflows/deploy-production-manual.yml"
+  
+  - name: "README.md contains semantic release configuration section"
+    type: contains
+    file_path: "my_custom_project/README.md"
+    content: "## Semantic Release Configuration"

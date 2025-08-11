@@ -52,3 +52,8 @@ checks:
   - name: ".github/workflows directory does not exist"
     type: not_exist
     file_path: "tmp_project/.github"
+  
+  - name: "README.md contains semantic release configuration section"
+    type: contains
+    file_path: "tmp_project/README.md"
+    content: "## Semantic Release Configuration"

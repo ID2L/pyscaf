@@ -66,3 +66,8 @@ checks:
     type: contains
     file_path: "tmp_project/.github/workflows/deploy-production-manual.yml"
     content: "pypa/gh-action-pypi-publish"
+  
+  - name: "README.md contains semantic release configuration section"
+    type: contains
+    file_path: "tmp_project/README.md"
+    content: "## Semantic Release Configuration"
