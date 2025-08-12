@@ -7,8 +7,9 @@ import logging
 import os
 import pkgutil
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pydantic import BaseModel
 
@@ -56,38 +57,36 @@ class ChoiceOption(BaseModel):
 class CLIOption(BaseModel):
     name: str  # e.g. '--author'
     type: str = "str"  # 'str', 'bool', 'int', 'choice', etc.
-    help: Optional[str] = None
+    help: str | None = None
     default: Any = None  # For choice type, this should be an index (int)
-    prompt: Optional[str] = None
-    choices: Optional[List[ChoiceOption]] = (
-        None  # For choice type - can be List[str] or List[ChoiceOption]
-    )
-    is_flag: Optional[bool] = None  # For bool
-    multiple: Optional[bool] = None  # For multi-choice
-    required: Optional[bool] = None
-    postfill_hook: Optional[Callable[[Dict[str, str]], Dict[str, str]]] = (
+    prompt: str | None = None
+    choices: list[ChoiceOption] | None = None  # For choice type - can be List[str] or List[ChoiceOption]
+    is_flag: bool | None = None  # For bool
+    multiple: bool | None = None  # For multi-choice
+    required: bool | None = None
+    postfill_hook: Callable[[dict[str, str]], dict[str, str]] | None = (
         None  # Optional pre-activation function that modify context
     )
 
-    def get_choice_keys(self) -> List[str]:
+    def get_choice_keys(self) -> list[str]:
         """Get the list of choice keys for CLI usage."""
         if self.choices and isinstance(self.choices[0], ChoiceOption):
             return [choice.key for choice in self.choices]
         return []
 
-    def get_choice_displays(self) -> List[str]:
+    def get_choice_displays(self) -> list[str]:
         """Get the list of choice displays for interactive mode."""
         if self.choices and isinstance(self.choices[0], ChoiceOption):
             return [choice.display for choice in self.choices]
         return []
 
-    def get_choice_values(self) -> List[Any]:
+    def get_choice_values(self) -> list[Any]:
         """Get the list of choice values."""
         if self.choices and isinstance(self.choices[0], ChoiceOption):
             return [choice.value for choice in self.choices]
         return []
 
-    def get_choice_by_key(self, key: str) -> Optional[Any]:
+    def get_choice_by_key(self, key: str) -> Any | None:
         """Get the value corresponding to a choice key."""
 
         if self.choices and isinstance(self.choices[0], ChoiceOption):
@@ -96,7 +95,7 @@ class CLIOption(BaseModel):
                     return choice.value
         return None
 
-    def get_choice_by_display(self, display: str) -> Optional[Any]:
+    def get_choice_by_display(self, display: str) -> Any | None:
         """Get the value corresponding to a choice display."""
 
         if self.choices and isinstance(self.choices[0], ChoiceOption):
@@ -105,7 +104,7 @@ class CLIOption(BaseModel):
                     return choice.value
         return None
 
-    def get_default_display(self) -> Optional[str]:
+    def get_default_display(self) -> str | None:
         """Get the default display."""
         if self.type == "choice" and self.choices and isinstance(self.default, int):
             if 0 <= self.default < len(self.choices):
@@ -138,25 +137,19 @@ class Action(ABC):
 
     # Explicit dependencies and preferences
     depends: set[str] = set()
-    run_preferably_after: Optional[str] = None
-    cli_options: List[CLIOption] = []
+    run_preferably_after: str | None = None
+    cli_options: list[CLIOption] = []
 
     def __init_subclass__(cls):
         # Validation: if multiple depends and no run_preferably_after, raise error
-        if (
-            hasattr(cls, "depends")
-            and len(cls.depends) > 1
-            and not getattr(cls, "run_preferably_after", None)
-        ):
-            raise ValueError(
-                f"Action '{cls.__name__}' has multiple depends but no run_preferably_after"
-            )
+        if hasattr(cls, "depends") and len(cls.depends) > 1 and not getattr(cls, "run_preferably_after", None):
+            raise ValueError(f"Action '{cls.__name__}' has multiple depends but no run_preferably_after")
 
-    def __init__(self, project_path: Union[str, Path]):
+    def __init__(self, project_path: str | Path):
         self.project_path = Path(project_path)
 
     @abstractmethod
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for this action, using the provided context.
 
@@ -195,7 +188,7 @@ class Action(ABC):
         """
         pass
 
-    def create_skeleton(self, context: dict) -> Set[Path]:
+    def create_skeleton(self, context: dict) -> set[Path]:
         """
         Create the filesystem skeleton for this action using the provided context.
 
@@ -242,7 +235,7 @@ def discover_actions():
     Dynamically discover all Action subclasses in the actions package (excluding base/manager/pycache).
     Returns a list of Action classes.
     """
-    actions: List[type[Action]] = []
+    actions: list[type[Action]] = []
     actions_dir = os.path.dirname(__file__)
     for _, module_name, is_pkg in pkgutil.iter_modules([actions_dir]):
         if module_name in ("base", "manager", "__pycache__"):

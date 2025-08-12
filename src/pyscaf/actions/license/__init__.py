@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Dict, Optional
 
 from pyscaf.actions import Action, ChoiceOption, CLIOption
 
@@ -56,7 +55,7 @@ class LicenseAction(Action):
     def __init__(self, project_path):
         super().__init__(project_path)
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         license_key = context.get("license", "mit")  # Get the key (e.g., "mit")
 
         # Convert key to value using LICENSE_CHOICES directly
@@ -74,6 +73,3 @@ class LicenseAction(Action):
                 license_content = license_template_path.read_text()
                 skeleton[Path("LICENSE")] = license_content
         return skeleton
-
-    def install(self, context: dict) -> None:
-        pass

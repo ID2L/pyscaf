@@ -37,7 +37,7 @@ class JupyterAction(Action):
     def activate(self, context: dict) -> bool:
         return context.get("jupyter") is None or context.get("jupyter", True)
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for Jupyter notebook support.
 
@@ -65,9 +65,7 @@ This directory contains Jupyter notebooks for the {project_name} project.
         }
         if context.get("versionning"):
             gitignore_path = Path(__file__).parent / "template.gitignore"
-            gitignore_content = (
-                gitignore_path.read_text() if gitignore_path.exists() else ""
-            )
+            gitignore_content = gitignore_path.read_text() if gitignore_path.exists() else ""
             skeleton[Path(".gitignore")] = gitignore_content
         return skeleton
 
@@ -77,18 +75,14 @@ This directory contains Jupyter notebooks for the {project_name} project.
 
         This will create a Jupyter kernel specific to this project.
         """
-        console.print(
-            "[bold blue]Setting up Jupyter kernel for the project...[/bold blue]"
-        )
+        console.print("[bold blue]Setting up Jupyter kernel for the project...[/bold blue]")
 
         try:
             # Ensure we're in the right directory
             os.chdir(self.project_path)
 
             # Create a Jupyter kernel for this project
-            console.print(
-                "[bold cyan]Creating Jupyter kernel for this project...[/bold cyan]"
-            )
+            console.print("[bold cyan]Creating Jupyter kernel for this project...[/bold cyan]")
 
             project_name = context.get("project_name", "myproject")
 
@@ -113,19 +107,13 @@ This directory contains Jupyter notebooks for the {project_name} project.
             )
 
             if result == 0:
-                console.print(
-                    "[bold green]Jupyter kernel created successfully![/bold green]"
-                )
+                console.print("[bold green]Jupyter kernel created successfully![/bold green]")
                 console.print(
                     f"[bold green]You can now use the '{project_name} (Poetry)' kernel in Jupyter.[/bold green]"
                 )
             else:
-                console.print(
-                    f"[bold yellow]Jupyter kernel creation exited with code {result}[/bold yellow]"
-                )
+                console.print(f"[bold yellow]Jupyter kernel creation exited with code {result}[/bold yellow]")
 
         except FileNotFoundError:
-            console.print(
-                "[bold yellow]Poetry or Jupyter not found. Make sure they are installed.[/bold yellow]"
-            )
+            console.print("[bold yellow]Poetry or Jupyter not found. Make sure they are installed.[/bold yellow]")
             console.print("https://python-poetry.org/docs/#installation")

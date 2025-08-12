@@ -6,7 +6,6 @@ import os
 import re
 import subprocess
 from pathlib import Path
-from typing import Dict, Optional
 
 import questionary
 from rich.console import Console
@@ -74,7 +73,7 @@ class GitAction(Action):
     def activate(self, context: dict) -> bool:
         return context.get("versionning") is None or context.get("versionning", True)
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for Git initialization.
 
@@ -87,9 +86,7 @@ class GitAction(Action):
 
         # Python & Poetry .gitignore content
         gitignore_path = Path(__file__).parent / "template.gitignore"
-        gitignore_content = (
-            gitignore_path.read_text() if gitignore_path.exists() else ""
-        )
+        gitignore_content = gitignore_path.read_text() if gitignore_path.exists() else ""
 
         # Return skeleton dictionary
         return {
@@ -121,21 +118,15 @@ class GitAction(Action):
             )
 
             if result == 0:
-                console.print(
-                    "[bold green]Git repository initialized successfully![/bold green]"
-                )
+                console.print("[bold green]Git repository initialized successfully![/bold green]")
 
                 # Configure remote repository if URL is provided
                 self._configure_remote(context)
             else:
-                console.print(
-                    f"[bold yellow]Git init exited with code {result}[/bold yellow]"
-                )
+                console.print(f"[bold yellow]Git init exited with code {result}[/bold yellow]")
 
         except FileNotFoundError:
-            console.print(
-                "[bold yellow]Git not found. Please install it first.[/bold yellow]"
-            )
+            console.print("[bold yellow]Git not found. Please install it first.[/bold yellow]")
 
     def _configure_remote(self, context: dict) -> None:
         """Configure remote repository."""
@@ -159,13 +150,9 @@ class GitAction(Action):
             )
 
             if result == 0:
-                console.print(
-                    f"[bold green]Remote repository configured: {remote_url}[/bold green]"
-                )
+                console.print(f"[bold green]Remote repository configured: {remote_url}[/bold green]")
         else:
-            console.print(
-                "[bold blue]No remote URL provided. You can add it later with:[/bold blue]"
-            )
+            console.print("[bold blue]No remote URL provided. You can add it later with:[/bold blue]")
             console.print("  git remote add origin <your-repository-url>")
 
     def install(self, context: dict) -> None:

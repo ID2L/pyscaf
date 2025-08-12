@@ -5,7 +5,6 @@ Poetry initialization actions.
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, Optional
 
 import tomli
 import tomli_w
@@ -19,12 +18,8 @@ console = Console()
 def get_local_git_author():
     """Get the author name from the local git config."""
     try:
-        git_name = (
-            subprocess.check_output(["git", "config", "user.name"]).decode().strip()
-        )
-        git_email = (
-            subprocess.check_output(["git", "config", "user.email"]).decode().strip()
-        )
+        git_name = subprocess.check_output(["git", "config", "user.name"]).decode().strip()
+        git_email = subprocess.check_output(["git", "config", "user.email"]).decode().strip()
         default_author = f"{git_name} <{git_email}>"
     except subprocess.CalledProcessError:
         default_author = ""
@@ -49,7 +44,7 @@ class CoreAction(Action):
     def __init__(self, project_path):
         super().__init__(project_path)
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for Core initialization.
 
@@ -65,15 +60,10 @@ class CoreAction(Action):
 
         # Add default ruff settings for VSCode
         vscode_settings_path = Path(__file__).parent / "default_settings.json"
-        vscode_settings = (
-            vscode_settings_path.read_text() if vscode_settings_path.exists() else ""
-        )
+        vscode_settings = vscode_settings_path.read_text() if vscode_settings_path.exists() else ""
         # Return skeleton dictionary
         skeleton = {
-            Path("README.md"): (
-                f"# {project_name}\n\nA Python project created with pyscaf\n\n"
-                f"{poetry_doc}\n"
-            ),
+            Path("README.md"): (f"# {project_name}\n\nA Python project created with pyscaf\n\n{poetry_doc}\n"),
             Path(f"src/{currated_projet_name}/__init__.py"): (
                 f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'
             ),
@@ -123,36 +113,24 @@ class CoreAction(Action):
                         pyproject_data["tool"] = {}
                     if "poetry" not in pyproject_data["tool"]:
                         pyproject_data["tool"]["poetry"] = {}
-                    pyproject_data["tool"]["poetry"]["packages"] = [
-                        {"include": currated_projet_name, "from": "src"}
-                    ]
+                    pyproject_data["tool"]["poetry"]["packages"] = [{"include": currated_projet_name, "from": "src"}]
                     with pyproject_path.open("wb") as f:
                         f.write(tomli_w.dumps(pyproject_data).encode("utf-8"))
                     console.print(
                         f"[bold green]Added [tool.poetry].packages for {currated_projet_name} in pyproject.toml[/bold green]"
                     )
                 except Exception as e:
-                    console.print(
-                        f"[bold yellow]Section [tool.poetry] not found or error: {e}[/bold yellow]"
-                    )
+                    console.print(f"[bold yellow]Section [tool.poetry] not found or error: {e}[/bold yellow]")
             else:
-                console.print(
-                    "[bold yellow]pyproject.toml not found after poetry init.[/bold yellow]"
-                )
+                console.print("[bold yellow]pyproject.toml not found after poetry init.[/bold yellow]")
 
             if result == 0:
-                console.print(
-                    "[bold green]Poetry initialization successful![/bold green]"
-                )
+                console.print("[bold green]Poetry initialization successful![/bold green]")
             else:
-                console.print(
-                    f"[bold yellow]Poetry init exited with code {result}[/bold yellow]"
-                )
+                console.print(f"[bold yellow]Poetry init exited with code {result}[/bold yellow]")
 
         except FileNotFoundError:
-            console.print(
-                "[bold yellow]Poetry not found. Please install it first:[/bold yellow]"
-            )
+            console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
             console.print("https://python-poetry.org/docs/#installation")
 
     def install(self, context: dict) -> None:
@@ -169,36 +147,22 @@ class CoreAction(Action):
 
             # Run poetry install
             console.print("[bold cyan]Running poetry install...[/bold cyan]")
-            result = subprocess.call(
-                ["poetry", "install"], stdin=None, stdout=None, stderr=None
-            )
+            result = subprocess.call(["poetry", "install"], stdin=None, stdout=None, stderr=None)
 
             if result == 0:
-                console.print(
-                    "[bold green]Poetry dependencies installed successfully!"
-                    "[/bold green]"
-                )
+                console.print("[bold green]Poetry dependencies installed successfully![/bold green]")
             else:
-                console.print(
-                    f"[bold yellow]Poetry install exited with code {result}"
-                    f"[/bold yellow]"
-                )
+                console.print(f"[bold yellow]Poetry install exited with code {result}[/bold yellow]")
 
         except FileNotFoundError:
-            console.print(
-                "[bold yellow]Poetry not found. Please install it first:[/bold yellow]"
-            )
+            console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
             console.print("https://python-poetry.org/docs/#installation")
             return
 
         # Separate block for VSCode Ruff extension installation
         try:
             console.print("[bold cyan]Installing VSCode Ruff extension...[/bold cyan]")
-            subprocess.call(
-                ["code", "--install-extension", "charliermarsh.ruff", "--force"]
-            )
+            subprocess.call(["code", "--install-extension", "charliermarsh.ruff", "--force"])
         except FileNotFoundError:
-            console.print(
-                "[bold yellow]VSCode not found. Please install it first:[/bold yellow]"
-            )
+            console.print("[bold yellow]VSCode not found. Please install it first:[/bold yellow]")
             console.print("https://code.visualstudio.com/download")

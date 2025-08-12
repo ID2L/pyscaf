@@ -11,12 +11,7 @@ def load_pdoc_config(pyproject_path: Path) -> dict:
         sys.exit(1)
     with pyproject_path.open("rb") as f:
         pyproject = tomli.load(f)
-    return (
-        pyproject.get("tool", {})
-        .get("pyscaf", {})
-        .get("documentation", {})
-        .get("pdoc", {})
-    )
+    return pyproject.get("tool", {}).get("pyscaf", {}).get("documentation", {}).get("pdoc", {})
 
 
 def load_documentation_config(pyproject_path: Path) -> dict:
@@ -60,9 +55,7 @@ def config_to_pdoc_args(config: dict) -> list:
     args = []
     for key, value in config.items():
         if key == "output":
-            print(
-                "Warning: 'output' argument ignored. Use gen_doc function for output directory management."
-            )
+            print("Warning: 'output' argument ignored. Use gen_doc function for output directory management.")
             continue
         cli_key = f"--{key.replace('_', '-')}"
 
@@ -83,9 +76,6 @@ def serve_doc():
     """Serve the documentation using pdoc."""
     pyproject_path = Path("pyproject.toml")
     config = load_pdoc_config(pyproject_path)
-    # if not config:
-    #     print("No [tool.pyscaf.documentation] section found in pyproject.toml.")
-    #     sys.exit(1)
     args = config_to_pdoc_args(config)
     # Add modules/paths to document (required by pdoc)
     modules = config.get("modules")

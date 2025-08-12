@@ -37,12 +37,10 @@ class JupyterToolsAction(Action):
 
     def activate(self, context: dict) -> bool:
         return (
-            context.get("jupyter", True)
-            and context.get("jupyter_tools") is None
-            or context.get("jupyter_tools", True)
+            context.get("jupyter", True) and context.get("jupyter_tools") is None or context.get("jupyter_tools", True)
         )
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for Jupyter tools.
 
@@ -66,19 +64,13 @@ class JupyterToolsAction(Action):
                     and "pyscaf" in config_data["tool"]
                     and "jupyter-tools" in config_data["tool"]["pyscaf"]
                 ):
-                    jupyter_tools_config = config_data["tool"]["pyscaf"][
-                        "jupyter-tools"
-                    ]
+                    jupyter_tools_config = config_data["tool"]["pyscaf"]["jupyter-tools"]
                     # Extract all directory paths from the config
                     for key, value in jupyter_tools_config.items():
-                        if isinstance(value, str) and (
-                            "dir" in key or "directory" in key
-                        ):
+                        if isinstance(value, str) and ("dir" in key or "directory" in key):
                             config_dirs.append(Path(value))
             except Exception as e:
-                console.print(
-                    f"[bold yellow]Warning: Could not parse config.toml: {e}[/bold yellow]"
-                )
+                console.print(f"[bold yellow]Warning: Could not parse config.toml: {e}[/bold yellow]")
 
         # Copy scripts from the source
         scripts_dir = Path(__file__).parent / "scripts"
@@ -101,9 +93,7 @@ class JupyterToolsAction(Action):
 
             for script_file in scripts_dir.glob("*.py"):
                 script_content = script_file.read_text()
-                skeleton[Path(f"pyscaf/jupyter-tools/scripts/{script_file.name}")] = (
-                    script_content
-                )
+                skeleton[Path(f"pyscaf/jupyter-tools/scripts/{script_file.name}")] = script_content
 
         return skeleton
 
@@ -126,19 +116,13 @@ class JupyterToolsAction(Action):
                     try:
                         # Make executable on Unix-like systems
                         script_file.chmod(0o755)
-                        console.print(
-                            f"[bold green]Made {script_file.name} executable[/bold green]"
-                        )
+                        console.print(f"[bold green]Made {script_file.name} executable[/bold green]")
                     except OSError:
                         # On Windows, this will fail but that's okay
                         pass
 
             console.print("[bold green]Jupyter tools setup complete![/bold green]")
-            console.print(
-                "[bold blue]You can now use the tools in the tools/ directory.[/bold blue]"
-            )
+            console.print("[bold blue]You can now use the tools in the tools/ directory.[/bold blue]")
 
         except Exception as e:
-            console.print(
-                f"[bold yellow]Error setting up Jupyter tools: {e}[/bold yellow]"
-            )
+            console.print(f"[bold yellow]Error setting up Jupyter tools: {e}[/bold yellow]")

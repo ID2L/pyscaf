@@ -1,13 +1,10 @@
 from pathlib import Path
-from typing import Dict, Optional
 
 from pyscaf.actions import Action, ChoiceOption, CLIOption
 
 DOC_CHOICES = [
     ChoiceOption(key="none", display="None (no documentation)", value=None),
-    ChoiceOption(
-        key="pdoc", display="pdoc (simple, auto-generated API docs)", value="pdoc"
-    ),
+    ChoiceOption(key="pdoc", display="pdoc (simple, auto-generated API docs)", value="pdoc"),
 ]
 
 
@@ -30,10 +27,8 @@ class DocumentationAction(Action):
     def __init__(self, project_path):
         super().__init__(project_path)
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
-        doc_key = context.get(
-            "documentation", "none"
-        )  # Get the key (e.g., "none", "pdoc")
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
+        doc_key = context.get("documentation", "none")  # Get the key (e.g., "none", "pdoc")
         print(f"Documentation key: {doc_key}")
 
         # Convert key to value using DOC_CHOICES directly
@@ -62,8 +57,6 @@ class DocumentationAction(Action):
 
                 for script_file in scripts_dir.glob("*.py"):
                     script_content = script_file.read_text()
-                    skeleton[
-                        Path(f"pyscaf/documentation/scripts/{script_file.name}")
-                    ] = script_content
+                    skeleton[Path(f"pyscaf/documentation/scripts/{script_file.name}")] = script_content
         # If doc_choice is None, do not add anything
         return skeleton

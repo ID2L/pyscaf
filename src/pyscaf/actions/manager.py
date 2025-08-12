@@ -4,7 +4,7 @@ Project action manager module.
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any
 
 import questionary
 from rich.console import Console
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 class ActionManager:
     """Manager for all project actions."""
 
-    def __init__(self, project_name: Union[str, Path], context: Dict[str, Any]):
+    def __init__(self, project_name: str | Path, context: dict[str, Any]):
         """
         Initialize the action manager.
 
@@ -38,7 +38,7 @@ class ActionManager:
         self.project_path = Path.cwd() / project_name
         console.print(f"[bold green]Project path: [/bold green]{self.project_path}")
         self.context = context
-        self.actions: List[Action] = []
+        self.actions: list[Action] = []
 
         # Determine which actions to include based on configuration
         self._determine_actions()

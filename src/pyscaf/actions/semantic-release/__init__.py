@@ -35,11 +35,10 @@ class SemanticReleaseAction(Action):
     def activate(self, context: dict) -> bool:
         """Only activate if versionning is enabled and semantic-release is requested."""
         return context.get("versionning", False) and (
-            context.get("semantic_release") is None
-            or context.get("semantic_release", True)
+            context.get("semantic_release") is None or context.get("semantic_release", True)
         )
 
-    def skeleton(self, context: dict) -> Dict[Path, Optional[str]]:
+    def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for semantic release.
 
@@ -63,9 +62,7 @@ class SemanticReleaseAction(Action):
                     # Copy to .github/workflows/ in the generated project
                     target_path = Path(".github") / "workflows" / workflow_file.name
                     skeleton[target_path] = workflow_file.read_text()
-                    console.print(
-                        f"[bold green]Added GitHub workflow: {target_path}[/bold green]"
-                    )
+                    console.print(f"[bold green]Added GitHub workflow: {target_path}[/bold green]")
 
         return skeleton
 
@@ -87,16 +84,12 @@ class SemanticReleaseAction(Action):
         pyproject_path = self.project_path / "pyproject.toml"
         self._update_config_with_tomli(context, pyproject_path)
 
-        console.print(
-            "[bold green]Semantic release configuration completed![/bold green]"
-        )
+        console.print("[bold green]Semantic release configuration completed![/bold green]")
 
     def _update_config_with_tomli(self, context: dict, pyproject_path: Path) -> None:
         """Update configuration using tomli_w."""
         if not pyproject_path.exists():
-            console.print(
-                "[bold yellow]pyproject.toml not found, skipping configuration updates[/bold yellow]"
-            )
+            console.print("[bold yellow]pyproject.toml not found, skipping configuration updates[/bold yellow]")
             return
 
         try:
@@ -109,28 +102,17 @@ class SemanticReleaseAction(Action):
             curated_project_name = project_name.replace("-", "_")
             new_init_path = f"src/{curated_project_name}/__init__.py:__version__"
 
-            if (
-                "tool" in pyproject_data
-                and "semantic_release" in pyproject_data["tool"]
-            ):
-                pyproject_data["tool"]["semantic_release"]["version_variables"] = [
-                    new_init_path
-                ]
-                console.print(
-                    f"[bold green]Updated __init__.py path to: {new_init_path}[/bold green]"
-                )
+            if "tool" in pyproject_data and "semantic_release" in pyproject_data["tool"]:
+                pyproject_data["tool"]["semantic_release"]["version_variables"] = [new_init_path]
+                console.print(f"[bold green]Updated __init__.py path to: {new_init_path}[/bold green]")
 
                 # Update remote type
                 git_host = context.get("git_host")
                 if git_host:
                     if "remote" not in pyproject_data["tool"]["semantic_release"]:
                         pyproject_data["tool"]["semantic_release"]["remote"] = {}
-                    pyproject_data["tool"]["semantic_release"]["remote"]["type"] = (
-                        git_host
-                    )
-                    console.print(
-                        f"[bold green]Updated remote type to: {git_host}[/bold green]"
-                    )
+                    pyproject_data["tool"]["semantic_release"]["remote"]["type"] = git_host
+                    console.print(f"[bold green]Updated remote type to: {git_host}[/bold green]")
 
                 # Write back the updated configuration
                 with pyproject_path.open("wb") as f:
