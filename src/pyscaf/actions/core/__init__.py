@@ -139,8 +139,9 @@ class CoreAction(Action):
 
         This will run 'poetry install' to install all dependencies.
         """
-        console.print("[bold blue]Installing dependencies with Poetry...[/bold blue]")
+        super().init(context)
 
+        console.print("[bold blue]Installing dependencies with Poetry...[/bold blue]")
         try:
             # Ensure we're in the right directory
             os.chdir(self.project_path)
