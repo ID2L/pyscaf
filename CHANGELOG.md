@@ -1,12 +1,18 @@
 # CHANGELOG
 
 
+## v1.4.2 (2025-08-18)
+
+
 ## v1.4.1 (2025-08-18)
 
 ### Bug Fixes
 
 - No abstract method on Action class
   ([`72e6d43`](https://github.com/ID2L/pyscaf/commit/72e6d4382be83fc78fccaf474f5ee0cf9e460790))
+
+- Postfill_hook called after every response in interactive mode, if available
+  ([`e18f02a`](https://github.com/ID2L/pyscaf/commit/e18f02aa9e02c025cb5beabb686d8f82c0a5072e))
 
 ### Refactoring
 
