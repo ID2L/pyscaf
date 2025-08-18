@@ -1,7 +1,20 @@
 # CHANGELOG
 
 
+## v1.5.0 (2025-08-18)
+
+
 ## v1.4.2 (2025-08-18)
+
+### Bug Fixes
+
+- **action**: Removed abstract class for action
+  ([`6954754`](https://github.com/ID2L/pyscaf/commit/69547548eacffc89878ca7823b8db0733c6594c5))
+
+### Features
+
+- **action/core**: Added ruff configuration in the pyproject
+  ([`0b26f4e`](https://github.com/ID2L/pyscaf/commit/0b26f4ea7f39c11cd2eb17059ae7b432b4393675))
 
 
 ## v1.4.1 (2025-08-18)
