@@ -1,6 +1,6 @@
 [project]
 name = "open-pyscaf"
-version = "1.4.0"
+version = "1.4.1"
 description = "A python scaffolder with quarto and other utilities out-of-the-box"
 authors = [
     {name = "guilhem.heinrich",email = "guilhem.heinrich@gmail.com"}
