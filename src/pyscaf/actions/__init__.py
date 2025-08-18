@@ -9,7 +9,7 @@ import pkgutil
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -148,7 +148,6 @@ class Action(ABC):
     def __init__(self, project_path: str | Path):
         self.project_path = Path(project_path)
 
-    @abstractmethod
     def skeleton(self, context: dict) -> dict[Path, str | None]:
         """
         Define the filesystem skeleton for this action, using the provided context.
@@ -237,7 +236,7 @@ def discover_actions():
     """
     actions: list[type[Action]] = []
     actions_dir = os.path.dirname(__file__)
-    for _, module_name, is_pkg in pkgutil.iter_modules([actions_dir]):
+    for _, module_name, _ in pkgutil.iter_modules([actions_dir]):
         if module_name in ("base", "manager", "__pycache__"):
             continue
         mod = importlib.import_module(f"pyscaf.actions.{module_name}")
