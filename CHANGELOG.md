@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v1.4.1 (2025-08-18)
+
+### Bug Fixes
+
+- No abstract method on Action class
+  ([`72e6d43`](https://github.com/ID2L/pyscaf/commit/72e6d4382be83fc78fccaf474f5ee0cf9e460790))
+
+### Refactoring
+
+- Readded proper ruff at pyproject level, and fixed some formatting/linting problem
+  ([`aac35ee`](https://github.com/ID2L/pyscaf/commit/aac35ee26e60cdd396b1385e666f6dca060689b9))
+
+
 ## v1.4.0 (2025-08-11)
 
 ### Features
