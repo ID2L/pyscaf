@@ -6,7 +6,6 @@ import importlib
 import logging
 import os
 import pkgutil
-from abc import ABC, abstractmethod
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -124,7 +123,7 @@ class CLIOption(BaseModel):
         return self.default
 
 
-class Action(ABC):
+class Action:
     """
     Abstract base class for all project actions.
     Now supports explicit dependencies, preferences, and CLI options.
@@ -159,7 +158,9 @@ class Action(ABC):
         Returns:
             Dictionary mapping paths to content
         """
-        pass
+        # Default implementation: no skeleton to create
+        # Override in subclasses if needed
+        return {}
 
     def init(self, context: dict) -> None:
         """
@@ -185,7 +186,9 @@ class Action(ABC):
         This method is called after all actions have been initialized.
         Use it to install dependencies, run commands like 'poetry install', etc.
         """
-        pass
+        # Default implementation: no installation needed
+        # Override in subclasses if needed
+        return None
 
     def create_skeleton(self, context: dict) -> set[Path]:
         """
