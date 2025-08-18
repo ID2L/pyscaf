@@ -165,6 +165,8 @@ class ActionManager:
                     else:  # str or fallback
                         answer = questionary.text(prompt, default=default if default is not None else "").ask()
                     context[context_key] = answer
+                    if opt.postfill_hook:
+                        context = opt.postfill_hook(context)
         return context
 
     def create_project(self) -> None:
