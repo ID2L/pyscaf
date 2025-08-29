@@ -60,3 +60,10 @@ class DocumentationAction(Action):
                     skeleton[Path(f"pyscaf/documentation/scripts/{script_file.name}")] = script_content
         # If doc_choice is None, do not add anything
         return skeleton
+
+    def init(self, context):
+        doc_key = context.get("documentation", "none")  # Get the key (e.g., "none", "pdoc")
+        if doc_key == "none":
+            return
+        
+        super().init(context)

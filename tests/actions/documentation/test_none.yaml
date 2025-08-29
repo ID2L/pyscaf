@@ -1,3 +1,7 @@
+cli_arguments:
+  options:
+    documentation: "none"
+
 checks:
   - name: "pyscaf/documentation directory not exists by default"
     type: not_exist
