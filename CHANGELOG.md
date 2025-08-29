@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.5.1 (2025-08-29)
+
+### Bug Fixes
+
+- **action**: Documentation should not merge toml config if "none" is selected, and by default
+  ([`9f48170`](https://github.com/ID2L/pyscaf/commit/9f481706e68f54c7fad4f73c5204647beb78b1a5))
+
+
 ## v1.5.0 (2025-08-18)
 
 
