@@ -24,7 +24,7 @@ class JupyterToolsAction(Action):
     run_preferably_after = "jupyter"
     cli_options = [
         CLIOption(
-            name="--jupyter-tools",
+            name="--jupyter_tools",
             type="bool",
             help="Add Jupyter notebook manipulation tools",
             prompt="Do you want to add Jupyter notebook manipulation tools ?",
@@ -62,9 +62,9 @@ class JupyterToolsAction(Action):
                 if (
                     "tool" in config_data
                     and "pyscaf" in config_data["tool"]
-                    and "jupyter-tools" in config_data["tool"]["pyscaf"]
+                    and "jupyter_tools" in config_data["tool"]["pyscaf"]
                 ):
-                    jupyter_tools_config = config_data["tool"]["pyscaf"]["jupyter-tools"]
+                    jupyter_tools_config = config_data["tool"]["pyscaf"]["jupyter_tools"]
                     # Extract all directory paths from the config
                     for key, value in jupyter_tools_config.items():
                         if isinstance(value, str) and ("dir" in key or "directory" in key):
@@ -76,7 +76,7 @@ class JupyterToolsAction(Action):
         scripts_dir = Path(__file__).parent / "scripts"
 
         skeleton = {
-            Path("pyscaf/jupyter-tools"): None,  # Create tools directory
+            Path("pyscaf/jupyter_tools"): None,  # Create tools directory
             Path("README.md"): readme_content,  # Add to configuration
         }
 
@@ -88,12 +88,12 @@ class JupyterToolsAction(Action):
         if scripts_dir.exists():
             # Add __init__.py for pyscaf directory
             skeleton[Path("pyscaf/__init__.py")] = ""
-            skeleton[Path("pyscaf/jupyter-tools/__init__.py")] = ""
-            skeleton[Path("pyscaf/jupyter-tools/scripts/__init__.py")] = ""
+            skeleton[Path("pyscaf/jupyter_tools/__init__.py")] = ""
+            skeleton[Path("pyscaf/jupyter_tools/scripts/__init__.py")] = ""
 
             for script_file in scripts_dir.glob("*.py"):
                 script_content = script_file.read_text()
-                skeleton[Path(f"pyscaf/jupyter-tools/scripts/{script_file.name}")] = script_content
+                skeleton[Path(f"pyscaf/jupyter_tools/scripts/{script_file.name}")] = script_content
 
         return skeleton
 
