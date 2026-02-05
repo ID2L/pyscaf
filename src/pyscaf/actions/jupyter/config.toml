@@ -1,7 +1,7 @@
-[tool.poetry.group.dev.dependencies]
+[tool.pixi.feature.dev.dependencies]
 jupyter = "*"
 notebook = "*"
 nbconvert = "*"
 ipykernel = "*"
 matplotlib = "*"
-pandas = "*" 
+pandas = "*"

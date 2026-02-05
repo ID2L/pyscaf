@@ -23,7 +23,7 @@ Tests are organized in the `tests/` directory with the following structure:
 
 ```bash
 # Run all tests
-poetry run pytest
+pixi run pytest
 
 # Run tests with verbose output
 poetry run pytest -v
@@ -222,7 +222,7 @@ Add pytest to your CI/CD pipeline:
 # GitHub Actions example
 - name: Run tests
   run: |
-    poetry install
+    pixi install
     poetry run pytest --cov=src --cov-report=xml
     
 - name: Upload coverage to Codecov

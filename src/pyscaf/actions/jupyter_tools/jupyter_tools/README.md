@@ -70,5 +70,5 @@ This action integrates seamlessly with the Jupyter action, providing additional 
 ### Requirements
 
 - Requires the `core` and `jupyter` actions to be run first
-- Poetry project structure
+- Pixi project structure
 - Python 3.7+

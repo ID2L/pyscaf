@@ -1,3 +1,6 @@
+# Pixi
+.pixi/
+
 # Python
 **/__pycache__/
 *.py[cod]

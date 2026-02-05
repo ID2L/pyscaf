@@ -16,6 +16,9 @@ markers = [
     "unit: marks tests as unit tests"
 ]
 
-[tool.poetry.group.dev.dependencies]
+[tool.pixi.feature.dev.dependencies]
 pytest = "*"
 pytest-cov = "*"
+
+[tool.pixi.tasks]
+test = "pytest"

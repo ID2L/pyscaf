@@ -1,10 +1,10 @@
-[tool.poetry.group.dev.dependencies]
+[tool.pixi.feature.dev.dependencies]
 pdoc = "*"
 tomli = "*"
 
-[tool.poetry.scripts]
-gen-doc = "pyscaf.documentation.scripts.parse_doc:gen_doc"
-serve-doc = "pyscaf.documentation.scripts.parse_doc:serve_doc"
+[tool.pixi.tasks]
+gen-doc = "pdoc --html --output-dir docs src"
+serve-doc = "pdoc --http : src"
 
 [tool.pyscaf.documentation]
 output_path = "docs"

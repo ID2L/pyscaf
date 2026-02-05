@@ -1,6 +1,4 @@
-# pyscaf
-
-A python poetry scaffolder - A tool to quickly initialize Python projects with complete and modern configuration.
+A python scaffolder powered by [Pixi](https://pixi.sh) - A tool to quickly initialize Python projects with complete and modern configuration.
 
 ## Installation
 
@@ -46,10 +44,10 @@ This allows you to:
 
 In its current version, `pyscaf` automatically configures:
 
-### 📦 Package Management with Poetry
-- Complete `poetry` configuration for package management
-- Features similar to R's `DESCRIPTION` file
-- Dependency management and publication
+### 📦 Environment Management with Pixi
+- Complete `pixi` configuration for environment and dependency management
+- Multi-platform support (Linux, macOS, Windows)
+- Fast and reproducible environments
 
 ### 🎯 Code Quality with Ruff
 - Configuration and installation of `ruff` for code normalization
@@ -76,6 +74,43 @@ In its current version, `pyscaf` automatically configures:
 
 ## Development
 
-This project is developed to simplify Python project creation with integrated best practices from the start.
+This project uses [Pixi](https://pixi.sh) for development.
+
+### Setup
+
+1. Install Pixi if you haven't already:
+   ```bash
+   curl -fsSL https://pixi.sh/install.sh | bash
+   ```
+
+2. Clone the repository and initialize the environment:
+   ```bash
+   pixi install
+   ```
+
+### Tasks
+
+You can run various development tasks using `pixi run`:
+
+- **Run pyscaf:** `pixi run pyscaf`
+- **Run tests:** `pixi run test`
+- **Check linting:** `pixi run lint`
+- **Format code:** `pixi run format`
+
+For a full list of available tasks, run:
+```bash
+pixi task list
+```
+
+### Environments
+
+The project defines two environments:
+- `default`: Basic environment for running the tool.
+- `dev`: Includes development tools like `pytest`, `ruff`, and `python-semantic-release`.
+
+To run a task in the `dev` environment:
+```bash
+pixi run -e dev <task_name>
+```
 
 

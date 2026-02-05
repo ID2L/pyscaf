@@ -1,53 +1,52 @@
-## Poetry Integration
+## Pixi Integration
 
-This project uses Poetry for dependency management and packaging. Poetry provides a modern and efficient way to manage Python dependencies and build packages.
+This project uses Pixi for environment and dependency management. Pixi provides a modern, fast, and multi-platform way to manage project environments.
 
 ### Features
 
-- **Dependency Management**: Poetry manages project dependencies through `pyproject.toml`
-- **Virtual Environment**: Automatically creates and manages a virtual environment
-- **Build System**: Integrated build system for creating Python packages
-- **Lock File**: Generates a `poetry.lock` file for reproducible installations
+- **Environment Management**: Pixi manages project environments through `pyproject.toml`
+- **Multi-platform support**: Works seamlessly on Linux, macOS, and Windows
+- **Built-in Tasks**: Powerful task runner for development workflows
+- **Fast and Reproducible**: Conda-based environment resolution
 
 ### Common Commands
 
 ```bash
-# Install dependencies
-poetry install
+# Install dependencies and setup environment
+pixi install
+
+# Run a task
+pixi run <task_name>
 
 # Add a new dependency
-poetry add package-name
+pixi add package-name
 
 # Add a development dependency
-poetry add --dev package-name
+pixi add --feature dev package-name
 
-# Update dependencies
-poetry update
+# List tasks
+pixi task list
 
-# Run a command within the virtual environment
-poetry run python script.py
-
-# Activate the virtual environment
-poetry shell
+# Shell into the environment
+pixi shell
 ```
 
 ### Project Structure
 
-The project follows a standard Python package structure:
-- `pyproject.toml`: Project configuration and dependencies
-- `poetry.lock`: Locked dependencies for reproducible builds
+The project follows a modern structure:
+- `pyproject.toml`: Project configuration, dependencies, and Pixi tasks
+- `pixi.lock`: Locked dependencies for reproducible environments
 - `src/`: Source code directory
 - `tests/`: Test files directory
 
 ### Development
 
 To start developing:
-1. Ensure Poetry is installed
-2. Run `poetry install` to install all dependencies
-3. Use `poetry shell` to activate the virtual environment
-4. Start coding!
+1. Ensure Pixi is installed: `curl -fsSL https://pixi.sh/install.sh | bash`
+2. Run `pixi install` to initialize the environment
+3. Start coding!
 
-For more information, visit [Poetry's official documentation](https://python-poetry.org/docs/).
+For more information, visit [Pixi's official documentation](https://pixi.sh).
 
 ## Ruff Integration
 
