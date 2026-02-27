@@ -44,7 +44,7 @@ class CoreAction(Action):
             type="str",
             help="Package name (valid python identifier)",
             prompt="What is the name of the main package ?",
-            default=lambda: "myproject",  # Fallback, logic in skeleton/init
+            default=None,
         ),
     ]
 
@@ -59,7 +59,9 @@ class CoreAction(Action):
             Dictionary mapping paths to content
         """
         project_name = context.get("project_name", "myproject")
-        package_name = context.get("package_name", project_name.replace("-", "_"))
+        package_name = context.get("package_name")
+        if not package_name:
+            package_name = project_name.replace("-", "_")
 
         # Read Pixi documentation (placeholder or from a file if exists)
         pixi_doc_path = Path(__file__).parent / "README.md"
@@ -102,7 +104,9 @@ class CoreAction(Action):
             )
 
             project_name = context.get("project_name", "myproject")
-            package_name = context.get("package_name", project_name.replace("-", "_"))
+            package_name = context.get("package_name")
+            if not package_name:
+                package_name = project_name.replace("-", "_")
 
             # Pixi init --format pyproject creates a pyproject.toml if not exists
             pyproject_path = Path("pyproject.toml")
