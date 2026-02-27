@@ -16,9 +16,12 @@ markers = [
     "unit: marks tests as unit tests"
 ]
 
-[tool.pixi.feature.dev.dependencies]
+[tool.pixi.feature.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
 
 [tool.pixi.tasks]
-test = "pytest"
+test = { cmd = "pytest", default-environment = "test" }
+
+[tool.pixi.environments]
+test = {features = ["test"], solve-group = "default"}

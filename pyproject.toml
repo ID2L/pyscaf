@@ -1,9 +1,10 @@
 [project]
 name = "open-pyscaf"
-version = "2.0.0"
+version = "3.0.0"
 description = "A python scaffolder with quarto and other utilities out-of-the-box"
 authors = [
-    {name = "guilhem.heinrich",email = "guilhem.heinrich@gmail.com"}
+    {name = "guilhem.heinrich",email = "guilhem.heinrich@gmail.com"},
+    {name = "arnaud.charleroy",email = "arnaud.charleroy@inrae.fr"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
@@ -26,13 +27,13 @@ packages = ["src/pyscaf"]
 pyscaf = "pyscaf.cli:main"
 
 [tool.pixi.feature.dev.dependencies]
-pytest = "^8.3.5"
-pytest-cov = "^4.1.0"
-pytest-mock = "^3.12.0"
-pytest-xdist = "^3.5.0"
-python-semantic-release = "^9.21.1"
-ruff = "^0.11.11"
-PyYAML = "^6.0"
+pytest = ">=8.3.5,<9"
+pytest-cov = ">=4.1.0,<5"
+pytest-mock = ">=3.12.0,<4"
+pytest-xdist = ">=3.5.0,<4"
+python-semantic-release = ">=9.21.1,<10"
+ruff = ">=0.11.11,<0.12"
+pyyaml = ">=6.0,<7"
 
 [build-system]
 requires = ["hatchling"]
@@ -178,5 +179,6 @@ jinja2 = ">=3.1.6,<4"
 tomli = ">=2.4.0,<3"
 tomli-w = ">=1.2.0,<2"
 tomlkit = "0.13.3.*"
+pyyaml = ">=6.0.3,<7"
 
 

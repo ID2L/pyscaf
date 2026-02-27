@@ -175,3 +175,7 @@ cython_debug/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+# debug env
+# python3 -m venv pyscaf_env
+pyscaf_env

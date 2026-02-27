@@ -1,5 +1,5 @@
 [tool.pixi.feature.dev.dependencies]
-python-semantic-release = "^9.21.1"
+python-semantic-release = ">=9.21.1,<10.0.0"
 
 
 [tool.semantic_release]

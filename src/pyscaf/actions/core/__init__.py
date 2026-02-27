@@ -39,6 +39,13 @@ class CoreAction(Action):
             prompt="Who is the main author of this project ?",
             default=get_local_git_author,
         ),
+        CLIOption(
+            name="--package-name",
+            type="str",
+            help="Package name (valid python identifier)",
+            prompt="What is the name of the main package ?",
+            default=lambda: "myproject",  # Fallback, logic in skeleton/init
+        ),
     ]
 
     def __init__(self, project_path):
@@ -52,7 +59,7 @@ class CoreAction(Action):
             Dictionary mapping paths to content
         """
         project_name = context.get("project_name", "myproject")
-        currated_projet_name = project_name.replace("-", "_")
+        package_name = context.get("package_name", project_name.replace("-", "_"))
 
         # Read Pixi documentation (placeholder or from a file if exists)
         pixi_doc_path = Path(__file__).parent / "README.md"
@@ -64,7 +71,7 @@ class CoreAction(Action):
         # Return skeleton dictionary
         skeleton = {
             Path("README.md"): (f"# {project_name}\n\nA Python project created with pyscaf\n\n{pixi_doc}\n"),
-            Path(f"src/{currated_projet_name}/__init__.py"): (
+            Path(f"src/{package_name}/__init__.py"): (
                 f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'
             ),
             Path(".vscode/settings.json"): vscode_settings if vscode_settings else None,
@@ -96,7 +103,7 @@ class CoreAction(Action):
             )
 
             project_name = context.get("project_name", "myproject")
-            currated_projet_name = project_name.replace("-", "_")
+            package_name = context.get("package_name", project_name.replace("-", "_"))
 
             # Pixi init --format pyproject creates a pyproject.toml if not exists
             pyproject_path = Path("pyproject.toml")
@@ -106,7 +113,28 @@ class CoreAction(Action):
                 try:
                     # Configure project metadata if needed or Pixi specific sections
                     if "project" in pyproject_data:
+                        old_name = pyproject_data["project"].get("name", "")
                         pyproject_data["project"]["name"] = project_name
+                        pyproject_data["project"]["version"] = "0.0.0"
+
+                        # Update pixi pypi-dependencies key as well
+                        if "tool" in pyproject_data and "pixi" in pyproject_data["tool"]:
+                            pixi_tool = pyproject_data["tool"]["pixi"]
+                            if "pypi-dependencies" in pixi_tool:
+                                pypi_deps = pixi_tool["pypi-dependencies"]
+                                # If old_name is in pypi-dependencies, rename it to project_name
+                                if old_name and old_name in pypi_deps:
+                                    pypi_deps[project_name] = pypi_deps.pop(old_name)
+                                # If the key is still missing, add it
+                                if project_name not in pypi_deps:
+                                    pypi_deps[project_name] = {"path": ".", "editable": True}
+
+                            # Ensure default environment exists
+                            if "environments" not in pixi_tool:
+                                pixi_tool["environments"] = {}
+                            if "default" not in pixi_tool["environments"]:
+                                pixi_tool["environments"]["default"] = {"features": [], "solve-group": "default"}
+
                         if "authors" not in pyproject_data["project"]:
                             author_info = context.get("author", "")
                             if author_info:
@@ -122,7 +150,7 @@ class CoreAction(Action):
                     if "tool" not in pyproject_data:
                         pyproject_data["tool"] = {}
                     if "hatch" not in pyproject_data["tool"]:
-                        pyproject_data["tool"]["hatch"] = {"build": {"targets": {"wheel": {"packages": [f"src/{currated_projet_name}"]}}}}
+                        pyproject_data["tool"]["hatch"] = {"build": {"targets": {"wheel": {"packages": [f"src/{package_name}"]}}}}
                     
                     with pyproject_path.open("wb") as f:
                         f.write(tomli_w.dumps(pyproject_data).encode("utf-8"))

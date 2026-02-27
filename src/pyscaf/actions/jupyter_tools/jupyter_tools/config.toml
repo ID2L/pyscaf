@@ -16,12 +16,12 @@ template_file = ""
 
 [tool.pixi.tasks]
 # Convenient scripts
-py-to-nb = "python -m pyscaf.jupyter_tools.scripts.py_to_notebook"
-exec-nb = "python -m pyscaf.jupyter_tools.scripts.execute_notebook"
-nb-to-html = "python -m pyscaf.jupyter_tools.scripts.notebook_to_html"
-py-to-nb-all = "python -m pyscaf.jupyter_tools.scripts.main py_to_nb_all"
-exec-nb-all = "python -m pyscaf.jupyter_tools.scripts.main exec_nb_all"
-nb-to-html-all = "python -m pyscaf.jupyter_tools.scripts.main nb_to_html_all"
+py-to-nb = { cmd = "python -m pyscaf.jupyter_tools.scripts.py_to_notebook", default-environment = "dev" }
+exec-nb = { cmd = "python -m pyscaf.jupyter_tools.scripts.execute_notebook", default-environment = "dev" }
+nb-to-html = { cmd = "python -m pyscaf.jupyter_tools.scripts.notebook_to_html", default-environment = "dev" }
+py-to-nb-all = { cmd = "python -m pyscaf.jupyter_tools.scripts.main py_to_nb_all", default-environment = "dev" }
+exec-nb-all = { cmd = "python -m pyscaf.jupyter_tools.scripts.main exec_nb_all", default-environment = "dev" }
+nb-to-html-all = { cmd = "python -m pyscaf.jupyter_tools.scripts.main nb_to_html_all", default-environment = "dev" }
 
 [tool.pixi.feature.dev.dependencies]
 jupytext = "*"

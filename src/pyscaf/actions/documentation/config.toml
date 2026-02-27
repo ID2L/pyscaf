@@ -3,8 +3,11 @@ pdoc = "*"
 tomli = "*"
 
 [tool.pixi.tasks]
-gen-doc = "pdoc --html --output-dir docs src"
-serve-doc = "pdoc --http : src"
+gen-doc = { cmd = "python -m pdoc -o docs ./src/{package_name}", default-environment = "dev" }
+serve-doc = { cmd = "python -m pdoc ./src/{package_name}", default-environment = "dev" }
 
 [tool.pyscaf.documentation]
 output_path = "docs"
+
+[tool.pixi.environments]
+dev = {features = ["dev"], solve-group = "default"}

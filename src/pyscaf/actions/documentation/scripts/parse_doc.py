@@ -111,7 +111,7 @@ def gen_doc():
     args = config_to_pdoc_args(pdoc_config)
 
     # Add output directory
-    args.extend(["--output", str(output_dir)])
+    args.extend(["-o", str(output_dir)])
 
     # Add modules/paths to document
     modules = pdoc_config.get("modules")
