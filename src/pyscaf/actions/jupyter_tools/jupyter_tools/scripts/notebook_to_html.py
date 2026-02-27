@@ -82,7 +82,7 @@ def convert_notebook_to_html(
     print(f"Converting notebook {notebook_path} to HTML...")
     print("DEBUG: template_name", template_name)
     # Read the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
+    with open(notebook_path, encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
 
     # Process all cells
@@ -116,12 +116,8 @@ def main():
     parser = argparse.ArgumentParser(description="Convert Jupyter notebooks to HTML")
     parser.add_argument("input", help="Path to the input notebook file")
     parser.add_argument("output", help="Path to the output HTML file")
-    parser.add_argument(
-        "--hide-input", action="store_true", help="Hide all input cells by default"
-    )
-    parser.add_argument(
-        "--hide-output", action="store_true", help="Hide all output cells by default"
-    )
+    parser.add_argument("--hide-input", action="store_true", help="Hide all input cells by default")
+    parser.add_argument("--hide-output", action="store_true", help="Hide all output cells by default")
     parser.add_argument(
         "--template",
         help="Name of the built-in template to use. Available options: classic, lab, basic, reveal, full, custom",

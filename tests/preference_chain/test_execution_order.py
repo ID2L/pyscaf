@@ -131,24 +131,14 @@ class TestBestExecutionOrder:
         deploy_prod_index = result.index("deploy-prod")
 
         # Basic dependency chain
-        assert checkout_index < install_deps_index, (
-            "checkout should come before install-deps"
-        )
+        assert checkout_index < install_deps_index, "checkout should come before install-deps"
         assert install_deps_index < lint_index, "install-deps should come before lint"
         assert install_deps_index < test_index, "install-deps should come before test"
-        assert lint_index < build_index and test_index < build_index, (
-            "lint and test should come before build"
-        )
+        assert lint_index < build_index and test_index < build_index, "lint and test should come before build"
         assert build_index < docker_build_index, "build should come before docker-build"
-        assert docker_build_index < deploy_staging_index, (
-            "docker-build should come before deploy-staging"
-        )
-        assert deploy_staging_index < e2e_tests_index, (
-            "deploy-staging should come before e2e-tests"
-        )
-        assert e2e_tests_index < deploy_prod_index, (
-            "e2e-tests should come before deploy-prod"
-        )
+        assert docker_build_index < deploy_staging_index, "docker-build should come before deploy-staging"
+        assert deploy_staging_index < e2e_tests_index, "deploy-staging should come before e2e-tests"
+        assert e2e_tests_index < deploy_prod_index, "e2e-tests should come before deploy-prod"
 
     def test_empty_input(self):
         """Test with empty input."""
@@ -169,9 +159,7 @@ class TestBestExecutionOrder:
             Node(id="B", depends={"A"}, after="C"),  # 'C' is not in depends
         ]
 
-        with pytest.raises(
-            ValueError, match="Node 'B' has 'after'='C' but it's not in depends"
-        ):
+        with pytest.raises(ValueError, match="Node 'B' has 'after'='C' but it's not in depends"):
             best_execution_order(nodes)
 
     def test_auto_after_for_single_dependency(self):

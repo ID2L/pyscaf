@@ -27,13 +27,15 @@ packages = ["src/pyscaf"]
 pyscaf = "pyscaf.cli:main"
 
 [tool.pixi.feature.dev.dependencies]
+ruff = ">=0.11.11,<0.12"
+pyyaml = ">=6.0,<7"
+
+[tool.pixi.feature.test.dependencies]
 pytest = ">=8.3.5,<9"
 pytest-cov = ">=4.1.0,<5"
 pytest-mock = ">=3.12.0,<4"
 pytest-xdist = ">=3.5.0,<4"
-python-semantic-release = ">=9.21.1,<10"
-ruff = ">=0.11.11,<0.12"
-pyyaml = ">=6.0,<7"
+setuptools = "*"
 
 [build-system]
 requires = ["hatchling"]
@@ -139,7 +141,7 @@ src = ["src", "tests"]
 exclude = [
     "src/pyscaf/actions/*/template*"
 ]
-select = [
+lint.select = [
     "B",  # flake8-bugbear - https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
     "C4", # flake8-comprehensions - https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
     "E",  # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
@@ -161,13 +163,14 @@ open-pyscaf = { path = ".", editable = true }
 
 [tool.pixi.tasks]
 pyscaf = "python -m pyscaf.cli"
-test = "pytest"
-lint = "ruff check ."
-format = "ruff format ."
+test = { cmd = "PYTHONNOUSERSITE=1 pytest", default-environment = "test" }
+lint = { cmd = "ruff check .", default-environment = "dev" }
+format = { cmd = "ruff format .", default-environment = "dev" }
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
 
 [tool.pixi.dependencies]
 python = "3.11.*"

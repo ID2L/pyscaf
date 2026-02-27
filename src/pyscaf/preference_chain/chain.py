@@ -23,9 +23,7 @@ def extend_nodes(tree: list[Node]) -> list[ExtendedNode]:
     """
     extended_nodes: list[ExtendedNode] = []
     for node in tree:
-        extended_nodes.append(
-            ExtendedNode(id=node.id, depends=node.depends, after=node.after)
-        )
+        extended_nodes.append(ExtendedNode(id=node.id, depends=node.depends, after=node.after))
     for node in extended_nodes:
         for id in node.depends:
             found_node = next((x for x in extended_nodes if x.id == id), None)
@@ -41,15 +39,12 @@ def update_chains(node: ExtendedNode, chains: list[ChainLink]):
         if (
             chain.head is not None
             and node.id == chain.head.id  # node is at the head of the chain
-            and node.referenced_by.issubset(
-                chain.ids
-            )  # all the nodes that reference the node are in the chain
+            and node.referenced_by.issubset(chain.ids)  # all the nodes that reference the node are in the chain
             and (
                 set(node.external_dependencies).issubset(
                     chain.external_dependencies
                 )  # all the external dependencies of the node are in the chain's ones
-                or len(chain.external_dependencies)
-                == 0  # The chain has no external dependencies
+                or len(chain.external_dependencies) == 0  # The chain has no external dependencies
             )
         ):
             logger.debug(f"HEAD updated chain {chain.ids} with {node.id}")
@@ -93,8 +88,7 @@ def merge_chains(chain: ChainLink, chains: list[ChainLink]) -> ChainLink:
                 set(chain.external_dependencies).issubset(
                     other_chain.external_dependencies.union(set(other_chain.ids))
                 )  # all the external dependencies of the chain are in the chain's ones
-                or len(other_chain.external_dependencies)
-                == 0  # The other_chain has no external dependencies
+                or len(other_chain.external_dependencies) == 0  # The other_chain has no external dependencies
             )
         ):
             logger.debug(f"HEAD merged chain {chain.ids} with {other_chain.ids}")
@@ -108,9 +102,7 @@ def merge_chains(chain: ChainLink, chains: list[ChainLink]) -> ChainLink:
         # Or if the other_chain has the same external dependencies as the chain
         if (
             chain.head.after == other_chain.tail.id
-            and set(chain.external_dependencies).issubset(
-                other_chain.external_dependencies.union(set(other_chain.ids))
-            )
+            and set(chain.external_dependencies).issubset(other_chain.external_dependencies.union(set(other_chain.ids)))
             and len(other_chain.tail.referenced_by)
             <= 1  # The chain is referenced by only one other chain (after relation), or is a leaf chain
         ):
@@ -131,10 +123,7 @@ def build_chains(tree: list[ExtendedNode]) -> list[ChainLink]:
         logger.debug(f"Chain (before merging): {chain.ids}")
         chain = merge_chains(chain, chains)
 
-        if (
-            chain.tail.referenced_by is not None
-            and chain.head.id in chain.tail.referenced_by
-        ):
+        if chain.tail.referenced_by is not None and chain.head.id in chain.tail.referenced_by:
             logger.debug(f"Chain (after merging): {chain.ids} is a loop")
             raise CircularDependencyError("Circular dependency detected")
         logger.debug(
@@ -147,9 +136,7 @@ def build_chains(tree: list[ExtendedNode]) -> list[ChainLink]:
 
 
 def compute_all_resolution_pathes(chains: list[ChainLink]):
-    all_pathes: list[list[ChainLink]] = [
-        list(path) for path in itertools.permutations(chains)
-    ]
+    all_pathes: list[list[ChainLink]] = [list(path) for path in itertools.permutations(chains)]
 
     # Filter valid paths: check head dependencies and external dependencies
     valid_pathes: list[list[ChainLink]] = []
@@ -157,11 +144,7 @@ def compute_all_resolution_pathes(chains: list[ChainLink]):
         is_valid = True
         for i, chain in enumerate(path):
             # Get previous chains' ids
-            previous_ids = (
-                set().union(*(prev_chain.ids for prev_chain in path[:i]))
-                if i > 0
-                else set()
-            )
+            previous_ids = set().union(*(prev_chain.ids for prev_chain in path[:i])) if i > 0 else set()
 
             # Check dependencies
             if not chain.depends.issubset(previous_ids):

@@ -30,9 +30,7 @@ def py_to_nb_all():
             if file.endswith(".py"):
                 input_path = os.path.join(root, file)
                 rel_path = os.path.relpath(input_path, src_dir)
-                output_path = os.path.join(
-                    dst_dir, os.path.splitext(rel_path)[0] + ".ipynb"
-                )
+                output_path = os.path.join(dst_dir, os.path.splitext(rel_path)[0] + ".ipynb")
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
                 convert_to_notebook(input_path, output_path)
                 print(f"Converted {input_path} -> {output_path}")
@@ -64,9 +62,7 @@ def nb_to_html_all():
             if file.endswith(".ipynb"):
                 input_path = os.path.join(root, file)
                 rel_path = os.path.relpath(input_path, src_dir)
-                output_path = os.path.join(
-                    html_dir, os.path.splitext(rel_path)[0] + ".html"
-                )
+                output_path = os.path.join(html_dir, os.path.splitext(rel_path)[0] + ".html")
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
                 convert_notebook_to_html(
                     input_path,

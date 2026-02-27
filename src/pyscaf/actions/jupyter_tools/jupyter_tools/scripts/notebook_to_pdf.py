@@ -83,7 +83,7 @@ def convert_notebook_to_pdf(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Read the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
+    with open(notebook_path, encoding="utf-8") as f:
         nb = nb_read(f, as_version=4)
 
     # Process all cells
@@ -132,12 +132,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Convert Jupyter notebooks to PDF")
     parser.add_argument("input", help="Path to the input notebook file")
     parser.add_argument("output", help="Path to the output PDF file")
-    parser.add_argument(
-        "--hide-input", action="store_true", help="Hide all input cells by default"
-    )
-    parser.add_argument(
-        "--hide-output", action="store_true", help="Hide all output cells by default"
-    )
+    parser.add_argument("--hide-input", action="store_true", help="Hide all input cells by default")
+    parser.add_argument("--hide-output", action="store_true", help="Hide all output cells by default")
     parser.add_argument("--template", help="Name of the built-in template to use")
     parser.add_argument("--template-path", help="Path to a custom template directory")
     parser.add_argument("--template-file", help="Path to a specific template file")

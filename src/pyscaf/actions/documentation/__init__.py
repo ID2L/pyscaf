@@ -81,7 +81,7 @@ class DocumentationAction(Action):
             for placeholder in placeholders:
                 if placeholder in new_content:
                     new_content = new_content.replace(placeholder, package_name)
-            
+
             if new_content != content:
                 pyproject_path.write_text(new_content)
                 print(f"[INFO] Replaced placeholders in {pyproject_path}")

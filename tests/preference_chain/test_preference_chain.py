@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import List
 
 import pytest
 import yaml
@@ -23,7 +22,7 @@ class PreferenceChainTestHelper:
     def __init__(self, test_data_dir: str):
         self.test_data_dir = test_data_dir
 
-    def resolve_dependencies_from_yaml(self, yaml_filename: str) -> List[str]:
+    def resolve_dependencies_from_yaml(self, yaml_filename: str) -> list[str]:
         """
         Load dependencies from a YAML file and compute the best execution order.
 
@@ -74,7 +73,7 @@ class PreferenceChainTestHelper:
 
         return final_order
 
-    def create_yaml_file(self, filename: str, dependencies: List[dict]):
+    def create_yaml_file(self, filename: str, dependencies: list[dict]):
         """Create a YAML file with the given dependencies."""
         yaml_path = os.path.join(self.test_data_dir, filename)
         with open(yaml_path, "w") as f:
@@ -122,9 +121,7 @@ class TestPreferenceChainIntegration:
         # A should be first, D should be last, B and C can be in any order in between
         assert result[0] == "A", f"Expected A to be first, got {result}"
         assert result[-1] == "D", f"Expected D to be last, got {result}"
-        assert "B" in result and "C" in result, (
-            f"Both B and C should be present in {result}"
-        )
+        assert "B" in result and "C" in result, f"Both B and C should be present in {result}"
 
         # B and C should come after A and before D
         a_index = result.index("A")
@@ -153,15 +150,11 @@ class TestPreferenceChainIntegration:
         # test should come before coverage (due to 'after' preference)
         test_index = result.index("test")
         coverage_index = result.index("coverage")
-        assert test_index < coverage_index, (
-            f"test should come before coverage in {result}"
-        )
+        assert test_index < coverage_index, f"test should come before coverage in {result}"
 
         # reporting should come before coverage (dependency)
         reporting_index = result.index("reporting")
-        assert reporting_index < coverage_index, (
-            f"reporting should come before coverage in {result}"
-        )
+        assert reporting_index < coverage_index, f"reporting should come before coverage in {result}"
 
     def test_complex_scenario(self, test_helper):
         """Test a more complex scenario similar to the original dependencies.yaml."""
@@ -199,23 +192,14 @@ class TestPreferenceChainIntegration:
 
         # Verify dependency chain: versionning -> github -> github-actions -> ci-pipeline -> pytest -> coverage
         assert (
-            versionning_index
-            < github_index
-            < github_actions_index
-            < ci_pipeline_index
-            < pytest_index
-            < coverage_index
+            versionning_index < github_index < github_actions_index < ci_pipeline_index < pytest_index < coverage_index
         ), f"Dependency chain violated in {result}"
 
         # Verify that test comes before github-action-test (after preference)
-        assert test_index < github_action_test_index, (
-            f"test should come before github-action-test in {result}"
-        )
+        assert test_index < github_action_test_index, f"test should come before github-action-test in {result}"
 
         # Verify that github comes before github-action-test (dependency)
-        assert github_index < github_action_test_index, (
-            f"github should come before github-action-test in {result}"
-        )
+        assert github_index < github_action_test_index, f"github should come before github-action-test in {result}"
 
     def test_invalid_circular_dependency(self, test_helper):
         """Test that circular dependencies are properly detected and raise an error."""
@@ -257,12 +241,8 @@ class TestPreferenceChainIntegration:
         child1_index = result.index("child1")
         child2_index = result.index("child2")
 
-        assert root1_index < child1_index, (
-            f"root1 should come before child1 in {result}"
-        )
-        assert root2_index < child2_index, (
-            f"root2 should come before child2 in {result}"
-        )
+        assert root1_index < child1_index, f"root1 should come before child1 in {result}"
+        assert root2_index < child2_index, f"root2 should come before child2 in {result}"
 
 
 if __name__ == "__main__":

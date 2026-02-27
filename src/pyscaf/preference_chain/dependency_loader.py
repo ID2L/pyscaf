@@ -1,5 +1,4 @@
 from collections import defaultdict
-from typing import List
 
 import yaml
 from pydantic import ValidationError
@@ -12,12 +11,12 @@ from .model import Node
 # - Warns if there are multiple 'depends' but no 'after'
 
 
-def load_and_complete_dependencies(yaml_path: str) -> List[Node]:
+def load_and_complete_dependencies(yaml_path: str) -> list[Node]:
     """
     Load dependencies from a YAML file and complete the 'after' property if possible.
     Returns a list of Node objects.
     """
-    with open(yaml_path, "r") as f:
+    with open(yaml_path) as f:
         raw_dependencies = yaml.safe_load(f)
 
     dependencies = []
@@ -39,9 +38,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[Node]:
                 if len(dep.depends) == 1:
                     dep.after = next(iter(dep.depends))
                 else:
-                    print(
-                        f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'."
-                    )
+                    print(f"WARNING: Dependency '{dep.id}' has multiple 'depends' but no 'after'.")
         dependencies.append(dep)
     return dependencies
 
@@ -52,9 +49,7 @@ def load_and_complete_dependencies(yaml_path: str) -> List[Node]:
 #   - extra_depends is a set of ids that are depends but not in the after-chain
 
 
-def build_dependency_tree(
-    dependencies: list[Node], root_id: str
-) -> tuple[dict, set[str]]:
+def build_dependency_tree(dependencies: list[Node], root_id: str) -> tuple[dict, set[str]]:
     """
     Build a dependency tree starting from root_id, following 'after' recursively.
     Returns a tuple (tree, extra_depends) where:

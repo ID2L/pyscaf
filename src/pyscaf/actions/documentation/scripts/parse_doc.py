@@ -34,7 +34,14 @@ def get_project_package_paths() -> list:
         pyproject = tomli.load(f)
 
     # Try Hatchling first
-    packages = pyproject.get("tool", {}).get("hatch", {}).get("build", {}).get("targets", {}).get("wheel", {}).get("packages", [])
+    packages = (
+        pyproject.get("tool", {})
+        .get("hatch", {})
+        .get("build", {})
+        .get("targets", {})
+        .get("wheel", {})
+        .get("packages", [])
+    )
     if packages:
         return packages
 

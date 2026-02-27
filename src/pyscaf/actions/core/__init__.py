@@ -71,9 +71,7 @@ class CoreAction(Action):
         # Return skeleton dictionary
         skeleton = {
             Path("README.md"): (f"# {project_name}\n\nA Python project created with pyscaf\n\n{pixi_doc}\n"),
-            Path(f"src/{package_name}/__init__.py"): (
-                f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'
-            ),
+            Path(f"src/{package_name}/__init__.py"): (f'"""\n{project_name} package.\n"""\n\n__version__ = "0.0.0"\n'),
             Path(".vscode/settings.json"): vscode_settings if vscode_settings else None,
         }
         return skeleton
@@ -95,7 +93,8 @@ class CoreAction(Action):
                 [
                     "pixi",
                     "init",
-                    "--format", "pyproject",
+                    "--format",
+                    "pyproject",
                 ],
                 stdin=None,
                 stdout=None,
@@ -145,18 +144,18 @@ class CoreAction(Action):
                                     pyproject_data["project"]["authors"] = [{"name": name.strip(), "email": email}]
                                 else:
                                     pyproject_data["project"]["authors"] = [{"name": author_info.strip()}]
-                    
+
                     # Ensure tool.hatch.build exists for default build backend if we want hatch
                     if "tool" not in pyproject_data:
                         pyproject_data["tool"] = {}
                     if "hatch" not in pyproject_data["tool"]:
-                        pyproject_data["tool"]["hatch"] = {"build": {"targets": {"wheel": {"packages": [f"src/{package_name}"]}}}}
-                    
+                        pyproject_data["tool"]["hatch"] = {
+                            "build": {"targets": {"wheel": {"packages": [f"src/{package_name}"]}}}
+                        }
+
                     with pyproject_path.open("wb") as f:
                         f.write(tomli_w.dumps(pyproject_data).encode("utf-8"))
-                    console.print(
-                        f"[bold green]Configured pyproject.toml for {project_name}[/bold green]"
-                    )
+                    console.print(f"[bold green]Configured pyproject.toml for {project_name}[/bold green]")
                 except Exception as e:
                     console.print(f"[bold yellow]Error updating pyproject.toml: {e}[/bold yellow]")
             else:

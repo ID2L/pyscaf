@@ -30,9 +30,7 @@ class ChainLink(BaseModel):
 
     @property
     def external_dependencies(self) -> set[str]:
-        return set().union(
-            *[node.external_dependencies for node in self.children]
-        ) - set(self.ids)
+        return set().union(*[node.external_dependencies for node in self.children]) - set(self.ids)
 
     @property
     def depends(self) -> set[str]:

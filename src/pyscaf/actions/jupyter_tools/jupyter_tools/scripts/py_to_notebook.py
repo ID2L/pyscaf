@@ -62,9 +62,7 @@ def convert_to_notebook(input_path: str, output_path: str) -> None:
 
 def main():
     """CLI entry point for converting Python files to notebooks."""
-    parser = argparse.ArgumentParser(
-        description="Convert Python files to Jupyter notebooks"
-    )
+    parser = argparse.ArgumentParser(description="Convert Python files to Jupyter notebooks")
     parser.add_argument("input", help="Path to the input Python file")
     parser.add_argument("output", help="Path to the output notebook file")
 
@@ -81,9 +79,7 @@ def main_all():
     """CLI entry point to convert all .py files in notebooks/ to .ipynb notebooks in ./build."""
     import glob
 
-    notebooks_dir = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "notebooks"
-    )
+    notebooks_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "notebooks")
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "build")
     os.makedirs(output_dir, exist_ok=True)
     py_files = glob.glob(os.path.join(notebooks_dir, "*.py"))
