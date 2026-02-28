@@ -90,10 +90,23 @@ class CoreAction(Action):
             # Change to project directory
             os.chdir(self.project_path)
 
+            # Try to find pixi binary
+            import shutil
+
+            pixi_path = shutil.which("pixi")
+            if not pixi_path:
+                # Common fallback for linux pixi installation
+                home_pixi = Path.home() / ".pixi" / "bin" / "pixi"
+                if home_pixi.exists():
+                    pixi_path = str(home_pixi)
+
+            if not pixi_path:
+                raise FileNotFoundError("pixi")
+
             # Use subprocess.call to pass control to the terminal
             result = subprocess.call(
                 [
-                    "pixi",
+                    pixi_path,
                     "init",
                     "--format",
                     "pyproject",
@@ -138,16 +151,15 @@ class CoreAction(Action):
                             if "default" not in pixi_tool["environments"]:
                                 pixi_tool["environments"]["default"] = {"features": [], "solve-group": "default"}
 
-                        if "authors" not in pyproject_data["project"]:
-                            author_info = context.get("author", "")
-                            if author_info:
-                                # Quick parse "Name <email>"
-                                if "<" in author_info and ">" in author_info:
-                                    name, email = author_info.split("<")
-                                    email = email.strip(">")
-                                    pyproject_data["project"]["authors"] = [{"name": name.strip(), "email": email}]
-                                else:
-                                    pyproject_data["project"]["authors"] = [{"name": author_info.strip()}]
+                    author_info = context.get("author", "")
+                    if author_info:
+                        # Quick parse "Name <email>"
+                        if "<" in author_info and ">" in author_info:
+                            name, email = author_info.split("<")
+                            email = email.strip(">")
+                            pyproject_data["project"]["authors"] = [{"name": name.strip(), "email": email}]
+                        else:
+                            pyproject_data["project"]["authors"] = [{"name": author_info.strip()}]
 
                     # Ensure tool.hatch.build exists for default build backend if we want hatch
                     if "tool" not in pyproject_data:
@@ -160,6 +172,13 @@ class CoreAction(Action):
                     with pyproject_path.open("wb") as f:
                         f.write(tomli_w.dumps(pyproject_data).encode("utf-8"))
                     console.print(f"[bold green]Configured pyproject.toml for {project_name}[/bold green]")
+
+                    # pixi init creates a .gitignore by default, remove it if versioning is disabled
+                    if context.get("versionning") is False:
+                        gitignore_path = Path(".gitignore")
+                        if gitignore_path.exists():
+                            gitignore_path.unlink()
+                            console.print("[bold cyan]Removed .gitignore as versionning is disabled[/bold cyan]")
                 except Exception as e:
                     console.print(f"[bold yellow]Error updating pyproject.toml: {e}[/bold yellow]")
             else:

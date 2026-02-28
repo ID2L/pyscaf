@@ -21,7 +21,8 @@ GIT_HOST_CHOICES = [
 
 
 def postfill_remote_url(context: dict) -> dict:
-    context["versionning"] = True
+    if context.get("versionning") is not False:
+        context["versionning"] = True
     if re.search(r"[^\w]github\.com[^\w]", context["remote_url"]):
         context["git_host"] = "github"
         console.print("[bold cyan]Detected GitHub repository from URL[/bold cyan]")
@@ -32,7 +33,8 @@ def postfill_remote_url(context: dict) -> dict:
 
 
 def postfill_git_host(context: dict) -> dict:
-    context["versionning"] = True
+    if context.get("versionning") is not False:
+        context["versionning"] = True
     return context
 
 
