@@ -29,4 +29,4 @@ checks:
 
   - name: "pyscaf/jupyter_tools directory should not exist when disabled"
     type: not_exist
-    file_path: "tmp_project/pyscaf/jupyter_tools" 
+    file_path: "tmp_project/src/pyscaf/jupyter_tools"

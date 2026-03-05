@@ -26,24 +26,24 @@ checks:
   
   - name: "pyscaf directory exists"
     type: exist
-    file_path: "tmp_project/pyscaf"
+    file_path: "tmp_project/src/pyscaf"
   
   - name: "pyscaf/__init__.py exists"
     type: exist
-    file_path: "tmp_project/pyscaf/__init__.py"
+    file_path: "tmp_project/src/pyscaf/__init__.py"
   
   - name: "pyscaf/documentation directory exists"
     type: exist
-    file_path: "tmp_project/pyscaf/documentation"
+    file_path: "tmp_project/src/pyscaf/documentation"
   
   - name: "pyscaf/documentation/__init__.py exists"
     type: exist
-    file_path: "tmp_project/pyscaf/documentation/__init__.py"
+    file_path: "tmp_project/src/pyscaf/documentation/__init__.py"
   
   - name: "pyscaf/documentation/scripts directory exists"
     type: exist
-    file_path: "tmp_project/pyscaf/documentation/scripts"
+    file_path: "tmp_project/src/pyscaf/documentation/scripts"
   
   - name: "pyscaf/documentation/scripts/__init__.py exists"
     type: exist
-    file_path: "tmp_project/pyscaf/documentation/scripts/__init__.py" 
+    file_path: "tmp_project/src/pyscaf/documentation/scripts/__init__.py"
