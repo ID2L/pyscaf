@@ -23,29 +23,29 @@ Tests are organized in the `tests/` directory with the following structure:
 
 ```bash
 # Run all tests
-poetry run pytest
+uv run pytest
 
 # Run tests with verbose output
-poetry run pytest -v
+uv run pytest -v
 
 # Run tests in a specific file
-poetry run pytest tests/test_module.py
+uv run pytest tests/test_module.py
 
 # Run a specific test function
-poetry run pytest tests/test_module.py::test_function_name
+uv run pytest tests/test_module.py::test_function_name
 
 # Run tests with coverage report
-poetry run pytest --cov=src --cov-report=html
+uv run pytest --cov=src --cov-report=html
 
 # Run tests and stop at first failure
-poetry run pytest -x
+uv run pytest -x
 
 # Run tests matching a pattern
-poetry run pytest -k "test_pattern"
+uv run pytest -k "test_pattern"
 
 # Run tests with specific markers
-poetry run pytest -m "unit"  # Run only unit tests
-poetry run pytest -m "not slow"  # Skip slow tests
+uv run pytest -m "unit"  # Run only unit tests
+uv run pytest -m "not slow"  # Skip slow tests
 ```
 
 ### Writing Tests
@@ -205,13 +205,13 @@ Generate coverage reports to ensure your tests cover your code adequately:
 
 ```bash
 # Generate HTML coverage report
-poetry run pytest --cov=src --cov-report=html
+uv run pytest --cov=src --cov-report=html
 
 # Generate terminal coverage report
-poetry run pytest --cov=src --cov-report=term-missing
+uv run pytest --cov=src --cov-report=term-missing
 
 # Set minimum coverage threshold
-poetry run pytest --cov=src --cov-fail-under=80
+uv run pytest --cov=src --cov-fail-under=80
 ```
 
 ### Integration with CI/CD
@@ -222,8 +222,8 @@ Add pytest to your CI/CD pipeline:
 # GitHub Actions example
 - name: Run tests
   run: |
-    poetry install
-    poetry run pytest --cov=src --cov-report=xml
+    uv sync
+    uv run pytest --cov=src --cov-report=xml
     
 - name: Upload coverage to Codecov
   uses: codecov/codecov-action@v3

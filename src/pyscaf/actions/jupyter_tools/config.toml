@@ -14,7 +14,7 @@ template_name = "classic"
 template_path = ""
 template_file = ""
 
-[tool.poetry.scripts]
+[project.scripts]
 # Convenient scripts
 py-to-nb = "pyscaf.jupyter_tools.scripts.py_to_notebook:main"
 exec-nb = "pyscaf.jupyter_tools.scripts.execute_notebook:main"
@@ -23,7 +23,9 @@ py-to-nb-all = "pyscaf.jupyter_tools.scripts.main:py_to_nb_all"
 exec-nb-all = "pyscaf.jupyter_tools.scripts.main:exec_nb_all"
 nb-to-html-all = "pyscaf.jupyter_tools.scripts.main:nb_to_html_all"
 
-[tool.poetry.group.dev.dependencies]
-jupytext = "*"
-nbconvert = "*"
-tomli = "*"
+[dependency-groups]
+dev = [
+    "jupytext",
+    "nbconvert",
+    "tomli",
+]

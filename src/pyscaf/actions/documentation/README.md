@@ -26,7 +26,7 @@ Two scripts are available to manage documentation. Both scripts use the configur
 Generates static documentation files to the directory specified in `tool.pyscaf.documentation.output_path`.
 
 ```bash
-poetry run gen-doc
+uv run gen-doc
 ```
 
 #### `serve-doc`
@@ -34,7 +34,7 @@ poetry run gen-doc
 Starts a local documentation server for interactive browsing.
 
 ```bash
-poetry run serve-doc
+uv run serve-doc
 ```
 
 ### pdoc Arguments
