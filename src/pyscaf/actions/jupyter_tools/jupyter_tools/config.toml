@@ -1,6 +1,6 @@
 # Jupyter Tools Configuration
 
-[tool.pyscaf.jupyter-tools]
+[tool.pyscaf.jupyter_tools]
 # Default output directories
 python_notebook_dir = "notebooks/python"
 jupyter_notebook_dir = "notebooks/ipynb"
@@ -16,12 +16,12 @@ template_file = ""
 
 [tool.poetry.scripts]
 # Convenient scripts
-py-to-nb = "pyscaf.jupyter-tools.scripts.py_to_notebook:main"
-exec-nb = "pyscaf.jupyter-tools.scripts.execute_notebook:main"
-nb-to-html = "pyscaf.jupyter-tools.scripts.notebook_to_html:main"
-py-to-nb-all = "pyscaf.jupyter-tools.scripts.main:py_to_nb_all"
-exec-nb-all = "pyscaf.jupyter-tools.scripts.main:exec_nb_all"
-nb-to-html-all = "pyscaf.jupyter-tools.scripts.main:nb_to_html_all"
+py-to-nb = "pyscaf.jupyter_tools.scripts.py_to_notebook:main"
+exec-nb = "pyscaf.jupyter_tools.scripts.execute_notebook:main"
+nb-to-html = "pyscaf.jupyter_tools.scripts.notebook_to_html:main"
+py-to-nb-all = "pyscaf.jupyter_tools.scripts.main:py_to_nb_all"
+exec-nb-all = "pyscaf.jupyter_tools.scripts.main:exec_nb_all"
+nb-to-html-all = "pyscaf.jupyter_tools.scripts.main:nb_to_html_all"
 
 [tool.poetry.group.dev.dependencies]
 jupytext = "*"

@@ -23,8 +23,8 @@ def load_project_config(config_path: str = "./pyproject.toml") -> dict:
 
 def py_to_nb_all():
     config = load_project_config()
-    src_dir = config["tool"]["pyscaf"]["jupyter-tools"]["python_notebook_dir"]
-    dst_dir = config["tool"]["pyscaf"]["jupyter-tools"]["jupyter_notebook_dir"]
+    src_dir = config["tool"]["pyscaf"]["jupyter_tools"]["python_notebook_dir"]
+    dst_dir = config["tool"]["pyscaf"]["jupyter_tools"]["jupyter_notebook_dir"]
     for root, _, files in os.walk(src_dir):
         for file in files:
             if file.endswith(".py"):
@@ -40,7 +40,7 @@ def py_to_nb_all():
 
 def exec_nb_all():
     config = load_project_config()
-    src_dir = config["tool"]["pyscaf"]["jupyter-tools"]["jupyter_notebook_dir"]
+    src_dir = config["tool"]["pyscaf"]["jupyter_tools"]["jupyter_notebook_dir"]
     for root, _, files in os.walk(src_dir):
         for file in files:
             if file.endswith(".ipynb"):
@@ -51,7 +51,7 @@ def exec_nb_all():
 
 def nb_to_html_all():
     config = load_project_config()
-    section = config["tool"]["pyscaf"]["jupyter-tools"]
+    section = config["tool"]["pyscaf"]["jupyter_tools"]
     src_dir = section["jupyter_notebook_dir"]
     html_dir = section["html_dir"]
     hide_input = section.get("hide_input", False)

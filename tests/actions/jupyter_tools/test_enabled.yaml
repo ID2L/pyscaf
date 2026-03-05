@@ -1,7 +1,7 @@
 cli_arguments:
   options:
     jupyter: true
-    jupyter-tools: true
+    jupyter_tools: true
 
 checks:
   - name: "pyproject.toml exists"
@@ -28,10 +28,10 @@ checks:
     type: exist
     file_path: "tmp_project/notebooks"
   
-  - name: "pyscaf/jupyter-tools directory should exist"
+  - name: "pyscaf/jupyter_tools directory should exist"
     type: exist
-    file_path: "tmp_project/pyscaf/jupyter-tools" 
+    file_path: "tmp_project/pyscaf/jupyter_tools" 
 
-  - name: "pyscaf/jupyter-tools/scripts directory should exist"
+  - name: "pyscaf/jupyter_tools/scripts directory should exist"
     type: exist
-    file_path: "tmp_project/pyscaf/jupyter-tools/scripts" 
+    file_path: "tmp_project/pyscaf/jupyter_tools/scripts" 

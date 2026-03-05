@@ -1,7 +1,6 @@
 cli_arguments:
   options:
     jupyter: true
-    jupyter-tools: false
 
 checks:
   - name: "pyproject.toml exists"
@@ -27,7 +26,7 @@ checks:
   - name: "notebooks directory exists"
     type: exist
     file_path: "tmp_project/notebooks"
-  
-  - name: "pyscaf/jupyter-tools directory should not exist when disabled"
+
+  - name: "pyscaf/jupyter_tools directory should not exist when disabled"
     type: not_exist
-    file_path: "tmp_project/pyscaf/jupyter-tools" 
+    file_path: "tmp_project/pyscaf/jupyter_tools" 
