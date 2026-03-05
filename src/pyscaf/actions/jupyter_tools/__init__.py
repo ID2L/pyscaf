@@ -93,7 +93,7 @@ class JupyterToolsAction(Action):
 
             for script_file in scripts_dir.glob("*.py"):
                 script_content = script_file.read_text()
-                skeleton[Path(f"pyscaf/jupyter_tools/scripts/{script_file.name}")] = script_content
+                skeleton[Path(f"src/pyscaf/jupyter_tools/scripts/{script_file.name}")] = script_content
 
         return skeleton
 

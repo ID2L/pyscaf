@@ -57,7 +57,7 @@ class DocumentationAction(Action):
 
                 for script_file in scripts_dir.glob("*.py"):
                     script_content = script_file.read_text()
-                    skeleton[Path(f"pyscaf/documentation/scripts/{script_file.name}")] = script_content
+                    skeleton[Path(f"src/pyscaf/documentation/scripts/{script_file.name}")] = script_content
         # If doc_choice is None, do not add anything
         return skeleton
 
