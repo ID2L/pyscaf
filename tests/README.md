@@ -27,13 +27,13 @@ Ou pour un fichier précis :
 pytest tests/test_cli_interactive.py
 ```
 
-### Avec poetry
+### Avec uv
 ```bash
-poetry run pytest
+uv run pytest
 ```
 Ou pour un fichier précis :
 ```bash
-poetry run pytest tests/test_cli_interactive.py
+uv run pytest tests/test_cli_interactive.py
 ```
 
 ## Ajouter de nouveaux tests

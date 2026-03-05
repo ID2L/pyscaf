@@ -22,22 +22,15 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v3
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
-        path: .venv
-        key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
 
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      run: poetry install --with dev
+      run: uv sync
 
     - name: Run tests
       run: |
-        poetry run pytest --cov=pyscaf --cov-report=xml --cov-report=term-missing
+        uv run pytest --cov=pyscaf --cov-report=xml --cov-report=term-missing

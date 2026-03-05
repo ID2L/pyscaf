@@ -1,6 +1,6 @@
 # pyscaf
 
-A python poetry scaffolder - A tool to quickly initialize Python projects with complete and modern configuration.
+A python uv scaffolder - A tool to quickly initialize Python projects with complete and modern configuration.
 
 ## Installation
 
@@ -46,8 +46,8 @@ This allows you to:
 
 In its current version, `pyscaf` automatically configures:
 
-### 📦 Package Management with Poetry
-- Complete `poetry` configuration for package management
+### 📦 Package Management with uv
+- Complete `uv` configuration for package management
 - Features similar to R's `DESCRIPTION` file
 - Dependency management and publication
 
