@@ -50,14 +50,14 @@ class DocumentationAction(Action):
             # Copy scripts from the source
             scripts_dir = Path(__file__).parent / "scripts"
             if scripts_dir.exists():
-                # Add __init__.py for pyscaf directory
-                skeleton[Path("pyscaf/__init__.py")] = ""
-                skeleton[Path("pyscaf/documentation/__init__.py")] = ""
-                skeleton[Path("pyscaf/documentation/scripts/__init__.py")] = ""
+                # Add __init__.py for pyscaf directory in src
+                skeleton[Path("src/pyscaf/__init__.py")] = ""
+                skeleton[Path("src/pyscaf/documentation/__init__.py")] = ""
+                skeleton[Path("src/pyscaf/documentation/scripts/__init__.py")] = ""
 
                 for script_file in scripts_dir.glob("*.py"):
                     script_content = script_file.read_text()
-                    skeleton[Path(f"pyscaf/documentation/scripts/{script_file.name}")] = script_content
+                    skeleton[Path(f"src/pyscaf/documentation/scripts/{script_file.name}")] = script_content
         # If doc_choice is None, do not add anything
         return skeleton
 

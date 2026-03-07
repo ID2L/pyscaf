@@ -84,7 +84,7 @@ class GitAction(Action):
         git_doc_path = Path(__file__).parent / "README.md"
         git_doc = git_doc_path.read_text() if git_doc_path.exists() else ""
 
-        # Python & Poetry .gitignore content
+        # Python & uv .gitignore content
         gitignore_path = Path(__file__).parent / "template.gitignore"
         gitignore_content = gitignore_path.read_text() if gitignore_path.exists() else ""
 

@@ -84,8 +84,13 @@ class TestAction(Action):
 
             # Run a quick test to validate setup
             console.print("[bold cyan]Running initial test validation...[/bold cyan]")
+            # Remove VIRTUAL_ENV from environment to avoid uv warnings when running inside another venv
+            env = os.environ.copy()
+            env.pop("VIRTUAL_ENV", None)
+
             result = subprocess.call(
-                ["poetry", "run", "pytest", "--version"],
+                ["uv", "run", "pytest", "--version"],
+                env=env,
                 stdin=None,
                 stdout=None,
                 stderr=None,
@@ -97,7 +102,8 @@ class TestAction(Action):
                 # Run the actual tests
                 console.print("[bold cyan]Running initial tests...[/bold cyan]")
                 test_result = subprocess.call(
-                    ["poetry", "run", "pytest", "tests/", "-v"],
+                    ["uv", "run", "pytest", "tests/", "-v"],
+                    env=env,
                     stdin=None,
                     stdout=None,
                     stderr=None,
@@ -111,5 +117,5 @@ class TestAction(Action):
                 console.print(f"[bold yellow]Pytest validation failed (exit code {result})[/bold yellow]")
 
         except FileNotFoundError:
-            console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
-            console.print("https://python-poetry.org/docs/#installation")
+            console.print("[bold yellow]uv not found. Please install it first.[/bold yellow]")
+            console.print("https://docs.astral.sh/uv/getting-started/installation")

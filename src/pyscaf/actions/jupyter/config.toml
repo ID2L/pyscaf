@@ -1,7 +1,9 @@
-[tool.poetry.group.dev.dependencies]
-jupyter = "*"
-notebook = "*"
-nbconvert = "*"
-ipykernel = "*"
-matplotlib = "*"
-pandas = "*" 
+[dependency-groups]
+dev = [
+    "jupyter",
+    "notebook",
+    "nbconvert",
+    "ipykernel",
+    "matplotlib",
+    "pandas",
+]

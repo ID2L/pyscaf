@@ -184,7 +184,7 @@ class Action:
         Install dependencies or run post-initialization commands, using the provided context.
 
         This method is called after all actions have been initialized.
-        Use it to install dependencies, run commands like 'poetry install', etc.
+        Use it to install dependencies, run commands like 'uv sync', etc.
         """
         # Default implementation: no installation needed
         # Override in subclasses if needed

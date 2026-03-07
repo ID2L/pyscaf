@@ -30,8 +30,8 @@ checks:
   
   - name: "pyscaf/jupyter_tools directory should exist"
     type: exist
-    file_path: "tmp_project/pyscaf/jupyter_tools" 
+    file_path: "tmp_project/src/pyscaf/jupyter_tools" 
 
   - name: "pyscaf/jupyter_tools/scripts directory should exist"
     type: exist
-    file_path: "tmp_project/pyscaf/jupyter_tools/scripts" 
+    file_path: "tmp_project/src/pyscaf/jupyter_tools/scripts"

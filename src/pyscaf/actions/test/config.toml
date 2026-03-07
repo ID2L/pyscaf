@@ -16,6 +16,8 @@ markers = [
     "unit: marks tests as unit tests"
 ]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "*"
-pytest-cov = "*"
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-cov",
+]

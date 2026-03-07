@@ -1,53 +1,53 @@
-## Poetry Integration
+## uv Integration
 
-This project uses Poetry for dependency management and packaging. Poetry provides a modern and efficient way to manage Python dependencies and build packages.
+This project uses uv for dependency management and packaging. uv provides a modern and extremely fast way to manage Python dependencies and build packages.
 
 ### Features
 
-- **Dependency Management**: Poetry manages project dependencies through `pyproject.toml`
+- **Dependency Management**: uv manages project dependencies through `pyproject.toml`
 - **Virtual Environment**: Automatically creates and manages a virtual environment
 - **Build System**: Integrated build system for creating Python packages
-- **Lock File**: Generates a `poetry.lock` file for reproducible installations
+- **Lock File**: Generates a `uv.lock` file for reproducible installations
 
 ### Common Commands
 
 ```bash
 # Install dependencies
-poetry install
+uv sync
 
 # Add a new dependency
-poetry add package-name
+uv add package-name
 
 # Add a development dependency
-poetry add --dev package-name
+uv add --dev package-name
 
 # Update dependencies
-poetry update
+uv sync --upgrade
 
 # Run a command within the virtual environment
-poetry run python script.py
+uv run python script.py
 
 # Activate the virtual environment
-poetry shell
+uv run shell
 ```
 
 ### Project Structure
 
 The project follows a standard Python package structure:
 - `pyproject.toml`: Project configuration and dependencies
-- `poetry.lock`: Locked dependencies for reproducible builds
+- `uv.lock`: Locked dependencies for reproducible builds
 - `src/`: Source code directory
 - `tests/`: Test files directory
 
 ### Development
 
 To start developing:
-1. Ensure Poetry is installed
-2. Run `poetry install` to install all dependencies
-3. Use `poetry shell` to activate the virtual environment
+1. Ensure uv is installed
+2. Run `uv sync` to install all dependencies
+3. Use `uv run` to execute scripts in the environment
 4. Start coding!
 
-For more information, visit [Poetry's official documentation](https://python-poetry.org/docs/).
+For more information, visit [uv's official documentation](https://docs.astral.sh/uv/).
 
 ## Ruff Integration
 
