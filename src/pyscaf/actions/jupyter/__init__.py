@@ -86,10 +86,10 @@ This directory contains Jupyter notebooks for the {project_name} project.
 
             project_name = context.get("project_name", "myproject")
 
-            # Run the ipykernel installation via poetry
+            # Run the ipykernel installation via Pixi
             result = subprocess.call(
                 [
-                    "poetry",
+                    "pixi",
                     "run",
                     "python",
                     "-m",
@@ -99,7 +99,7 @@ This directory contains Jupyter notebooks for the {project_name} project.
                     "--name",
                     project_name,
                     "--display-name",
-                    f"{project_name} (Poetry)",
+                    f"{project_name} (Pixi)",
                 ],
                 stdin=None,
                 stdout=None,
@@ -109,11 +109,11 @@ This directory contains Jupyter notebooks for the {project_name} project.
             if result == 0:
                 console.print("[bold green]Jupyter kernel created successfully![/bold green]")
                 console.print(
-                    f"[bold green]You can now use the '{project_name} (Poetry)' kernel in Jupyter.[/bold green]"
+                    f"[bold green]You can now use the '{project_name} (Pixi)' kernel in Jupyter.[/bold green]"
                 )
             else:
                 console.print(f"[bold yellow]Jupyter kernel creation exited with code {result}[/bold yellow]")
 
         except FileNotFoundError:
-            console.print("[bold yellow]Poetry or Jupyter not found. Make sure they are installed.[/bold yellow]")
-            console.print("https://python-poetry.org/docs/#installation")
+            console.print("[bold yellow]Pixi or Jupyter not found. Make sure they are installed.[/bold yellow]")
+            console.print("https://pixi.sh/install.sh")

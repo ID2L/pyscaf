@@ -6,7 +6,7 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, TypedDict
+from typing import Any, TypedDict
 
 import pytest
 import yaml
@@ -30,7 +30,7 @@ class TestResult(TypedDict):
     return_code: int
     stdout: str
     stderr: str
-    check_results: List[CheckResult]
+    check_results: list[CheckResult]
     all_checks_passed: bool
 
 
@@ -42,18 +42,16 @@ class ActionTestRunner:
         self.config = self._load_config()
         self.temp_dir = None
 
-    def _load_config(self) -> Dict[str, Any]:
+    def _load_config(self) -> dict[str, Any]:
         """Load and validate the YAML configuration file."""
-        with open(self.test_file_path, "r", encoding="utf-8") as f:
+        with open(self.test_file_path, encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
         # Validate required fields
         required_fields = ["checks"]
         for field in required_fields:
             if field not in config:
-                raise ValueError(
-                    f"Missing required field '{field}' in {self.test_file_path}"
-                )
+                raise ValueError(f"Missing required field '{field}' in {self.test_file_path}")
 
         return config
 
@@ -62,7 +60,7 @@ class ActionTestRunner:
         self.temp_dir = Path(tempfile.mkdtemp())
         return self.temp_dir
 
-    def _build_cli_command(self) -> List[str]:
+    def _build_cli_command(self) -> list[str]:
         """Build the CLI command with arguments from config."""
         cmd = ["pyscaf"]
 
@@ -92,14 +90,10 @@ class ActionTestRunner:
 
         return cmd
 
-    def _execute_command(
-        self, cmd: List[str], cwd: Path
-    ) -> subprocess.CompletedProcess:
+    def _execute_command(self, cmd: list[str], cwd: Path) -> subprocess.CompletedProcess:
         """Execute the CLI command in the specified directory."""
         try:
-            result = subprocess.run(
-                cmd, cwd=cwd, capture_output=True, text=True, timeout=60
-            )
+            result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=60)
             return result
         except subprocess.TimeoutExpired:
             raise TimeoutError(f"Command timed out: {' '.join(cmd)}")
@@ -120,7 +114,7 @@ class ActionTestRunner:
             return False
 
         try:
-            with open(full_path, "r", encoding="utf-8") as f:
+            with open(full_path, encoding="utf-8") as f:
                 file_content = f.read()
             return content in file_content
         except Exception:
@@ -140,7 +134,7 @@ class ActionTestRunner:
             print(f"Error executing custom check {function_path}: {e}")
             return False
 
-    def _run_checks(self) -> List[CheckResult]:
+    def _run_checks(self) -> list[CheckResult]:
         """Run all checks and return results."""
         results = []
 
@@ -167,9 +161,7 @@ class ActionTestRunner:
                 elif check_type == "contains":
                     result["success"] = self._check_file_contains(file_path, content)
                 elif check_type == "not_contains":
-                    result["success"] = not self._check_file_contains(
-                        file_path, content
-                    )
+                    result["success"] = not self._check_file_contains(file_path, content)
                 elif check_type == "custom":
                     result["success"] = self._execute_custom_check(function_path)
                 else:
@@ -213,9 +205,7 @@ class ActionTestRunner:
                 shutil.rmtree(self.temp_dir)
 
 
-def discover_test_files(
-    module_filter: str | None = None, test_filter: str | None = None
-) -> List[tuple[Path, str]]:
+def discover_test_files(module_filter: str | None = None, test_filter: str | None = None) -> list[tuple[Path, str]]:
     """Discover all YAML test files in the tests/actions directory."""
     tests_dir = Path(__file__).parent
     test_files = []

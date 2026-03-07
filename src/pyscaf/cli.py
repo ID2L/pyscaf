@@ -3,7 +3,7 @@ Command-line interface for pyscaf.
 """
 
 import sys
-from typing import Any, Type
+from typing import Any
 
 import click
 from rich.console import Console
@@ -29,7 +29,7 @@ def print_version(ctx, param, value):
 def collect_cli_options():
     action_classes = discover_actions()
     deps = []
-    action_class_by_id: dict[str, Type[Action]] = {}
+    action_class_by_id: dict[str, type[Action]] = {}
     for action_cls in action_classes:
         action_id = action_cls.__name__.replace("Action", "").lower()
         depends = getattr(action_cls, "depends", set())

@@ -65,5 +65,25 @@ class DocumentationAction(Action):
         doc_key = context.get("documentation", "none")  # Get the key (e.g., "none", "pdoc")
         if doc_key == "none":
             return
-        
+
         super().init(context)
+
+        # Post-process pyproject.toml to replace placeholders
+        project_name = context.get("project_name", "myproject")
+        package_name = context.get("package_name")
+        if not package_name:
+            package_name = project_name.replace("-", "_")
+
+        pyproject_path = self.project_path / "pyproject.toml"
+        if pyproject_path.exists():
+            content = pyproject_path.read_text()
+            # Replace both {package_name} and {curated_project_name} for compatibility
+            placeholders = ["{package_name}", "{curated_project_name}"]
+            new_content = content
+            for placeholder in placeholders:
+                if placeholder in new_content:
+                    new_content = new_content.replace(placeholder, package_name)
+
+            if new_content != content:
+                pyproject_path.write_text(new_content)
+                print(f"[INFO] Replaced placeholders in {pyproject_path}")

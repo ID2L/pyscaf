@@ -17,7 +17,7 @@ from .tree_walker import DependencyTreeWalker
 logger = logging.getLogger(__name__)
 
 
-def best_execution_order(nodes: List[Node]) -> List[str]:
+def best_execution_order(nodes: list[Node]) -> list[str]:
     """
     Determine the best execution order using the preference chain logic.
 
@@ -31,7 +31,7 @@ def best_execution_order(nodes: List[Node]) -> List[str]:
         CircularDependencyError: If no valid resolution path can be found
     """
     # Ensure all nodes have proper 'after' field set if they have dependencies
-    node_objects: List[Node] = []
+    node_objects: list[Node] = []
     for node in nodes:
         # If node has dependencies but no 'after' is specified, use the first dependency
         if node.depends and node.after is None:
@@ -41,9 +41,7 @@ def best_execution_order(nodes: List[Node]) -> List[str]:
 
         # Validate that 'after' is in the dependencies if specified
         if after is not None and after not in node.depends:
-            raise ValueError(
-                f"Node '{node.id}' has 'after'='{after}' but it's not in depends={node.depends}"
-            )
+            raise ValueError(f"Node '{node.id}' has 'after'='{after}' but it's not in depends={node.depends}")
 
         node_obj = Node(id=node.id, depends=node.depends, after=after)
         node_objects.append(node_obj)

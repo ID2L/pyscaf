@@ -27,13 +27,13 @@ Ou pour un fichier précis :
 pytest tests/test_cli_interactive.py
 ```
 
-### Avec poetry
+### Avec pixi
 ```bash
-poetry run pytest
+pixi run test
 ```
 Ou pour un fichier précis :
 ```bash
-poetry run pytest tests/test_cli_interactive.py
+pixi run pytest tests/test_cli_interactive.py
 ```
 
 ## Ajouter de nouveaux tests

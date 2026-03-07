@@ -18,9 +18,7 @@ if __name__ == "__main__":
         )
         logger.debug("Mode debug activé")
     else:
-        logging.basicConfig(
-            level=logging.WARNING, format="\n    %(levelname)s: %(message)s"
-        )
+        logging.basicConfig(level=logging.WARNING, format="\n    %(levelname)s: %(message)s")
 
     # Load and complete dependencies from YAML
     yaml_path = os.path.join(os.path.dirname(__file__), "dependencies.yaml")

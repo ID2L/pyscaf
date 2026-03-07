@@ -85,7 +85,7 @@ class TestAction(Action):
             # Run a quick test to validate setup
             console.print("[bold cyan]Running initial test validation...[/bold cyan]")
             result = subprocess.call(
-                ["poetry", "run", "pytest", "--version"],
+                ["pixi", "run", "-e", "test", "pytest", "--version"],
                 stdin=None,
                 stdout=None,
                 stderr=None,
@@ -97,7 +97,7 @@ class TestAction(Action):
                 # Run the actual tests
                 console.print("[bold cyan]Running initial tests...[/bold cyan]")
                 test_result = subprocess.call(
-                    ["poetry", "run", "pytest", "tests/", "-v"],
+                    ["pixi", "run", "-e", "test", "pytest", "tests/", "-v"],
                     stdin=None,
                     stdout=None,
                     stderr=None,
@@ -111,5 +111,5 @@ class TestAction(Action):
                 console.print(f"[bold yellow]Pytest validation failed (exit code {result})[/bold yellow]")
 
         except FileNotFoundError:
-            console.print("[bold yellow]Poetry not found. Please install it first:[/bold yellow]")
-            console.print("https://python-poetry.org/docs/#installation")
+            console.print("[bold yellow]Pixi not found. Please install it first:[/bold yellow]")
+            console.print("https://pixi.sh/install.sh")

@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v2.0.0 (2026-02-05)
+
+### Features
+
+- **environment**: Migrated from Poetry to Pixi for development and environment management.
+- **scaffolding**: Updated `pyscaf` to initialize new projects with Pixi instead of Poetry.
+- **module**: Renamed `jupyter-tools` to `jupyter_tools` for better Python compatibility.
+
+### Refactoring
+
+- **build**: Switched build backend from `poetry-core` to `hatchling`.
+- **documentation**: Updated all README files to reflect Pixi integration.
+
+
 ## v1.5.1 (2025-08-29)
 
 ### Bug Fixes

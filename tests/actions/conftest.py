@@ -39,9 +39,7 @@ def pytest_collection_modifyitems(config, items):
             module_filter, test_name_filter = action_filter.split(":", 1)
         else:
             module_filter = action_filter
-            test_name_filter = (
-                None  # Ensure test_name_filter is cleared if only module is provided
-            )
+            test_name_filter = None  # Ensure test_name_filter is cleared if only module is provided
 
     # If no filters are provided, return early
     if not module_filter and not test_name_filter:
@@ -58,9 +56,7 @@ def pytest_collection_modifyitems(config, items):
             current_module, current_test_name = test_id.split(":", 1)
 
             match_module = not module_filter or current_module == module_filter
-            match_test_name = (
-                not test_name_filter or current_test_name == test_name_filter
-            )
+            match_test_name = not test_name_filter or current_test_name == test_name_filter
 
             if match_module and match_test_name:
                 selected_items.append(item)

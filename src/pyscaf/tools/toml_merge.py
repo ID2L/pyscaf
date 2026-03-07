@@ -10,16 +10,8 @@ def merge_toml_files(input_path: Path, output_path: Path):
     Preserves and merges comments at the correct location (inline, under section, etc.).
     """
     # Read files as TOML documents (preserving comments)
-    input_doc = (
-        tomlkit.parse(input_path.read_text(encoding="utf-8"))
-        if input_path.exists()
-        else tomlkit.document()
-    )
-    output_doc = (
-        tomlkit.parse(output_path.read_text(encoding="utf-8"))
-        if output_path.exists()
-        else tomlkit.document()
-    )
+    input_doc = tomlkit.parse(input_path.read_text(encoding="utf-8")) if input_path.exists() else tomlkit.document()
+    output_doc = tomlkit.parse(output_path.read_text(encoding="utf-8")) if output_path.exists() else tomlkit.document()
 
     def deep_merge(source, dest):
         """
