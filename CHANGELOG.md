@@ -1,6 +1,46 @@
 # CHANGELOG
 
 
+## v1.6.0 (2026-03-07)
+
+### Bug Fixes
+
+- Corrected skeleton paths to include the `src/` prefix for generated files.
+  ([#15](https://github.com/ID2L/pyscaf/pull/15),
+  [`d097c9e`](https://github.com/ID2L/pyscaf/commit/d097c9ed1ee92f2986fe806a51e689a2c99bfb53))
+
+- Resolve JupyterToolsAction discovery by fixing directory nesting
+  ([#15](https://github.com/ID2L/pyscaf/pull/15),
+  [`d097c9e`](https://github.com/ID2L/pyscaf/commit/d097c9ed1ee92f2986fe806a51e689a2c99bfb53))
+
+### Chores
+
+- Bump minimum Python version to 3.12 and correct internal script paths.
+  ([#15](https://github.com/ID2L/pyscaf/pull/15),
+  [`d097c9e`](https://github.com/ID2L/pyscaf/commit/d097c9ed1ee92f2986fe806a51e689a2c99bfb53))
+
+* Move pyscaf scripts in src if not module pyscaf are not recognize fix tests
+
+- Update CI Python test matrix to 3.12-3.14 and consolidate Python setup using the uv action.
+  ([#15](https://github.com/ID2L/pyscaf/pull/15),
+  [`d097c9e`](https://github.com/ID2L/pyscaf/commit/d097c9ed1ee92f2986fe806a51e689a2c99bfb53))
+
+---------
+
+Co-authored-by: guilhemheinrich <guilhem.heinrich@gmail.com>
+
+### Features
+
+- Migrate dependency management from Poetry to UV. ([#15](https://github.com/ID2L/pyscaf/pull/15),
+  [`d097c9e`](https://github.com/ID2L/pyscaf/commit/d097c9ed1ee92f2986fe806a51e689a2c99bfb53))
+
+### Refactoring
+
+- Replace Poetry with uv for package management and project setup.
+  ([#15](https://github.com/ID2L/pyscaf/pull/15),
+  [`d097c9e`](https://github.com/ID2L/pyscaf/commit/d097c9ed1ee92f2986fe806a51e689a2c99bfb53))
+
+
 ## v1.5.2 (2026-03-07)
 
 ### Bug Fixes
