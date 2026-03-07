@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v1.5.2 (2026-03-07)
+
+### Bug Fixes
+
+- Resolve JupyterToolsAction discovery by fixing directory nesting
+  ([#14](https://github.com/ID2L/pyscaf/pull/14),
+  [`e5e79c4`](https://github.com/ID2L/pyscaf/commit/e5e79c4742ce7faa3d4ce5d5933f3c000bb37938))
+
+
 ## v1.5.1 (2025-08-29)
 
 ### Bug Fixes
