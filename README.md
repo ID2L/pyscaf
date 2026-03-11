@@ -4,16 +4,42 @@ A python uv scaffolder - A tool to quickly initialize Python projects with compl
 
 ## Installation
 
-The `pyscaf` module is available on PyPI and can be installed with pip:
+### With pip
 
 ```bash
 pip install open-pyscaf
 ```
 
-Or from the test repository:
+### With uv (recommended)
+
+[uv](https://docs.astral.sh/uv/) is a fast Python package manager. Install `pyscaf` as a global tool:
+
+```bash
+uv tool install open-pyscaf
+```
+
+Or run it directly without installing:
+
+```bash
+uvx open-pyscaf init --interactive my-project
+```
+
+Or add it to a project's dev dependencies:
+
+```bash
+uv add --dev open-pyscaf
+```
+
+### From the test repository
 
 ```bash
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple open-pyscaf
+```
+
+Or with uv:
+
+```bash
+uv tool install open-pyscaf --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple
 ```
 
 ## Usage
