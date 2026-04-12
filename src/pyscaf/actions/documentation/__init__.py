@@ -1,6 +1,11 @@
+"""Documentation scaffolding actions."""
+
+import logging
 from pathlib import Path
 
-from pyscaf.actions import Action, ChoiceOption, CLIOption
+from pyscaf_core import Action, ChoiceOption, CLIOption
+
+logger = logging.getLogger(__name__)
 
 DOC_CHOICES = [
     ChoiceOption(key="none", display="None (no documentation)", value=None),
@@ -20,7 +25,7 @@ class DocumentationAction(Action):
             help="Choose a documentation system for your project",
             prompt="Which documentation system do you want to use?",
             choices=DOC_CHOICES,
-            default=0,  # Index of the default choice
+            default=0,
         ),
     ]
 
@@ -28,29 +33,23 @@ class DocumentationAction(Action):
         super().__init__(project_path)
 
     def skeleton(self, context: dict) -> dict[Path, str | None]:
-        doc_key = context.get("documentation", "none")  # Get the key (e.g., "none", "pdoc")
-        print(f"Documentation key: {doc_key}")
+        doc_key = context.get("documentation", "none")
 
-        # Convert key to value using DOC_CHOICES directly
         doc_choice = None
         for choice in DOC_CHOICES:
             if choice.key == doc_key:
                 doc_choice = choice.value
                 break
-        print(f"Documentation choice value: {doc_choice}")
 
         skeleton = {}
         if doc_choice == "pdoc":
-            # Read documentation README
             doc_readme_path = Path(__file__).parent / "README.md"
             doc_readme = doc_readme_path.read_text() if doc_readme_path.exists() else ""
 
             skeleton[Path("README.md")] = doc_readme
 
-            # Copy scripts from the source
             scripts_dir = Path(__file__).parent / "scripts"
             if scripts_dir.exists():
-                # Add __init__.py for pyscaf directory in src
                 skeleton[Path("src/pyscaf/__init__.py")] = ""
                 skeleton[Path("src/pyscaf/documentation/__init__.py")] = ""
                 skeleton[Path("src/pyscaf/documentation/scripts/__init__.py")] = ""
@@ -58,12 +57,11 @@ class DocumentationAction(Action):
                 for script_file in scripts_dir.glob("*.py"):
                     script_content = script_file.read_text()
                     skeleton[Path(f"src/pyscaf/documentation/scripts/{script_file.name}")] = script_content
-        # If doc_choice is None, do not add anything
         return skeleton
 
     def init(self, context):
-        doc_key = context.get("documentation", "none")  # Get the key (e.g., "none", "pdoc")
+        doc_key = context.get("documentation", "none")
         if doc_key == "none":
             return
-        
+
         super().init(context)

@@ -1,7 +1,0 @@
-- id: A
-- depends:
-  - A
-  id: B
-- depends:
-  - B
-  id: C
