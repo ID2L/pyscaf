@@ -1,6 +1,67 @@
 # CHANGELOG
 
 
+## v2.0.0 (2026-04-12)
+
+### Bug Fixes
+
+- **pyscaf**: Address review findings from migration
+  ([`f3ee01d`](https://github.com/ID2L/pyscaf/commit/f3ee01d13fd54f3e106e4648f07b0e828d011b53))
+
+- Fix operator precedence bug in JupyterToolsAction.activate that could enable jupyter_tools even
+  when jupyter was disabled - Add smoke tests for --version and init --help with dynamic options -
+  Update README.md to document pyscaf-core architecture dependency
+
+Made-with: Cursor
+
+- **pyscaf**: Handle missing git in get_local_git_author and improve README
+  ([`119be20`](https://github.com/ID2L/pyscaf/commit/119be2001747191849adcf687671e71c7d292795))
+
+- Catch FileNotFoundError in get_local_git_author() when git is not installed (was only catching
+  CalledProcessError) - Fix test_cli_version to match Click's default version output format - Add
+  Development section to README with setup, scaffolding and test commands
+
+All 35 tests pass (4 smoke + 31 YAML).
+
+Made-with: Cursor
+
+### Documentation
+
+- Add AGENT and constitution documentation for pyscaf
+  ([`dc0e6ba`](https://github.com/ID2L/pyscaf/commit/dc0e6ba2962f75e89b35489d5150f6b500a195c9))
+
+- Added speckit for cursor
+  ([`f1db3cc`](https://github.com/ID2L/pyscaf/commit/f1db3cc07a649d15818dc001fc53ffa4a14ff1e8))
+
+- **pyscaf**: Add review.md and update stats for migration
+  ([`47d08e8`](https://github.com/ID2L/pyscaf/commit/47d08e8e44f91a98e67d3183687603e61ab6e815))
+
+Review approved with all HIGH/MEDIUM issues resolved. Stats updated with 3 sessions (/specify,
+  /implement, /review-implemented).
+
+Made-with: Cursor
+
+### Features
+
+- **pyscaf**: Migrate to pyscaf-core as framework dependency
+  ([`87b2c5b`](https://github.com/ID2L/pyscaf/commit/87b2c5b9e7871a22e28d3ce2ae2aedab67046095))
+
+Replace the monolithic architecture with a thin-app pattern that delegates all framework logic
+  (Action base class, ActionManager, preference chain, CLI builder, TOML tools) to pyscaf-core.
+  Concrete actions remain in-place with updated imports. Tests migrated to pyscaf_core.testing YAML
+  runner.
+
+BREAKING CHANGE: pyscaf-core >= 0.2.1 is now required as a dependency. The internal modules
+  pyscaf.preference_chain, pyscaf.tools, and pyscaf.actions.manager are removed.
+
+Made-with: Cursor
+
+### Breaking Changes
+
+- **pyscaf**: Pyscaf-core >= 0.2.1 is now required as a dependency. The internal modules
+  pyscaf.preference_chain, pyscaf.tools, and pyscaf.actions.manager are removed.
+
+
 ## v1.6.0 (2026-03-07)
 
 ### Bug Fixes
