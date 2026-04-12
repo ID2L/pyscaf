@@ -29,9 +29,9 @@ class JupyterToolsAction(Action):
         super().__init__(project_path)
 
     def activate(self, context: dict) -> bool:
-        return (
-            context.get("jupyter", True) and context.get("jupyter_tools") is None or context.get("jupyter_tools", True)
-        )
+        if not context.get("jupyter", True):
+            return False
+        return context.get("jupyter_tools") is None or context.get("jupyter_tools", True)
 
     def skeleton(self, context: dict) -> dict[Path, str | None]:
         config_path = Path(__file__).parent / "config.toml"

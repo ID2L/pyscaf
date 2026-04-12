@@ -100,6 +100,10 @@ In its current version, `pyscaf` automatically configures:
 - `pytest-cov` integration for code coverage
 - Ready-to-use test structure
 
+## Architecture
+
+`pyscaf` is built on [pyscaf-core](https://pypi.org/project/pyscaf-core/), a reusable framework for building project scaffolders. The core provides the plugin system, CLI builder, action manager and dependency resolution. `pyscaf` contributes 8 concrete actions (core, git, jupyter, jupyter_tools, documentation, license, semantic_release, test) as plugins.
+
 ## Development
 
 This project is developed to simplify Python project creation with integrated best practices from the start.
