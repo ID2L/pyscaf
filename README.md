@@ -100,8 +100,46 @@ In its current version, `pyscaf` automatically configures:
 - `pytest-cov` integration for code coverage
 - Ready-to-use test structure
 
+## Architecture
+
+`pyscaf` is built on [pyscaf-core](https://pypi.org/project/pyscaf-core/), a reusable framework for building project scaffolders. The core provides the plugin system, CLI builder, action manager and dependency resolution. `pyscaf` contributes 8 concrete actions (core, git, jupyter, jupyter_tools, documentation, license, semantic_release, test) as plugins.
+
 ## Development
 
-This project is developed to simplify Python project creation with integrated best practices from the start.
+### Setup
+
+Clone the repository and install in development mode with [uv](https://docs.astral.sh/uv/):
+
+```bash
+git clone https://github.com/guilhemheinrich/pyscaf.git
+cd pyscaf
+uv sync
+```
+
+### Scaffolding a project (non-interactive)
+
+```bash
+uv run pyscaf init my-project --no-install
+```
+
+### Running the tests
+
+Smoke tests (plugin discovery, CLI wiring):
+
+```bash
+uv run pytest tests/test_pyscaf_smoke.py -v
+```
+
+YAML-driven action tests (powered by `pyscaf_core.testing`):
+
+```bash
+uv run pytest tests/test_yaml_actions.py -v
+```
+
+All tests:
+
+```bash
+uv run pytest tests/ -v
+```
 
 

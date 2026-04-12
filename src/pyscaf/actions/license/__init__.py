@@ -1,6 +1,8 @@
+"""License file actions."""
+
 from pathlib import Path
 
-from pyscaf.actions import Action, ChoiceOption, CLIOption
+from pyscaf_core import Action, ChoiceOption, CLIOption
 
 LICENSE_CHOICES = [
     ChoiceOption(
@@ -48,7 +50,7 @@ class LicenseAction(Action):
             help="Choose a license for your project",
             prompt="Which license do you want to use?",
             choices=LICENSE_CHOICES,
-            default=0,  # Index of the default choice
+            default=0,
         ),
     ]
 
@@ -56,9 +58,8 @@ class LicenseAction(Action):
         super().__init__(project_path)
 
     def skeleton(self, context: dict) -> dict[Path, str | None]:
-        license_key = context.get("license", "mit")  # Get the key (e.g., "mit")
+        license_key = context.get("license", "mit")
 
-        # Convert key to value using LICENSE_CHOICES directly
         license_choice = None
         for choice in LICENSE_CHOICES:
             if choice.key == license_key:
@@ -67,7 +68,6 @@ class LicenseAction(Action):
 
         skeleton = {}
         if license_choice:
-            # Read the selected license template
             license_template_path = Path(__file__).parent / license_choice
             if license_template_path.exists():
                 license_content = license_template_path.read_text()

@@ -1,18 +1,16 @@
-"""
-Poetry initialization actions.
-"""
+"""Core initialization actions."""
 
+import logging
 import os
+import re
 import subprocess
 from pathlib import Path
 
 import tomli
 import tomli_w
-from rich.console import Console
+from pyscaf_core import Action, CLIOption
 
-from pyscaf.actions import Action, CLIOption
-
-console = Console()
+logger = logging.getLogger(__name__)
 
 
 def get_local_git_author():
@@ -21,7 +19,7 @@ def get_local_git_author():
         git_name = subprocess.check_output(["git", "config", "user.name"]).decode().strip()
         git_email = subprocess.check_output(["git", "config", "user.email"]).decode().strip()
         default_author = f"{git_name} <{git_email}>"
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         default_author = ""
     return default_author
 
@@ -29,7 +27,7 @@ def get_local_git_author():
 class CoreAction(Action):
     """Action to initialize a project with uv."""
 
-    depends = set()  # uv is the root action
+    depends = set()
     run_preferably_after = None
     cli_options = [
         CLIOption(
@@ -45,23 +43,15 @@ class CoreAction(Action):
         super().__init__(project_path)
 
     def skeleton(self, context: dict) -> dict[Path, str | None]:
-        """
-        Define the filesystem skeleton for Core initialization.
-
-        Returns:
-            Dictionary mapping paths to content
-        """
         project_name = context.get("project_name", "myproject")
         currated_projet_name = project_name.replace("-", "_")
 
-        # Read uv documentation
         uv_doc_path = Path(__file__).parent / "README.md"
         uv_doc = uv_doc_path.read_text() if uv_doc_path.exists() else ""
 
-        # Add default ruff settings for VSCode
         vscode_settings_path = Path(__file__).parent / "default_settings.json"
         vscode_settings = vscode_settings_path.read_text() if vscode_settings_path.exists() else ""
-        # Return skeleton dictionary
+
         skeleton = {
             Path("README.md"): (f"# {project_name}\n\nA Python project created with pyscaf\n\n{uv_doc}\n"),
             Path(f"src/{currated_projet_name}/__init__.py"): (
@@ -72,18 +62,11 @@ class CoreAction(Action):
         return skeleton
 
     def init(self, context: dict) -> None:
-        """
-        Initialize Core after skeleton creation.
-
-        This will run 'poetry init' in non-interactive mode.
-        """
-        console.print("[bold blue]Initializing core project...[/bold blue]")
+        logger.info("Initializing core project...")
 
         try:
-            # Change to project directory
             os.chdir(self.project_path)
 
-            # Use subprocess.call to pass control to the terminal
             result = subprocess.call(
                 [
                     "uv",
@@ -94,86 +77,69 @@ class CoreAction(Action):
                     "--author-from",
                     "none",
                 ],
-                # No redirection,
-                # allows full terminal interaction
                 stdin=None,
                 stdout=None,
                 stderr=None,
             )
 
-            project_name = context.get("project_name", "myproject")
-            currated_projet_name = project_name.replace("-", "_")
-
-            # Ajout dynamique de la clé authors dans [project] du pyproject.toml
             pyproject_path = Path("pyproject.toml")
             if pyproject_path.exists():
                 with pyproject_path.open("rb") as f:
                     pyproject_data = tomli.load(f)
                 try:
-                    # Ensure project properties exists
                     if "project" not in pyproject_data:
                         pyproject_data["project"] = {}
                     if "authors" not in pyproject_data["project"]:
                         pyproject_data["project"]["authors"] = []
-                    
+
                     author = context.get("author", "")
                     if author:
-                        import re
                         match = re.match(r"(?P<name>[^<]+)\s*<(?P<email>[^>]+)>", author)
                         if match:
-                            pyproject_data["project"]["authors"].append({"name": match.group("name").strip(), "email": match.group("email").strip()})
+                            pyproject_data["project"]["authors"].append(
+                                {"name": match.group("name").strip(), "email": match.group("email").strip()}
+                            )
                         else:
                             pyproject_data["project"]["authors"].append({"name": author.strip()})
-                            
+
                     with pyproject_path.open("wb") as f:
                         f.write(tomli_w.dumps(pyproject_data).encode("utf-8"))
-                    console.print(
-                        "[bold green]Added authors configuration in pyproject.toml[/bold green]"
-                    )
+                    logger.info("Added authors configuration in pyproject.toml")
                 except Exception as e:
-                    console.print(f"[bold yellow]Section [project] not found or error: {e}[/bold yellow]")
+                    logger.warning("Section [project] not found or error: %s", e)
             else:
-                console.print("[bold yellow]pyproject.toml not found after uv init.[/bold yellow]")
+                logger.warning("pyproject.toml not found after uv init.")
 
             if result == 0:
-                console.print("[bold green]uv initialization successful![/bold green]")
+                logger.info("uv initialization successful!")
             else:
-                console.print(f"[bold yellow]uv init exited with code {result}[/bold yellow]")
+                logger.warning("uv init exited with code %s", result)
 
         except FileNotFoundError:
-            console.print("[bold yellow]uv not found. Please install it first.[/bold yellow]")
+            logger.warning("uv not found. Please install it first.")
 
     def install(self, context: dict) -> None:
-        """
-        Install dependencies with uv.
-
-        This will run 'uv sync' to install all dependencies.
-        """
         super().init(context)
 
-        console.print("[bold blue]Installing dependencies with uv...[/bold blue]")
+        logger.info("Installing dependencies with uv...")
         try:
-            # Ensure we're in the right directory
             os.chdir(self.project_path)
 
-            # Run uv sync
-            console.print("[bold cyan]Running uv sync...[/bold cyan]")
+            logger.info("Running uv sync...")
             result = subprocess.call(["uv", "sync"], stdin=None, stdout=None, stderr=None)
 
             if result == 0:
-                console.print("[bold green]uv dependencies installed successfully![/bold green]")
+                logger.info("uv dependencies installed successfully!")
             else:
-                console.print(f"[bold yellow]uv sync exited with code {result}[/bold yellow]")
+                logger.warning("uv sync exited with code %s", result)
 
         except FileNotFoundError:
-            console.print("[bold yellow]uv not found. Please install it first.[/bold yellow]")
-            console.print("https://docs.astral.sh/uv/getting-started/installation")
+            logger.warning("uv not found. Please install it first.")
+            logger.info("https://docs.astral.sh/uv/getting-started/installation")
             return
 
-        # Separate block for VSCode Ruff extension installation
         try:
-            console.print("[bold cyan]Installing VSCode Ruff extension...[/bold cyan]")
+            logger.info("Installing VSCode Ruff extension...")
             subprocess.call(["code", "--install-extension", "charliermarsh.ruff", "--force"])
         except FileNotFoundError:
-            console.print("[bold yellow]VSCode not found. Please install it first:[/bold yellow]")
-            console.print("https://code.visualstudio.com/download")
+            logger.info("VSCode not found. Please install it first: https://code.visualstudio.com/download")

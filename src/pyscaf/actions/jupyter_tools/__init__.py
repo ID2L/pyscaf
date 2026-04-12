@@ -1,20 +1,13 @@
-"""
-jupyter tools initialization actions.
-"""
+"""Jupyter tools initialization actions."""
 
+import logging
 import os
-import subprocess
 from pathlib import Path
-from typing import Dict, Optional
 
 import tomli
-import tomli_w
-from rich.console import Console
+from pyscaf_core import Action, CLIOption
 
-from pyscaf.actions import Action, CLIOption
-from pyscaf.tools.toml_merge import merge_toml_files
-
-console = Console()
+logger = logging.getLogger(__name__)
 
 
 class JupyterToolsAction(Action):
@@ -36,25 +29,16 @@ class JupyterToolsAction(Action):
         super().__init__(project_path)
 
     def activate(self, context: dict) -> bool:
-        return (
-            context.get("jupyter", True) and context.get("jupyter_tools") is None or context.get("jupyter_tools", True)
-        )
+        if not context.get("jupyter", True):
+            return False
+        return context.get("jupyter_tools") is None or context.get("jupyter_tools", True)
 
     def skeleton(self, context: dict) -> dict[Path, str | None]:
-        """
-        Define the filesystem skeleton for Jupyter tools.
-
-        Returns:
-            Dictionary mapping paths to content
-        """
-
-        # Read configuration file
         config_path = Path(__file__).parent / "config.toml"
         readme_path = Path(__file__).parent / "README.md"
         readme_content = readme_path.read_text() if readme_path.exists() else ""
         config_content = config_path.read_text() if config_path.exists() else ""
 
-        # Parse config.toml to get directory paths
         config_dirs = []
         if config_path.exists():
             try:
@@ -65,28 +49,23 @@ class JupyterToolsAction(Action):
                     and "jupyter_tools" in config_data["tool"]["pyscaf"]
                 ):
                     jupyter_tools_config = config_data["tool"]["pyscaf"]["jupyter_tools"]
-                    # Extract all directory paths from the config
                     for key, value in jupyter_tools_config.items():
                         if isinstance(value, str) and ("dir" in key or "directory" in key):
                             config_dirs.append(Path(value))
             except Exception as e:
-                console.print(f"[bold yellow]Warning: Could not parse config.toml: {e}[/bold yellow]")
+                logger.warning("Could not parse config.toml: %s", e)
 
-        # Copy scripts from the source
         scripts_dir = Path(__file__).parent / "scripts"
 
         skeleton = {
-            Path("src/pyscaf/jupyter_tools"): None,  # Create tools directory
-            Path("README.md"): readme_content,  # Add to configuration
+            Path("src/pyscaf/jupyter_tools"): None,
+            Path("README.md"): readme_content,
         }
 
-        # Add configured directories to skeleton
         for dir_path in config_dirs:
-            skeleton[dir_path] = None  # Create directory
+            skeleton[dir_path] = None
 
-        # Add all script files
         if scripts_dir.exists():
-            # Add __init__.py for pyscaf directory in src
             skeleton[Path("src/pyscaf/__init__.py")] = ""
             skeleton[Path("src/pyscaf/jupyter_tools/__init__.py")] = ""
             skeleton[Path("src/pyscaf/jupyter_tools/scripts/__init__.py")] = ""
@@ -98,31 +77,21 @@ class JupyterToolsAction(Action):
         return skeleton
 
     def install(self, context: dict) -> None:
-        """
-        Set up the Jupyter tools for the project.
-
-        This will make the tools executable and create convenience scripts.
-        """
-        console.print("[bold blue]Setting up Jupyter tools...[/bold blue]")
+        logger.info("Setting up Jupyter tools...")
 
         try:
-            # Ensure we're in the right directory
             os.chdir(self.project_path)
 
-            # Make tools executable (on Unix-like systems)
             tools_dir = Path("tools")
             if tools_dir.exists():
                 for script_file in tools_dir.glob("*.py"):
                     try:
-                        # Make executable on Unix-like systems
                         script_file.chmod(0o755)
-                        console.print(f"[bold green]Made {script_file.name} executable[/bold green]")
+                        logger.info("Made %s executable", script_file.name)
                     except OSError:
-                        # On Windows, this will fail but that's okay
                         pass
 
-            console.print("[bold green]Jupyter tools setup complete![/bold green]")
-            console.print("[bold blue]You can now use the tools in the tools/ directory.[/bold blue]")
+            logger.info("Jupyter tools setup complete!")
 
         except Exception as e:
-            console.print(f"[bold yellow]Error setting up Jupyter tools: {e}[/bold yellow]")
+            logger.warning("Error setting up Jupyter tools: %s", e)
