@@ -106,6 +106,40 @@ In its current version, `pyscaf` automatically configures:
 
 ## Development
 
-This project is developed to simplify Python project creation with integrated best practices from the start.
+### Setup
+
+Clone the repository and install in development mode with [uv](https://docs.astral.sh/uv/):
+
+```bash
+git clone https://github.com/guilhemheinrich/pyscaf.git
+cd pyscaf
+uv sync
+```
+
+### Scaffolding a project (non-interactive)
+
+```bash
+uv run pyscaf init my-project --no-install
+```
+
+### Running the tests
+
+Smoke tests (plugin discovery, CLI wiring):
+
+```bash
+uv run pytest tests/test_pyscaf_smoke.py -v
+```
+
+YAML-driven action tests (powered by `pyscaf_core.testing`):
+
+```bash
+uv run pytest tests/test_yaml_actions.py -v
+```
+
+All tests:
+
+```bash
+uv run pytest tests/ -v
+```
 
 

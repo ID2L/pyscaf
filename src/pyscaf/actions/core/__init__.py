@@ -19,7 +19,7 @@ def get_local_git_author():
         git_name = subprocess.check_output(["git", "config", "user.name"]).decode().strip()
         git_email = subprocess.check_output(["git", "config", "user.email"]).decode().strip()
         default_author = f"{git_name} <{git_email}>"
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         default_author = ""
     return default_author
 
