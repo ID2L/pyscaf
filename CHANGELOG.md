@@ -1,9 +1,15 @@
 # CHANGELOG
 
 
+## v2.0.1 (2026-04-13)
+
+
 ## v2.0.0 (2026-04-12)
 
 ### Bug Fixes
+
+- Hide git relative question when no versionning
+  ([`0e282fc`](https://github.com/ID2L/pyscaf/commit/0e282fcf9e69e46ad54812cc345f0ea14ffb3fb9))
 
 - **pyscaf**: Address review findings from migration
   ([`f3ee01d`](https://github.com/ID2L/pyscaf/commit/f3ee01d13fd54f3e106e4648f07b0e828d011b53))
