@@ -52,6 +52,7 @@ class GitAction(Action):
             help="Provide a remote url for the git repository",
             prompt="Git remote url ?",
             postfill_hook=postfill_remote_url,
+            visible_when=lambda ctx: ctx.get("versionning") is not False,
         ),
         CLIOption(
             name="--git-host",
@@ -61,6 +62,7 @@ class GitAction(Action):
             choices=GIT_HOST_CHOICES,
             default=0,
             postfill_hook=postfill_git_host,
+            visible_when=lambda ctx: ctx.get("versionning") is not False,
         ),
     ]
 
